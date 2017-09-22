@@ -1,0 +1,81 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: 1b111111-1111-1111-1111-111111111111
+  UUID: 2b111111-1111-1111-1111-111111111111
+  name: Tunnel_XConnTest
+  description: Tunnel_XConnTest
+  type: VF
+  category: Allotted Resource
+  subcategory: Tunnel XConnect
+  resourceVendor: '12345'
+  resourceVendorRelease: '1'
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+- resource-Tunnel_XConnTest-interface:
+    file: resource-TunnelXconntest-template-interface.yml
+- resource-Allotedresource:
+    file: resource-Allotedresource-template.yml
+topology_template:
+  inputs:
+    nf_naming:
+      type: org.openecomp.datatypes.Naming
+    nf_naming_code:
+      type: string
+    nf_function:
+      type: string
+    availability_zone_max_count:
+      type: integer
+      default: 1
+    nf_role:
+      type: string
+    max_instances:
+      type: integer
+    min_instances:
+      type: integer
+    nf_type:
+      type: string
+  node_templates:
+    Allotedresource 0:
+      type: org.openecomp.resource.vfc.AllottedResource1235
+      metadata:
+        invariantUUID: 3b111111-1111-1111-1111-111111111111
+        UUID: 4b111111-1111-1111-1111-111111111111
+        customizationUUID: 5b111111-1111-1111-1111-111111111111
+        version: '1.0'
+        name: Allotedresource
+        description: Allotedresource
+        type: VFC
+        category: Allotted Resource
+        subcategory: Allotted Resource
+        resourceVendor: '123'
+        resourceVendorRelease: '123'
+      properties:
+        providing_service_invariant_uuid: 6b111111-1111-1111-1111-111111111111
+        providing_service_uuid: 7b111111-1111-1111-1111-111111111111
+        providing_service_name: vVIGaaS-Test
+        max_instances: 1
+        min_instances: 1
+  substitution_mappings:
+    node_type: org.openecomp.resource.vf.TunnelXconntest
+    capabilities:
+      allotedresource0.feature:
+      - Allotedresource 0
+      - feature
+    requirements:
+      allotedresource0.service_dependency:
+      - Allotedresource 0
+      - service_dependency
+      allotedresource0.dependency:
+      - Allotedresource 0
+      - dependency

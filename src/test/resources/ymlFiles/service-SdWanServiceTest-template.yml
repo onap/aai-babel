@@ -1,0 +1,270 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: 1c111111-1111-1111-1111-111111111111
+  UUID: 2c111111-1111-1111-1111-111111111111
+  name: SD-WAN-Service-Test
+  description: SD-WAN-Service-Test
+  type: Service
+  category: Network L1-3
+  serviceEcompNaming: true
+  ecompGeneratedNaming: true
+  namingPolicy: ''
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+- service-SD-WAN-Service-Test-interface:
+    file: service-SdWanServiceTest-template-interface.yml
+- resource-SD-WAN-Test-VSP:
+    file: resource-SdWanTestVsp-template.yml
+- resource-SD-WAN-Test-VSP-interface:
+    file: resource-SdWanTestVsp-template-interface.yml
+- resource-Tunnel_XConnTest:
+    file: resource-TunnelXconntest-template.yml
+- resource-Tunnel_XConnTest-interface:
+    file: resource-TunnelXconntest-template-interface.yml
+topology_template:
+  node_templates:
+    SD-WAN-Test-VSP 0:
+      type: org.openecomp.resource.vf.SdWanTestVsp
+      metadata:
+        invariantUUID: 1a111111-1111-1111-1111-111111111111
+        UUID: 2a111111-1111-1111-1111-111111111111
+        customizationUUID: 3c111111-1111-1111-1111-111111111111
+        version: '1.0'
+        name: SD-WAN-Test-VSP
+        description: SD-WAN-Test-VSP
+        type: VF
+        category: Network L2-3
+        subcategory: WAN Connectors
+        resourceVendor: SCP-Test-VLM
+        resourceVendorRelease: '1.0'
+    Tunnel_XConnTest 0:
+      type: org.openecomp.resource.vf.TunnelXconntest
+      metadata:
+        invariantUUID: 1b111111-1111-1111-1111-111111111111
+        UUID: 2b111111-1111-1111-1111-111111111111
+        customizationUUID: 4c111111-1111-1111-1111-111111111111
+        version: '2.0'
+        name: Tunnel_XConnTest
+        description: Tunnel_XConnTest
+        type: VF
+        category: Allotted Resource
+        subcategory: Tunnel XConnect
+        resourceVendor: '12345'
+        resourceVendorRelease: '1'
+  groups:
+    sdwantestvsp0..SdWanTestVsp..DUMMY..module-0:
+      type: org.openecomp.groups.VfModule
+      metadata:
+        vfModuleModelName: SdWanTestVsp..DUMMY..module-0
+        vfModuleModelInvariantUUID: 6a111111-1111-1111-1111-111111111111
+        vfModuleModelUUID: 5c111111-1111-1111-1111-111111111111
+        vfModuleModelVersion: '2'
+        vfModuleModelCustomizationUUID: 6c111111-1111-1111-1111-111111111111
+      properties:
+        min_vf_module_instances: 0
+        vf_module_label: DUMMY
+        max_vf_module_instances:
+        vfc_list:
+        vf_module_type: Expansion
+        vf_module_description:
+        initial_count: 0
+        volume_group: false
+        availability_zone_count:
+  substitution_mappings:
+    node_type: org.openecomp.service.SdWanServiceTest
+    capabilities:
+      sdwantestvsp0.abstract_dummy_server.attachment_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.attachment_DUMMY_server_DUMMY_port
+      sdwantestvsp0.abstract_dummy_server.memory.resident_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.memory.resident_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.instance_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.instance_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.root.size_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.root.size_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.feature_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.feature_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.device.write.requests.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.device.write.requests.rate_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.network.outpoing.packets_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.network.outpoing.packets_DUMMY_server_DUMMY_port
+      sdwantestvsp0.abstract_dummy_server.network.outgoing.packets.rate_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.network.outgoing.packets.rate_DUMMY_server_DUMMY_port
+      sdwantestvsp0.abstract_dummy_server.disk.device.allocation_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.device.allocation_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.read.bytes_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.read.bytes_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.read.bytes.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.read.bytes.rate_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.device.usage_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.device.usage_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.network.outgoing.bytes_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.network.outgoing.bytes_DUMMY_server_DUMMY_port
+      sdwantestvsp0.abstract_dummy_server.disk.device.write.bytes_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.device.write.bytes_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.host_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.host_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.write.requests.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.write.requests.rate_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.binding_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.binding_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.device.latency_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.device.latency_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.write.bytes_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.write.bytes_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.os_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.os_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.network.incoming.bytes_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.network.incoming.bytes_DUMMY_server_DUMMY_port
+      sdwantestvsp0.abstract_dummy_server.disk.device.read.bytes.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.device.read.bytes.rate_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.write.requests_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.write.requests_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.vcpus_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.vcpus_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.ephemeral.size_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.ephemeral.size_DUMMY_server
+      tunnel_xconntest0.allotedresource0.feature:
+      - Allotedresource 0
+      - allotedresource0.feature
+      sdwantestvsp0.abstract_dummy_server.disk.device.read.requests_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.device.read.requests_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.binding_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.binding_DUMMY_server_DUMMY_port
+      sdwantestvsp0.abstract_dummy_server.disk.device.read.requests.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.device.read.requests.rate_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.memory.usage_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.memory.usage_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.feature:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.feature
+      sdwantestvsp0.abstract_dummy_server.disk.device.write.bytes.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.device.write.bytes.rate_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.latency_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.latency_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.memory_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.memory_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.usage_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.usage_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.device.write.requests_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.device.write.requests_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.scalable_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.scalable_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.cpu_util_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.cpu_util_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.capacity_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.capacity_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.network.incoming.packets_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.network.incoming.packets_DUMMY_server_DUMMY_port
+      sdwantestvsp0.abstract_dummy_server.cpu.delta_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.cpu.delta_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.iops_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.iops_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.allocation_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.allocation_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.device.read.bytes_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.device.read.bytes_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.cpu_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.cpu_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.network.outgoing.bytes.rate_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.network.outgoing.bytes.rate_DUMMY_server_DUMMY_port
+      sdwantestvsp0.abstract_dummy_server.disk.read.requests_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.read.requests_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.network.incoming.packets.rate_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.network.incoming.packets.rate_DUMMY_server_DUMMY_port
+      sdwantestvsp0.abstract_dummy_server.network.incoming.bytes.rate_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.network.incoming.bytes.rate_DUMMY_server_DUMMY_port
+      sdwantestvsp0.abstract_dummy_server.feature_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.feature_DUMMY_server_DUMMY_port
+      sdwantestvsp0.abstract_dummy_server.disk.device.iops_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.device.iops_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.device.capacity_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.device.capacity_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.disk.write.bytes.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.disk.write.bytes.rate_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.endpoint_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.endpoint_DUMMY_server
+    requirements:
+      sdwantestvsp0.abstract_dummy_server.dependency_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.dependency_DUMMY_server
+      tunnel_xconntest0.allotedresource0.service_dependency:
+      - Allotedresource 0
+      - allotedresource0.service_dependency
+      tunnel_xconntest0.allotedresource0.dependency:
+      - Allotedresource 0
+      - allotedresource0.dependency
+      sdwantestvsp0.abstract_dummy_server.dependency_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.dependency_DUMMY_server_DUMMY_port
+      sdwantestvsp0.abstract_dummy_server.link_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.link_DUMMY_server_DUMMY_port
+      sdwantestvsp0.abstract_dummy_server.local_storage_DUMMY_server:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.local_storage_DUMMY_server
+      sdwantestvsp0.abstract_dummy_server.dependency:
+      - abstract_DUMMY_server
+      - abstract_dummy_server.dependency
