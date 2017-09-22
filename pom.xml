@@ -1,0 +1,444 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>ajsc-archetype-parent</artifactId>
+		<groupId>com.att.ajsc</groupId>
+		<version>2.0.0</version>
+	</parent>
+	<groupId>org.onap.aai</groupId>
+	<artifactId>babel</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+
+	<properties>
+		<module.ajsc.namespace.name>babel-service</module.ajsc.namespace.name>
+		<module.ajsc.namespace.version>v1</module.ajsc.namespace.version>
+		<ajscRuntimeVersion>2.0.0</ajscRuntimeVersion>
+		<absoluteDistFilesRoot>/appl/${project.artifactId}</absoluteDistFilesRoot>
+
+		<!-- For NO Versioning, REMOVE the /${project.version} from the <distFilesRoot> 
+			property, below. PLEASE, NOTE: If your ${project.version} is a "-SNAPSHOT" 
+			version, THIS will be used as your directory structure. If you do NOT want 
+			this, simply remove the "-SNAPSHOT" from your <version> declaration at the 
+			top of pom.xml -->
+		<distFilesRoot>/appl/${project.artifactId}/${project.version}</distFilesRoot>
+		<runAjscHome>${basedir}/target/swm/package/nix/dist_files${distFilesRoot}</runAjscHome>
+
+		<!-- For SOA Cloud Installation -->
+		<installOwnerUser>aaiadmin</installOwnerUser>
+		<installOwnerGroup>aaiadmin</installOwnerGroup>
+		<ownerManagementGroup>com.att.csid.lab</ownerManagementGroup>
+
+		<!-- Port Selection. A value of 0 will allow for dynamic port selection. 
+			For local testing, you may choose to hardcode this value to something like 
+			8080 -->
+		<serverPort>9515</serverPort>
+		<sslport>9516</sslport>
+
+		<testRouteOffer>workstation</testRouteOffer>
+		<testEnv>DEV</testEnv>
+		<checkstyle.config.location>google_checks.xml</checkstyle.config.location>
+		<nexusproxy>https://nexus.onap.org</nexusproxy>
+
+		<!-- Dependency Versions -->
+		<aai.artifact.generator.version>1.1.0</aai.artifact.generator.version>
+		<apache.lang3.version>3.6</apache.lang3.version> 
+		<commons-compress.version>1.14</commons-compress.version>
+		<common.logging.version>1.1.0</common.logging.version>
+		<dom4j.version>1.6.1</dom4j.version>
+		<fasterxml.version>2.8.1</fasterxml.version>
+		<hamcrest.version>1.3</hamcrest.version>
+		<javaassist.version>3.21.0-GA</javaassist.version>
+		<logback.version>1.1.9</logback.version>
+		<mockito.version>1.10.19</mockito.version>
+		<powermock.version>1.6.2</powermock.version>
+		<sdc.distribution.client.version>1.1.32-SNAPSHOT</sdc.distribution.client.version>
+		<snakeyamle.version>1.18</snakeyamle.version>
+		<jacoco.version>0.7.9</jacoco.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>${dom4j.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Common logging framework -->
+		<dependency>
+			<groupId>org.onap.aai.logging-service</groupId>
+			<artifactId>common-logging</artifactId>
+			<version>${common.logging.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>1.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.1</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
+
+		<!-- apache commons -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>${commons-compress.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${apache.lang3.version}</version>
+		</dependency>
+
+		<!-- Artifact generation -->
+		<dependency>
+			<groupId>org.openecomp.sdc.common</groupId>
+			<artifactId>openecomp-sdc-artifact-generator-core</artifactId>
+			<version>${aai.artifact.generator.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${fasterxml.version}</version>
+		</dependency>
+
+		<!-- Testing -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-javaagent</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4-rule-agent</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>${javaassist.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openecomp.sdc.sdc-distribution-client</groupId>
+			<artifactId>sdc-distribution-client</artifactId>
+			<version>${sdc.distribution.client.version}</version>
+		</dependency>
+	   <dependency>
+	       <groupId>xmlunit</groupId>
+	       <artifactId>xmlunit</artifactId>
+	       <version>1.6</version>
+	       <scope>test</scope>
+	   </dependency>
+	</dependencies>
+	<!-- Added to fix build warnings caused by parent pom and bom -->
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<phase />
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+
+					<execution>
+						<id>report</id>
+						<phase>package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.groovy</groupId>
+				<artifactId>groovy-eclipse-compiler</artifactId>
+				<version>2.9.2-01</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>copy-docker-file</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target</outputDirectory>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>${basedir}/src/main/docker</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>**/*</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>${basedir}/src/main/bin/</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>client</classifier>
+							<includes>
+								<include>**/babel/service/data/*</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- license plugin -->
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<header>License.txt</header>
+					<includes>
+						<include>src/main/java/**</include>
+						<include>src/test/java/**</include>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>format</goal>
+						</goals>
+						<phase>process-sources</phase>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<classifier>client</classifier>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<reportPlugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-checkstyle-plugin</artifactId>
+							<version>2.17</version>
+							<reportSets>
+								<reportSet>
+									<reports>
+										<report>checkstyle</report>
+									</reports>
+								</reportSet>
+							</reportSets>
+						</plugin>
+					</reportPlugins>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!-- Added to fix build warnings caused by parent pom and bom -->
+
+	<profiles>
+		<profile>
+			<id>runAjsc</id>
+			<build>
+				<defaultGoal>initialize</defaultGoal>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.3.2</version>
+						<executions>
+							<execution>
+								<phase>initialize</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<includeProjectDependencies>false</includeProjectDependencies>
+									<includePluginDependencies>true</includePluginDependencies>
+									<executable>java</executable>
+									<mainClass>com.att.ajsc.runner.Runner</mainClass>
+									<executableDependency>
+										<groupId>com.att.ajsc</groupId>
+										<artifactId>ajsc-runner</artifactId>
+									</executableDependency>
+									<additionalClasspathElements>
+										<additionalClasspathElement>${basedir}/ajsc-shared-config/etc</additionalClasspathElement>
+									</additionalClasspathElements>
+
+									<environmentVariables>
+										<AJSC_HOME>${runAjscHome}</AJSC_HOME>
+									</environmentVariables>
+
+									<!-- Main AJSC System Properties below (necessary for proper startup) -->
+									<systemProperties>
+										<systemProperty>
+											<key>AJSC_HOME</key>
+											<value>${runAjscHome}</value>
+										</systemProperty>
+										<systemProperty>
+											<key>AJSC_HOME</key>
+											<value>${runAjscHome}</value>
+										</systemProperty>
+										<systemProperty>
+											<key>AJSC_CONF_HOME</key>
+											<value>${basedir}/bundleconfig-local</value>
+										</systemProperty>
+										<systemProperty>
+											<key>logback.configurationFile</key>
+											<value>${basedir}/ajsc-shared-config/etc/logback.xml</value>
+										</systemProperty>
+										<systemProperty>
+											<key>AJSC_SHARED_CONFIG</key>
+											<value>${basedir}/ajsc-shared-config</value>
+										</systemProperty>
+										<sysproperty>
+											<key>AJSC_EXTERNAL_LIB_FOLDERS</key>
+											<value>${basedir}/target/commonLibs</value>
+										</sysproperty>
+										<sysproperty>
+											<key>AJSC_EXTERNAL_PROPERTIES_FOLDERS</key>
+											<value>${basedir}/ajsc-shared-config/etc</value>
+										</sysproperty>
+
+										<systemProperty>
+											<key>AJSC_SERVICE_NAMESPACE</key>
+											<value>${module.ajsc.namespace.name}</value>
+										</systemProperty>
+										<systemProperty>
+											<key>AJSC_SERVICE_VERSION</key>
+											<value>${module.ajsc.namespace.version}</value>
+										</systemProperty>
+										<systemProperty>
+											<key>SOACLOUD_SERVICE_VERSION</key>
+											<value>${project.version}</value>
+										</systemProperty>
+										<systemProperty>
+											<key>server.port</key>
+											<value>${serverPort}</value>
+										</systemProperty>
+										<systemProperty>
+											<key>CONFIG_HOME</key>
+											<value>${basedir}/appconfig-local</value>
+										</systemProperty>
+										<systemProperty>
+											<key>artifactgenerator.config</key>
+											<value>${basedir}/appconfig-local/artifact-generator.properties</value>
+										</systemProperty>
+									</systemProperties>
+
+									<!-- Command Line Arguments to add to the java command. Here, you 
+										can specify the port as well as the Context you want your service to run 
+										in. Use context=/ to run in an unnamed Context (Root Context). The default 
+										configuration of the AJSC is to run under the / Context. Setting the port 
+										here can aid during the development phase of your service. However, you can 
+										leave this argument out entirely, and the AJSC will default to using an Ephemeral 
+										port. -->
+									<arguments>
+										<argument>context=/</argument>
+										<argument>port=${serverPort}</argument>
+										<argument>sslport=${sslport}</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+						<configuration>
+							<executable>java</executable>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>com.att.ajsc</groupId>
+								<artifactId>ajsc-runner</artifactId>
+								<version>${ajscRuntimeVersion}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>

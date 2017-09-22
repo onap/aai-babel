@@ -1,0 +1,314 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: 1a111111-1111-1111-1111-111111111111
+  UUID: 2a111111-1111-1111-1111-111111111111
+  name: SD-WAN-Test-VSP
+  description: SD-WAN-Test-VSP
+  type: VF
+  category: Network L2-3
+  subcategory: WAN Connectors
+  resourceVendor: SCP-Test-VLM
+  resourceVendorRelease: '1.0'
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+- resource-SD-WAN-Test-VSP-interface:
+    file: resource-SdWanTestVsp-template-interface.yml
+- resource-SdWanTestVsp.nodes.DUMMY_server:
+    file: resource-SdwantestvspNodesDummyServer-template.yml
+topology_template:
+  inputs:
+    nf_naming:
+      type: org.openecomp.datatypes.Naming
+    nf_function:
+      type: string
+    nf_naming_code:
+      type: string
+    availability_zone_max_count:
+      type: integer
+      default: 1
+    max_instances:
+      type: integer
+    nf_type:
+      type: string
+    DUMMY_flavor_name:
+      type: string
+      description: flavor name of PCRF PD instance
+    DUMMY_image_name:
+      type: string
+      description: PCRF PD image name
+    DUMMY_Role_net_name:
+      type: string
+      description: DUMMY network name
+    DUMMY_server_name:
+      type: string
+      description: PCRF PD server name
+    nf_role:
+      type: string
+    min_instances:
+      type: integer
+    DUMMY_vnf_id:
+      type: string
+      description: PCRF VNF Id
+  node_templates:
+    abstract_DUMMY_server:
+      type: org.openecomp.resource.vfc.SdWanTestVsp.abstract.nodes.DUMMY_server
+      metadata:
+        invariantUUID: 3a111111-1111-1111-1111-111111111111
+        UUID: 4a111111-1111-1111-1111-111111111111
+        customizationUUID: 5a111111-1111-1111-1111-111111111111
+        version: '1.0'
+        name: SdWanTestVsp.nodes.DUMMY_server
+        description: Not reusable inner VFC
+        type: VFC
+        category: Generic
+        subcategory: Abstract
+        resourceVendor: SCP-Test-VLM
+        resourceVendorRelease: '1.0'
+      properties:
+        port_DUMMY_port_network:
+        - get_input: DUMMY_Role_net_name
+        index_value: 0
+        port_DUMMY_port_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        vm_flavor_name:
+          get_input: DUMMY_flavor_name
+        service_template_filter:
+          substitute_service_template: Nested_DUMMY_serverServiceTemplate.yaml
+          count: '1'
+        port_DUMMY_port_network_role_tag:
+        - '"DUMMY_Role"'
+        vm_image_name:
+          get_input: DUMMY_image_name
+        vm_type_tag: DUMMY_server
+        min_instances: 0
+        compute_DUMMY_server_metadata:
+        - vnf_id:
+            get_input: DUMMY_vnf_id
+        port_DUMMY_port_mac_requirements:
+        - mac_count_required:
+            is_required: false
+        compute_DUMMY_server_name:
+        - get_input: DUMMY_server_name
+        nfc_naming_code: DUMMY_server
+  groups:
+    SdWanTestVsp..DUMMY..module-0:
+      type: org.openecomp.groups.VfModule
+      members:
+      - abstract_DUMMY_server
+      metadata:
+        vfModuleModelName: SdWanTestVsp..DUMMY..module-0
+        vfModuleModelInvariantUUID: 6a111111-1111-1111-1111-111111111111
+        vfModuleModelUUID: 7a111111-1111-1111-1111-111111111111
+        vfModuleModelVersion: '2'
+      properties:
+        min_vf_module_instances: 0
+        vf_module_label: DUMMY
+        max_vf_module_instances:
+        vfc_list:
+        vf_module_type: Expansion
+        vf_module_description:
+        initial_count: 0
+        volume_group: false
+        availability_zone_count:
+    DUMMY_group:
+      type: org.openecomp.groups.heat.HeatStack
+      members:
+      - abstract_DUMMY_server
+      metadata:
+        invariantUUID: 8a111111-1111-1111-1111-111111111111
+        UUID: 9a111111-1111-1111-1111-111111111111
+        version: '1'
+        name: DUMMY_group
+  substitution_mappings:
+    node_type: org.openecomp.resource.vf.SdWanTestVsp
+    capabilities:
+      abstract_dummy_server.instance_DUMMY_server:
+      - abstract_DUMMY_server
+      - instance_DUMMY_server
+      abstract_dummy_server.disk.device.write.bytes_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.device.write.bytes_DUMMY_server
+      abstract_dummy_server.disk.device.capacity_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.device.capacity_DUMMY_server
+      abstract_dummy_server.network.outgoing.bytes_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - network.outgoing.bytes_DUMMY_server_DUMMY_port
+      abstract_dummy_server.os_DUMMY_server:
+      - abstract_DUMMY_server
+      - os_DUMMY_server
+      abstract_dummy_server.host_DUMMY_server:
+      - abstract_DUMMY_server
+      - host_DUMMY_server
+      abstract_dummy_server.memory_DUMMY_server:
+      - abstract_DUMMY_server
+      - memory_DUMMY_server
+      abstract_dummy_server.disk.read.requests_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.read.requests_DUMMY_server
+      abstract_dummy_server.feature_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - feature_DUMMY_server_DUMMY_port
+      abstract_dummy_server.disk.device.write.requests.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.device.write.requests.rate_DUMMY_server
+      abstract_dummy_server.disk.ephemeral.size_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.ephemeral.size_DUMMY_server
+      abstract_dummy_server.disk.allocation_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.allocation_DUMMY_server
+      abstract_dummy_server.feature:
+      - abstract_DUMMY_server
+      - feature
+      abstract_dummy_server.scalable_DUMMY_server:
+      - abstract_DUMMY_server
+      - scalable_DUMMY_server
+      abstract_dummy_server.network.incoming.packets.rate_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - network.incoming.packets.rate_DUMMY_server_DUMMY_port
+      abstract_dummy_server.binding_DUMMY_server:
+      - abstract_DUMMY_server
+      - binding_DUMMY_server
+      abstract_dummy_server.disk.iops_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.iops_DUMMY_server
+      abstract_dummy_server.network.incoming.bytes_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - network.incoming.bytes_DUMMY_server_DUMMY_port
+      abstract_dummy_server.disk.read.bytes_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.read.bytes_DUMMY_server
+      abstract_dummy_server.disk.write.bytes_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.write.bytes_DUMMY_server
+      abstract_dummy_server.cpu.delta_DUMMY_server:
+      - abstract_DUMMY_server
+      - cpu.delta_DUMMY_server
+      abstract_dummy_server.disk.capacity_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.capacity_DUMMY_server
+      abstract_dummy_server.network.incoming.packets_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - network.incoming.packets_DUMMY_server_DUMMY_port
+      abstract_dummy_server.cpu_DUMMY_server:
+      - abstract_DUMMY_server
+      - cpu_DUMMY_server
+      abstract_dummy_server.memory.resident_DUMMY_server:
+      - abstract_DUMMY_server
+      - memory.resident_DUMMY_server
+      abstract_dummy_server.disk.device.read.bytes_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.device.read.bytes_DUMMY_server
+      abstract_dummy_server.disk.device.write.bytes.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.device.write.bytes.rate_DUMMY_server
+      abstract_dummy_server.disk.usage_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.usage_DUMMY_server
+      abstract_dummy_server.disk.write.requests_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.write.requests_DUMMY_server
+      abstract_dummy_server.endpoint_DUMMY_server:
+      - abstract_DUMMY_server
+      - endpoint_DUMMY_server
+      abstract_dummy_server.memory.usage_DUMMY_server:
+      - abstract_DUMMY_server
+      - memory.usage_DUMMY_server
+      abstract_dummy_server.disk.latency_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.latency_DUMMY_server
+      abstract_dummy_server.disk.write.requests.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.write.requests.rate_DUMMY_server
+      abstract_dummy_server.disk.device.allocation_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.device.allocation_DUMMY_server
+      abstract_dummy_server.disk.device.read.requests.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.device.read.requests.rate_DUMMY_server
+      abstract_dummy_server.disk.device.read.bytes.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.device.read.bytes.rate_DUMMY_server
+      abstract_dummy_server.disk.device.usage_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.device.usage_DUMMY_server
+      abstract_dummy_server.disk.device.write.requests_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.device.write.requests_DUMMY_server
+      abstract_dummy_server.vcpus_DUMMY_server:
+      - abstract_DUMMY_server
+      - vcpus_DUMMY_server
+      abstract_dummy_server.disk.write.bytes.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.write.bytes.rate_DUMMY_server
+      abstract_dummy_server.network.outgoing.bytes.rate_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - network.outgoing.bytes.rate_DUMMY_server_DUMMY_port
+      abstract_dummy_server.network.outpoing.packets_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - network.outpoing.packets_DUMMY_server_DUMMY_port
+      abstract_dummy_server.network.outgoing.packets.rate_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - network.outgoing.packets.rate_DUMMY_server_DUMMY_port
+      abstract_dummy_server.binding_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - binding_DUMMY_server_DUMMY_port
+      abstract_dummy_server.cpu_util_DUMMY_server:
+      - abstract_DUMMY_server
+      - cpu_util_DUMMY_server
+      abstract_dummy_server.attachment_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - attachment_DUMMY_server_DUMMY_port
+      abstract_dummy_server.disk.device.latency_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.device.latency_DUMMY_server
+      abstract_dummy_server.disk.root.size_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.root.size_DUMMY_server
+      abstract_dummy_server.disk.device.iops_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.device.iops_DUMMY_server
+      abstract_dummy_server.disk.read.bytes.rate_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.read.bytes.rate_DUMMY_server
+      abstract_dummy_server.feature_DUMMY_server:
+      - abstract_DUMMY_server
+      - feature_DUMMY_server
+      abstract_dummy_server.disk.device.read.requests_DUMMY_server:
+      - abstract_DUMMY_server
+      - disk.device.read.requests_DUMMY_server
+      abstract_dummy_server.network.incoming.bytes.rate_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - network.incoming.bytes.rate_DUMMY_server_DUMMY_port
+    requirements:
+      abstract_dummy_server.local_storage_DUMMY_server:
+      - abstract_DUMMY_server
+      - local_storage_DUMMY_server
+      abstract_dummy_server.dependency_DUMMY_server:
+      - abstract_DUMMY_server
+      - dependency_DUMMY_server
+      abstract_dummy_server.link_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - link_DUMMY_server_DUMMY_port
+      abstract_dummy_server.dependency_DUMMY_server_DUMMY_port:
+      - abstract_DUMMY_server
+      - dependency_DUMMY_server_DUMMY_port
+      abstract_dummy_server.dependency:
+      - abstract_DUMMY_server
+      - dependency
