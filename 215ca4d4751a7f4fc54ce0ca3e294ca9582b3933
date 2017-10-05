@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_34f3910b",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 703
+      },
+      "writtenOn": "2017-10-05T13:43:55Z",
+      "side": 1,
+      "message": "Change the child version, not the parent.",
+      "revId": "215ca4d4751a7f4fc54ce0ca3e294ca9582b3933",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_54d7354b",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 703
+      },
+      "writtenOn": "2017-10-05T13:43:55Z",
+      "side": 1,
+      "message": "Please add the following property:\n\n\u003conap.nexus.url\u003ehttps://nexus.onap.org\u003c/onap.nexus.url\u003e",
+      "revId": "215ca4d4751a7f4fc54ce0ca3e294ca9582b3933",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
