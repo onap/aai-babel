@@ -39,7 +39,7 @@
 		<testRouteOffer>workstation</testRouteOffer>
 		<testEnv>DEV</testEnv>
 		<checkstyle.config.location>google_checks.xml</checkstyle.config.location>
-		<nexusproxy>https://nexus.onap.org</nexusproxy>
+		<sitePath>/content/sites/site/org/onap/aai/babel/${project.artifactId}/${project.version}</sitePath>
 
 		<!-- Dependency Versions -->
 		<aai.artifact.generator.version>1.1.0</aai.artifact.generator.version>
@@ -179,6 +179,23 @@
 	        <url>${onap.nexus.url}/content/repositories/staging/</url>
 	    </repository>
 	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>ecomp-releases</id>
+			<name>ECOMP Release Repository</name>
+			<url>${onap.nexus.url}/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>ecomp-snapshots</id>
+			<name>ECOMP Snapshot Repository</name>
+			<url>${onap.nexus.url}/content/repositories/snapshots/</url>
+		</snapshotRepository>
+		<site>
+			<id>ecomp-site</id>
+			<url>dav:${onap.nexus.url}${sitePath}</url>
+		</site>
+	</distributionManagement>
 
 	<build>
 		<plugins>
