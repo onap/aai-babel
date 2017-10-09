@@ -57,6 +57,7 @@
 		<snakeyamle.version>1.18</snakeyamle.version>
 		<jacoco.version>0.7.9</jacoco.version>
 		<onap.nexus.url>https://nexus.onap.org</onap.nexus.url>
+		<docker.location>${basedir}/target</docker.location>
 	</properties>
 
 	<dependencies>
@@ -288,6 +289,21 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.4.11</version>
+				<configuration>
+					<verbose>true</verbose>
+					<serverId>docker-hub</serverId>
+					<imageName>${docker.push.registry}/openecomp/${project.artifactId}</imageName>
+					<dockerDirectory>${docker.location}</dockerDirectory>
+					<imageTags>
+                  		<imageTag>latest</imageTag>
+					</imageTags>
+					<forceTags>true</forceTags>
+				</configuration>
 			</plugin>
 
 			<!-- license plugin -->
