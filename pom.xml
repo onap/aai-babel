@@ -6,6 +6,7 @@
 		<artifactId>ajsc-archetype-parent</artifactId>
 		<groupId>com.att.ajsc</groupId>
 		<version>2.0.0</version>
+		<name>aai-babel</name>
 	</parent>
 	<groupId>org.onap.aai.babel</groupId>
 	<artifactId>babel</artifactId>
