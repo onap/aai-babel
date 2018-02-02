@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_4de6f7b5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2018-02-02T22:37:37Z",
+      "side": 1,
+      "message": "Remove line 10, \n\nIssue-ID should be part of the footer.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 8
+      },
+      "revId": "77e06be7bf72b5fe4c39d77a044dd9cce172702b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_add77bbe",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2018-02-02T22:37:37Z",
+      "side": 1,
+      "message": "Sorry, I meant the \u003cversion\u003e outside the \u003cparent\u003e group.\n\nLet\u0027s add this line after line 13",
+      "range": {
+        "startLine": 9,
+        "startChar": 2,
+        "endLine": 9,
+        "endChar": 24
+      },
+      "revId": "77e06be7bf72b5fe4c39d77a044dd9cce172702b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
