@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017 European Software Marketing Ltd.
+ * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2018 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- *
- * ECOMP is a trademark and service mark of AT&T Intellectual Property.
  */
 package org.onap.aai.babel.logging;
 
@@ -26,19 +24,22 @@ import com.att.eelf.i18n.EELFResourceManager;
 import org.onap.aai.cl.eelf.LogMessageEnum;
 
 public enum ApplicationMsgs implements LogMessageEnum {
-    //@formatter:off
-    /**
-     * Arguments: {0} = message.
-     */
-    DISTRIBUTION_EVENT,
-
-	PROCESS_REQUEST_ERROR,
-
-    INVALID_CSAR_FILE,
+    /** Arguments: {0} = message. */
+    // @formatter:off
+  DISTRIBUTION_EVENT,
+  MESSAGE_AUDIT,
+  MESSAGE_METRIC,
+  MISSING_REQUEST_ID,
+  PROCESS_REQUEST_ERROR,
+  INVALID_CSAR_FILE,
+  INVALID_REQUEST_JSON,
+  BABEL_REQUEST_PAYLOAD,
+  BABEL_RESPONSE_PAYLOAD,
+  LOAD_PROPERTIES,
+  PROCESSING_VNF_CATALOG_ERROR,
+  TEMP_FILE_ERROR;
     
-    INVALID_REQUEST_JSON;
-
-    //@formatter:on
+  // @formatter:on
 
     /**
      * Static initializer to ensure the resource bundles for this class are loaded... Here this application loads

@@ -1,11 +1,12 @@
-<model>
+<model xmlns="http://org.onap.aai.inventory/v12">
     <model-invariant-id>6a111111-1111-1111-1111-111111111111</model-invariant-id>
     <model-type>resource</model-type>
     <model-vers>
         <model-ver>
-            <model-version-id>7a111111-1111-1111-1111-111111111111</model-version-id>
+            <model-version-id>5c111111-1111-1111-1111-111111111111</model-version-id>
             <model-name>SdWanTestVsp..DUMMY..module-0</model-name>
             <model-version>2</model-version>
+            <model-description></model-description>
             <model-elements>
                 <model-element>
                     <new-data-del-flag>T</new-data-del-flag>

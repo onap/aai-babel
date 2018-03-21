@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017 European Software Marketing Ltd.
+ * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2018 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- *
- * ECOMP is a trademark and service mark of AT&T Intellectual Property.
  */
 package org.onap.aai.babel;
 
@@ -49,14 +47,13 @@ public class MicroServiceAuthTest {
     private static final String authPolicyFile = "auth_policy.json";
 
     static {
-        System.setProperty("CONFIG_HOME",
-                System.getProperty("user.dir") + File.separator + "src/test/resources");
+        System.setProperty("CONFIG_HOME", System.getProperty("user.dir") + File.separator + "src/test/resources");
     }
 
     /**
      * Temporarily invalidate the default policy file and then try to initialise the authorisation class using the name
      * of a policy file that does not exist.
-     * 
+     *
      * @throws AAIAuthException
      * @throws IOException
      */
@@ -65,9 +62,9 @@ public class MicroServiceAuthTest {
         String defaultFile = AAIMicroServiceAuthCore.getDefaultAuthFileName();
         try {
             AAIMicroServiceAuthCore.setDefaultAuthFileName("invalid.default.file");
-            BabelAuthConfig gapServiceAuthConfig = new BabelAuthConfig();
-            gapServiceAuthConfig.setAuthPolicyFile("invalid.file.name");
-            new AAIMicroServiceAuth(gapServiceAuthConfig);
+            BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
+            babelServiceAuthConfig.setAuthPolicyFile("invalid.file.name");
+            new AAIMicroServiceAuth(babelServiceAuthConfig);
         } finally {
             AAIMicroServiceAuthCore.setDefaultAuthFileName(defaultFile);
         }
@@ -75,7 +72,7 @@ public class MicroServiceAuthTest {
 
     /**
      * Test loading of a temporary file created with the specified roles
-     * 
+     *
      * @throws AAIAuthException
      * @throws IOException
      * @throws JSONException
@@ -90,21 +87,21 @@ public class MicroServiceAuthTest {
 
     /**
      * Test that the default policy file is loaded when a non-existent file is passed to the authorisation clas.
-     * 
+     *
      * @throws AAIAuthException
      */
     @Test
     public void createAuthFromDefaultFile() throws AAIAuthException {
-        BabelAuthConfig gapServiceAuthConfig = new BabelAuthConfig();
-        gapServiceAuthConfig.setAuthPolicyFile("non-existent-file");
-        AAIMicroServiceAuth auth = new AAIMicroServiceAuth(gapServiceAuthConfig);
+        BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
+        babelServiceAuthConfig.setAuthPolicyFile("non-existent-file");
+        AAIMicroServiceAuth auth = new AAIMicroServiceAuth(babelServiceAuthConfig);
         // The default policy will have been loaded
         assertAdminUserAuthorisation(auth, VALID_ADMIN_USER);
     }
 
     /**
      * Test loading of the policy file relative to CONFIG_HOME
-     * 
+     *
      * @throws AAIAuthException
      */
     @Test
@@ -125,13 +122,13 @@ public class MicroServiceAuthTest {
     @Test
     public void testValidateRequest() throws AAIAuthException {
         AAIMicroServiceAuth auth = createStandardAuth();
-        assertThat(auth.validateRequest(null, new MockHttpServletRequest(), null, "app/v1/gap"), is(false));
+        assertThat(auth.validateRequest(null, new MockHttpServletRequest(), null, "app/v1/babel"), is(false));
     }
 
     private AAIMicroServiceAuth createStandardAuth() throws AAIAuthException {
-        BabelAuthConfig gapServiceAuthConfig = new BabelAuthConfig();
-        gapServiceAuthConfig.setAuthPolicyFile(authPolicyFile);
-        return new AAIMicroServiceAuth(gapServiceAuthConfig);
+        BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
+        babelServiceAuthConfig.setAuthPolicyFile(authPolicyFile);
+        return new AAIMicroServiceAuth(babelServiceAuthConfig);
     }
 
     /**
@@ -155,7 +152,7 @@ public class MicroServiceAuthTest {
 
     /**
      * Assert authorisation results for an admin user based on the test policy file
-     * 
+     *
      * @param auth
      * @param adminUser
      * @throws AAIAuthException
