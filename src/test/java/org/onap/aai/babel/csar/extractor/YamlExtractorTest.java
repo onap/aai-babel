@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017 European Software Marketing Ltd.
+ * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2018 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- *
- * ECOMP is a trademark and service mark of AT&T Intellectual Property.
  */
 package org.onap.aai.babel.csar.extractor;
 
@@ -32,7 +30,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.onap.aai.babel.util.ArtifactTestUtils;
-import org.openecomp.sdc.generator.data.Artifact;
+import org.onap.aai.babel.xml.generator.data.Artifact;
 
 /**
  * Tests @see YamlExtractor
@@ -124,7 +122,7 @@ public class YamlExtractorTest {
     }
 
     @Test
-    public void extract_archiveContainsThreeRelevantYmlFilesFromSdWanService()
+    public void extract_archiveContainsOnlyTheExpectedYmlFilesFromSdWanService()
             throws IOException, InvalidArchiveException {
         List<Artifact> ymlFiles =
                 YamlExtractor.extract(loadResource("compressedArtifacts/service-SdWanServiceTest-csar.csar"),
@@ -134,6 +132,8 @@ public class YamlExtractorTest {
         payloads.add("ymlFiles/resource-SdWanTestVsp-template.yml");
         payloads.add("ymlFiles/resource-TunnelXconntest-template.yml");
         payloads.add("ymlFiles/service-SdWanServiceTest-template.yml");
+        payloads.add("ymlFiles/artifacts.yml");
+        payloads.add("ymlFiles/data.yml");
 
         new ArtifactTestUtils().performYmlAsserts(ymlFiles, payloads);
     }

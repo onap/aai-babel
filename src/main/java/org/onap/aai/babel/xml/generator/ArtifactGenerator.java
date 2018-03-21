@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017 European Software Marketing Ltd.
+ * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2018 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- *
- * ECOMP is a trademark and service mark of AT&T Intellectual Property.
  */
 package org.onap.aai.babel.xml.generator;
 
 import java.util.List;
 import org.onap.aai.babel.service.data.BabelArtifact;
-import org.openecomp.sdc.generator.data.Artifact;
+import org.onap.aai.babel.xml.generator.data.Artifact;
 
 public interface ArtifactGenerator {
 
     /**
      * Generate a {@link List} of {@link BabelArtifact}s from the Artifacts obtained from the CSAR
-     * 
-     * @param csarArtifacts artifacts obtained from the CSAR file
+     *
+     * @param csarArchive original CSAR file (zip format)
+     * @param csarArtifacts YAML artifacts extracted from the CSAR file
      * @return generated {@link BabelArtifact}s
+     * @throws XmlArtifactGenerationException
      */
-    List<BabelArtifact> generateArtifacts(List<Artifact> csarArtifacts) throws XmlArtifactGenerationException;
-    
+    List<BabelArtifact> generateArtifacts(byte[] csarArchive, List<Artifact> csarArtifacts)
+            throws XmlArtifactGenerationException;
 }

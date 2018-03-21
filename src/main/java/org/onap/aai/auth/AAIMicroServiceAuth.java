@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017 European Software Marketing Ltd.
+ * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2018 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- *
- * ECOMP is a trademark and service mark of AT&T Intellectual Property.
  */
 package org.onap.aai.auth;
 
@@ -28,16 +26,15 @@ import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import org.onap.aai.babel.config.BabelAuthConfig;
+import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.cl.api.Logger;
-import org.onap.aai.cl.eelf.LoggerFactory;
-
 
 /**
  * Public class for authentication and authorization operations. Authorization is applied according to user and role
  */
 public class AAIMicroServiceAuth {
 
-    private static Logger applicationLogger = LoggerFactory.getInstance().getLogger(AAIMicroServiceAuth.class);
+    private static final Logger applicationLogger = LogHelper.INSTANCE;
 
     private BabelAuthConfig babelAuthConfig;
 

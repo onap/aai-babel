@@ -3,7 +3,7 @@
 ## Introduction
 Babel is a microservice in the AAI project that can be used by clients that work with TOSCA CSAR files.
 
-It parses the TOSCA CSAR to generate xml files from a set of yaml files found in the TOSCA CSAR file.
+It parses the TOSCA CSAR to generate xml files from a set of YAML files found in the TOSCA CSAR file.
 
 ## Compiling Babel
 Babel service can be compiled easily using maven command `mvn clean install`  

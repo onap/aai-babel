@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017 European Software Marketing Ltd.
+ * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2018 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- *
- * ECOMP is a trademark and service mark of AT&T Intellectual Property.
  */
 package org.onap.aai.babel.util;
 
@@ -28,45 +26,45 @@ import org.junit.rules.ExpectedException;
 import org.onap.aai.babel.service.data.BabelRequest;
 
 public class TestRequestValidator {
-    
+
     @Rule
     public ExpectedException exception = ExpectedException.none();
-    
+
     @Test
-    public void testMissingArtifactNameExceptionThrown() throws Exception{
+    public void testMissingArtifactNameExceptionThrown() throws Exception {
         exception.expect(RequestValidationException.class);
         exception.expectMessage("No artifact name attribute found in the request body.");
-        
+
         BabelRequest request = new BabelRequest();
         request.setCsar("UEsDBBQACAgIAGsrz0oAAAAAAAAAAAAAAAAJAAAAY3Nhci5tZXRhC3Z");
         request.setArtifactVersion("1.0");
         request.setArtifactName(null);
-        RequestValidator.validateRequest(request);       
-        }
-    
+        RequestValidator.validateRequest(request);
+    }
 
-	@Test
-    public void testMissingArtifactVersionExceptionThrown() throws Exception{
-	    exception.expect(RequestValidationException.class);
-	    exception.expectMessage("No artifact version attribute found in the request body.");
-	    
+
+    @Test
+    public void testMissingArtifactVersionExceptionThrown() throws Exception {
+        exception.expect(RequestValidationException.class);
+        exception.expectMessage("No artifact version attribute found in the request body.");
+
         BabelRequest request = new BabelRequest();
         request.setCsar("UEsDBBQACAgIAGsrz0oAAAAAAAAAAAAAAAAJAAAAY3Nhci5tZXRhC3Z");
         request.setArtifactVersion(null);
         request.setArtifactName("hello");
-        RequestValidator.validateRequest(request);         
+        RequestValidator.validateRequest(request);
     }
-    
+
     @Test
-    public void testMissingCsarFile() throws Exception{
+    public void testMissingCsarFile() throws Exception {
         exception.expect(RequestValidationException.class);
         exception.expectMessage("No csar attribute found in the request body.");
-        
+
         BabelRequest request = new BabelRequest();
         request.setCsar(null);
         request.setArtifactVersion("1.0");
         request.setArtifactName("hello");
-        RequestValidator.validateRequest(request);            
+        RequestValidator.validateRequest(request);
     }
 
 }
