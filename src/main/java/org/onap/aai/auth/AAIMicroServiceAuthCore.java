@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017 European Software Marketing Ltd.
+ * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2018 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- *
- * ECOMP is a trademark and service mark of AT&T Intellectual Property.
  */
 package org.onap.aai.auth;
 
@@ -38,16 +36,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import org.onap.aai.babel.logging.ApplicationMsgs;
-import org.onap.aai.cl.api.Logger;
-import org.onap.aai.cl.eelf.LoggerFactory;
+import org.onap.aai.babel.logging.LogHelper;
 
-/**
- * Authentication and authorization by user and role.
- *
- */
+/** Authentication and authorization by user and role. */
 public class AAIMicroServiceAuthCore {
 
-    private static Logger applicationLogger = LoggerFactory.getInstance().getLogger(AAIMicroServiceAuthCore.class);
+    private static LogHelper applicationLogger = LogHelper.INSTANCE;
 
     public static final String FILESEP =
             (System.getProperty("file.separator") == null) ? "/" : System.getProperty("file.separator");
@@ -83,7 +77,6 @@ public class AAIMicroServiceAuthCore {
     }
 
     public static synchronized void init(String authPolicyFile) throws AAIAuthException {
-
         try {
             policyAuthFileName = AAIMicroServiceAuthCore.getConfigFile(authPolicyFile);
         } catch (IOException e) {
@@ -237,7 +230,6 @@ public class AAIMicroServiceAuthCore {
         public void setUser(String myuser) {
             this.username = myuser;
         }
-
     }
 
     public static class AAIAuthRole {

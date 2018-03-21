@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017 European Software Marketing Ltd.
+ * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2018 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- *
- * ECOMP is a trademark and service mark of AT&T Intellectual Property.
  */
 package org.onap.aai.babel.service.data;
 
 public class BabelRequest {
     private String csar;
-	private String artifactVersion;
+    private String artifactVersion;
     private String artifactName;
 
     public String getCsar() {
@@ -34,20 +32,20 @@ public class BabelRequest {
     public void setCsar(String csar) {
         this.csar = csar;
     }
-    
+
     public String getArtifactVersion() {
-		return artifactVersion;
-	}
+        return artifactVersion;
+    }
 
-	public void setArtifactVersion(String artifactVersion) {
-		this.artifactVersion = artifactVersion;
-	}
+    public void setArtifactVersion(String artifactVersion) {
+        this.artifactVersion = artifactVersion;
+    }
 
-	public String getArtifactName() {
-		return artifactName;
-	}
+    public String getArtifactName() {
+        return artifactName;
+    }
 
-	public void setArtifactName(String artifactName) {
-		this.artifactName = artifactName;
-	}
+    public void setArtifactName(String artifactName) {
+        this.artifactName = artifactName;
+    }
 }

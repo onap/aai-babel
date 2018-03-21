@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017 European Software Marketing Ltd.
+ * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2018 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- *
- * ECOMP is a trademark and service mark of AT&T Intellectual Property.
  */
 package org.onap.aai.babel.csar.fixture;
 
+import java.util.Objects;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.openecomp.sdc.api.notification.IArtifactInfo;
 
 /**
@@ -101,35 +101,24 @@ public class TestArtifactInfoImpl implements IArtifactInfo {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (!(obj instanceof TestArtifactInfoImpl)) {
+            return false;
+        } else if (obj == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        TestArtifactInfoImpl that = (TestArtifactInfoImpl) o;
-
-        if (artifactName != null ? !artifactName.equals(that.artifactName) : that.artifactName != null) {
-            return false;
-        }
-        if (artifactType != null ? !artifactType.equals(that.artifactType) : that.artifactType != null) {
-            return false;
-        }
-        if (artifactDescription != null ? !artifactDescription.equals(that.artifactDescription)
-                : that.artifactDescription != null) {
-            return false;
-        }
-        return artifactVersion != null ? artifactVersion.equals(that.artifactVersion) : that.artifactVersion == null;
+        TestArtifactInfoImpl rhs = (TestArtifactInfoImpl) obj;
+     // @formatter:off
+     return new EqualsBuilder()
+                  .append(artifactType, rhs.artifactType)
+                  .append(artifactDescription, rhs.artifactDescription)
+                  .append(artifactVersion, rhs.artifactVersion)
+                  .isEquals();
+     // @formatter:on
     }
 
     @Override
     public int hashCode() {
-        int result = artifactName != null ? artifactName.hashCode() : 0;
-        result = 31 * result + (artifactType != null ? artifactType.hashCode() : 0);
-        result = 31 * result + (artifactDescription != null ? artifactDescription.hashCode() : 0);
-        result = 31 * result + (artifactVersion != null ? artifactVersion.hashCode() : 0);
-        return result;
+        return Objects.hash(this.artifactType, this.artifactDescription, this.artifactVersion);
     }
 }
