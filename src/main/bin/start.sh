@@ -3,8 +3,8 @@
 # ============LICENSE_START=======================================================
 # org.onap.aai
 # ================================================================================
-# Copyright © 2017 AT&T Intellectual Property. All rights reserved.
-# Copyright © 2017 European Software Marketing Ltd.
+# Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
+# Copyright © 2017-2018 European Software Marketing Ltd.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ============LICENSE_END=========================================================
-#
-# ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
 BASEDIR="/opt/app/babel/"
 AJSC_HOME="$BASEDIR"
@@ -28,6 +26,22 @@ if [ -z "$CONFIG_HOME" ]; then
 	echo "CONFIG_HOME must be set in order to start up process"
 	exit 1
 fi
+
+foo () {
+if [ -z "$KEY_STORE_PASSWORD" ]; then
+	echo "KEY_STORE_PASSWORD must be set in order to start up process"
+	exit 1
+else
+	echo "KEY_STORE_PASSWORD=$KEY_STORE_PASSWORD\n" >> $AJSC_CONF_HOME/etc/sysprops/sys-props.properties
+fi
+
+if [ -z "$KEY_MANAGER_PASSWORD" ]; then
+	echo "KEY_MANAGER_PASSWORD must be set in order to start up process"
+	exit 1
+else
+	echo "KEY_MANAGER_PASSWORD=$KEY_MANAGER_PASSWORD\n" >> $AJSC_CONF_HOME/etc/sysprops/sys-props.properties
+fi
+}
 
 CLASSPATH="$AJSC_HOME/lib/*"
 CLASSPATH="$CLASSPATH:$AJSC_HOME/extJars/"
@@ -41,8 +55,6 @@ PROPS="$PROPS -DAJSC_SERVICE_VERSION=v1"
 PROPS="$PROPS -Dserver.port=9516"
 PROPS="$PROPS -DCONFIG_HOME=$CONFIG_HOME"
 PROPS="$PROPS -Dartifactgenerator.config=$CONFIG_HOME/artifact-generator.properties"
-PROPS="$PROPS -DKEY_STORE_PASSWORD=$KEY_STORE_PASSWORD"
-PROPS="$PROPS -DKEY_MANAGER_PASSWORD=$KEY_MANAGER_PASSWORD"
 JVM_MAX_HEAP=${MAX_HEAP:-1024}
 
 echo $CLASSPATH

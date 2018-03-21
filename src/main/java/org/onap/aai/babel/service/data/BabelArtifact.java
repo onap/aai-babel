@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017 European Software Marketing Ltd.
+ * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2018 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- *
- * ECOMP is a trademark and service mark of AT&T Intellectual Property.
  */
 package org.onap.aai.babel.service.data;
 
-/**
- * Bean representing the return artifacts of the Babel microservice.
- */
+/** Bean representing the return artifacts of the Babel microservice. */
 public class BabelArtifact {
-    String name;
-    String type;
-    byte[] payload;
 
-    public BabelArtifact(String name, String type, byte[] payload) {
-        super();
+    public enum ArtifactType {
+        MODEL,
+        VNFCATALOG;
+    }
+
+    String name;
+    ArtifactType type;
+    String payload;
+
+    public BabelArtifact(String name, ArtifactType type, String payload) {
         this.name = name;
         this.type = type;
         this.payload = payload;
@@ -45,19 +46,19 @@ public class BabelArtifact {
         this.name = name;
     }
 
-    public String getType() {
+    public ArtifactType getType() {
         return type;
     }
 
     public void setType(String type) {
-        this.type = type;
+        this.type = ArtifactType.valueOf(type);
     }
 
-    public byte[] getPayload() {
+    public String getPayload() {
         return payload;
     }
 
-    public void setPayload(byte[] payload) {
+    public void setPayload(String payload) {
         this.payload = payload;
     }
 }

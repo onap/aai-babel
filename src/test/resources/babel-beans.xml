@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+	<!-- ////////////////////////////////////////////////////////////////// -->
+	<!-- PROPERTY AND CONFIGURATION FILES -->
+	<!-- ////////////////////////////////////////////////////////////////// -->
+
+	<context:property-placeholder location="classpath:babel-auth.properties" ignore-unresolvable="true" />
+
+	<!-- ////////////////////////////////////////////////////////////////// -->
+	<!-- CONFIG BEANS -->
+	<!-- ////////////////////////////////////////////////////////////////// -->
+
+	<bean id="babelAuthConfig" class="org.onap.aai.babel.config.BabelAuthConfig">
+		<property name="authenticationDisable" value="${auth.authentication.disable}" />
+		<property name="authPolicyFile" value="${auth.policy.file}" />
+	</bean>
+
+	<!-- ////////////////////////////////////////////////////////////////// -->
+	<!-- IMPLEMENTATION BEANS -->
+	<!-- ////////////////////////////////////////////////////////////////// -->
+
+	<bean id="aaiMicroServiceAuth" class="org.onap.aai.auth.AAIMicroServiceAuth" >
+		<constructor-arg ref="babelAuthConfig" />
+	</bean>
+
+
+	<bean id="generateArtifacts" class="org.onap.aai.babel.service.GenerateArtifactsServiceImpl" >
+		<constructor-arg ref="aaiMicroServiceAuth" />	
+	</bean>
+
+</beans>

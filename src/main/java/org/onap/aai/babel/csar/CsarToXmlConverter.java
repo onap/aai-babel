@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017 European Software Marketing Ltd.
+ * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2018 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +17,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- *
- * ECOMP is a trademark and service mark of AT&T Intellectual Property.
  */
 package org.onap.aai.babel.csar;
 
 import java.util.List;
 import java.util.Objects;
+import org.apache.commons.lang.time.StopWatch;
 import org.onap.aai.babel.csar.extractor.InvalidArchiveException;
 import org.onap.aai.babel.csar.extractor.YamlExtractor;
 import org.onap.aai.babel.logging.ApplicationMsgs;
+import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.service.data.BabelArtifact;
-import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
-import org.onap.aai.babel.xml.generator.ArtifactGenerator;
 import org.onap.aai.babel.xml.generator.ModelGenerator;
-import org.onap.aai.cl.api.Logger;
-import org.onap.aai.cl.eelf.LoggerFactory;
-
-import org.openecomp.sdc.generator.data.Artifact;
+import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
+import org.onap.aai.babel.xml.generator.data.Artifact;
 
 /**
  * This class is responsible for converting content in a csar archive into one or more xml artifacts.
  */
 public class CsarToXmlConverter {
-    private static Logger logger = LoggerFactory.getInstance().getLogger(CsarToXmlConverter.class);
+    private static final LogHelper logger = LogHelper.INSTANCE;
 
     /**
      * This method is responsible for extracting one or more yaml files from the given csarArtifact and then using them
@@ -54,6 +50,10 @@ public class CsarToXmlConverter {
      */
     public List<BabelArtifact> generateXmlFromCsar(byte[] csarArchive, String name, String version)
             throws CsarConverterException {
+
+        StopWatch stopwatch = new StopWatch();
+        stopwatch.start();
+
         validateArguments(csarArchive, name, version);
 
         logger.info(ApplicationMsgs.DISTRIBUTION_EVENT,
@@ -65,8 +65,7 @@ public class CsarToXmlConverter {
             List<Artifact> ymlFiles = YamlExtractor.extract(csarArchive, name, version);
 
             logger.debug("Calling XmlArtifactGenerator to generateXmlArtifacts");
-            ArtifactGenerator modelGenerator = new ModelGenerator();
-            xmlArtifacts = modelGenerator.generateArtifacts(ymlFiles);
+            xmlArtifacts = new ModelGenerator().generateArtifacts(csarArchive, ymlFiles);
 
             logger.debug(xmlArtifacts.size() + " xml artifacts have been generated");
         } catch (InvalidArchiveException e) {
@@ -75,6 +74,8 @@ public class CsarToXmlConverter {
         } catch (XmlArtifactGenerationException e) {
             throw new CsarConverterException(
                     "An error occurred trying to generate xml files from a collection of yml files : " + e);
+        } finally {
+            logger.logMetrics(stopwatch, LogHelper.getCallerMethodName(0));
         }
 
         return xmlArtifacts;
