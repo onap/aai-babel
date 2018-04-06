@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # ============LICENSE_START=======================================================
 # org.onap.aai
@@ -19,41 +19,44 @@
 # limitations under the License.
 # ============LICENSE_END=========================================================
 
-BASEDIR="/opt/app/babel/"
-AJSC_HOME="$BASEDIR"
+AJSC_HOME="${AJSC_HOME-/opt/app/babel/}"
+AJSC_CONF_HOME="$AJSC_HOME/bundleconfig"
 
 if [ -z "$CONFIG_HOME" ]; then
-	echo "CONFIG_HOME must be set in order to start up process"
-	exit 1
+    echo "CONFIG_HOME must be set in order to start up the process"
+    exit 1
 fi
 
-foo () {
-if [ -z "$KEY_STORE_PASSWORD" ]; then
-	echo "KEY_STORE_PASSWORD must be set in order to start up process"
-	exit 1
-else
-	echo "KEY_STORE_PASSWORD=$KEY_STORE_PASSWORD\n" >> $AJSC_CONF_HOME/etc/sysprops/sys-props.properties
-fi
+# List of ajsc properties which are exposed for modification at deploy time
+declare -a MODIFY_PROP_LIST=("KEY_STORE_PASSWORD"
+                             "KEY_MANAGER_PASSWORD"
+                             "AJSC_JETTY_ThreadCount_MIN" 
+                             "AJSC_JETTY_ThreadCount_MAX"
+                             "AJSC_JETTY_BLOCKING_QUEUE_SIZE")
+PROP_LIST_LENGTH=${#MODIFY_PROP_LIST[@]}  
 
-if [ -z "$KEY_MANAGER_PASSWORD" ]; then
-	echo "KEY_MANAGER_PASSWORD must be set in order to start up process"
-	exit 1
-else
-	echo "KEY_MANAGER_PASSWORD=$KEY_MANAGER_PASSWORD\n" >> $AJSC_CONF_HOME/etc/sysprops/sys-props.properties
-fi
-}
+for (( i=1; i<${PROP_LIST_LENGTH}+1; i++ ));
+do
+   PROP_NAME=${MODIFY_PROP_LIST[$i-1]}
+   PROP_VALUE=${!PROP_NAME}
+   if [ ! -z "$PROP_VALUE" ]; then
+      sed -i "s/$PROP_NAME=.*$/$PROP_NAME=$PROP_VALUE/g" $AJSC_CONF_HOME/etc/sysprops/sys-props.properties
+   fi
+done
 
+# Change the CLASSPATH separator to ; if your O/S is Windows
 CLASSPATH="$AJSC_HOME/lib/*"
 CLASSPATH="$CLASSPATH:$AJSC_HOME/extJars/"
 CLASSPATH="$CLASSPATH:$AJSC_HOME/etc/"
+
 PROPS="-DAJSC_HOME=$AJSC_HOME"
-PROPS="$PROPS -DAJSC_CONF_HOME=$BASEDIR/bundleconfig/"
-PROPS="$PROPS -Dlogback.configurationFile=$BASEDIR/bundleconfig/etc/logback.xml"
+PROPS="$PROPS -DAJSC_CONF_HOME=$AJSC_CONF_HOME"
+PROPS="$PROPS -DCONFIG_HOME=$CONFIG_HOME"
+PROPS="$PROPS -Dlogback.configurationFile=$AJSC_CONF_HOME/bundleconfig/etc/logback.xml"
 PROPS="$PROPS -DAJSC_SHARED_CONFIG=$AJSC_CONF_HOME"
 PROPS="$PROPS -DAJSC_SERVICE_NAMESPACE=babel"
 PROPS="$PROPS -DAJSC_SERVICE_VERSION=v1"
 PROPS="$PROPS -Dserver.port=9516"
-PROPS="$PROPS -DCONFIG_HOME=$CONFIG_HOME"
 PROPS="$PROPS -Dartifactgenerator.config=$CONFIG_HOME/artifact-generator.properties"
 JVM_MAX_HEAP=${MAX_HEAP:-1024}
 
