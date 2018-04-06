@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_cdf3e708",
+        "filename": "src/main/bin/start.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2018-04-06T16:52:12Z",
+      "side": 1,
+      "message": "I can remove this trailing whitespace if it\u0027s considered important enough",
+      "range": {
+        "startLine": 36,
+        "startChar": 41,
+        "endLine": 36,
+        "endChar": 42
+      },
+      "revId": "c2e36b3d3bd5b150328dde2dd990350a02a2a70c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
