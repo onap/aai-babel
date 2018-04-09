@@ -3,12 +3,145 @@
         "name": "admin",
         "functions": [
             {
+                "name": "actions",
+                "methods": [
+                    {"name": "GET"},
+                    {"name": "DELETE"},
+                    {"name": "PUT"}
+                ]
+            },
+            {
+                "name": "servers",
+                "methods": [
+                    {"name": "GET"},
+                    {"name": "DELETE"},
+                    {"name": "PUT"}
+                ]
+            },
+            {
+                "name": "cloudinfra",
+                "methods": [
+                    {"name": "GET"},
+                    {"name": "DELETE"},
+                    {"name": "PUT"}
+                ]
+            },
+            {
+                "name": "cloud-infrastructure",
+                "methods": [
+                    {"name": "GET"},
+                    {"name": "DELETE"},
+                    {"name": "PUT"}
+                ]
+            },
+            {
+                "name": "sdandc",
+                "methods": [
+                    {"name": "GET"},
+                    {"name": "DELETE"},
+                    {"name": "PUT"}
+                ]
+            },
+            {
+                "name": "service-design-and-creation",
+                "methods": [
+                    {"name": "GET"},
+                    {"name": "DELETE"},
+                    {"name": "PUT"}
+                ]
+            },
+            {
+                "name": "business",
+                "methods": [
+                    {"name": "GET"},
+                    {"name": "DELETE"},
+                    {"name": "PUT"}
+                ]
+            },
+            {
+                "name": "network",
+                "methods": [
+                    {"name": "GET"},
+                    {"name": "DELETE"},
+                    {"name": "PUT"}
+                ]
+            },
+            {
+                "name": "search",
+                "methods": [
+                    {"name": "GET"},
+                    {"name": "POST"}
+                ]
+            },
+            {
+                "name": "util",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "license-management",
+                "methods": [
+                    {"name": "GET"},
+                    {"name": "DELETE"},
+                    {"name": "PUT"}
+                ]
+            },
+            {
+                "name": "examples",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "resources",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "generateurl",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "bulkadd",
+                "methods": [{"name": "PUT"}]
+            },
+            {
                 "name": "generateArtifacts",
                 "methods": [{"name": "POST"}]
             }
         ],
         "users": [
-            {"username": "CN=someone.onap.org, OU=someone, O=\"ONAP ORG\", L=NA, ST=NA, C=NA"}
+            {"username": "CN=aaiadmin, OU=AT&T Services Inc, O=AT&T, L=Middletown, ST=New Jersey, C=US"},
+            {"username": "CN=mtinjvmsdn10.cip.att.com, OU=SDN Controller Dev, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=mso.dev.att.com, OU=aaitest, O=ATT, L=Middletown, ST=New Jersey, C=US"},
+            {"username": "CN=ccpro.test.att.com, OU=Cloud Services, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=ccpro.dev.att.com, OU=Cloud Services, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=ccpro.dpa2.cci.att.com, OU=ro-client-dpa2, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=odl.node01.it.app.sdn.labs.att.com, OU=AIC, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=sdncodl-client.mtcnjdcp1.aic.cip.att.com, OU=SDNC, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=sdncodl-client.mtsnjdcp1.aic.cip.att.com, OU=SDNC, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=ro-client.mtsnjlcp1.aic.cip.att.com, OU=NVP, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=neutron-client.mtsnjlcp1.aic.cip.att.com, OU=NVP, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=ro-client.mtsnjdcp1.aic.cip.att.com, OU=NVP, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=mtsnjv9mobp01.aic.cip.att.com, OU=mtsnjv9mobp01, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=mtsnjv9mobp02.aic.cip.att.com, OU=mtsnjv9mobp02, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=msobpel-client.mtsnjdcp1.aic.cip.att.com, OU=mso-bpel-client-mtsnjdcp1, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=aai-client-dvrw.aic.cip.att.com, OU=aai-app-client-dv, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=ccpro.dpa3.cci.att.com, OU=NVP, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=bbnmsls.test.att.com, OU=WMQCLIENT(m45565d), O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=aai-client-sdn-gp.aic.cip.att.com, OU=aai-app-client-dv, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=aai-client.dev.att.com, OU=aai client dev, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=mtcnjv9ngos01.mtcnj.aic.cip.att.com, OU=nagios-client-e2e, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=ndashst.test.att.com, OU=Test1, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=aai-client-app-c.aic.cip.att.com, OU=aai-app-client-dv, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=dcae-client.test.att.com, OU=ATT Technology Development, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=klsd049.ipcoe.att.com, OU=GFP-IP Overland Server, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=zltv7763.vci.att.com, OU=dev1server, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=mtinjngvmapp06.cip.att.com, OU=DCAE, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=msobpel-client.mtanj.aic.cip.att.com, OU=mso-bpel-client-mtanj, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=aots-cm.dev.att.com, OU=aots, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=idf.dev.att.com, OU=CANOPI-IDF, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=msobpel-client.mtsnjdcp1.aic.cip.att.com, OU=mso-bpel-client-st, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=amdocs-ca02-client.test.att.com, OU=aai-client-amdocs, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=amdocs-il02-client.test.att.com, OU=aai-client-amdocs, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=amdocs-uk02-client.test.att.com, OU=aai-client-amdocs, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=aai-client.dev.att.com, OU=aai digicert client dev, O=\"AT&T Services, Inc.\", L=Dallas, ST=Texas, C=US"}
         ]
     },
     {
@@ -18,8 +151,27 @@
             "methods": [{"name": "POST"}]
         }],
         "users": [
-            {"username": "CN=someone.onap.org, OU=someone, O=\"ONAP ORG\", L=NA, ST=NA, C=NA"}
+            {"username": "CN=aai-client.dev.att.com, OU=aai client dev, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=bgtmo07vmk01devl.noc.att.com, OU=NetApps-vPE, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"}
         ]
+    },
+    {
+        "name": "ops-restricted",
+        "functions": [
+            {
+                "name": "cloudinfra",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "cloud-infrastructure",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "network",
+                "methods": [{"name": "GET"}]
+            }
+        ],
+        "users": [{"username": "CN=bgtmo07vmk01devl.noc.att.com, OU=NetApps-vPE, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"}]
     },
     {
         "name": "readonly",
@@ -27,11 +179,116 @@
             {
                 "name": "actions",
                 "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "servers",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "cloudinfra",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "cloud-infrastructure",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "sdandc",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "service-design-and-creation",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "business",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "network",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "search",
+                "methods": [
+                    {"name": "GET"},
+                    {"name": "POST"}
+                ]
+            },
+            {
+                "name": "util",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "license-management",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "examples",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "resources",
+                "methods": [{"name": "GET"}]
+            },
+            {
+                "name": "generateurl",
+                "methods": [{"name": "GET"}]
             }
         ],
         "users": [
-            {"username": "CN=someone.onap.org, OU=someone, O=\"ONAP ORG\", L=NA, ST=NA, C=NA"}
+            {"username": "CN=polodev.web.att.com, OU=aai-app-client-dv, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=mb2859-client-cert.test.att.com, OU=NVT-PREP-IST, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=fltd056.ffdc.sbc.com, OU=ALABS, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=aots-tm.test.att.com, OU=AOTS, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=aai-client-dvro.aic.cip.att.com, OU=aai-app-client-dv, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=aai-client-dv1.aic.cip.att.com, OU=aai-app-client-dv, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=aai-client-dv2.aic.cip.att.com, OU=aai-app-client-dv, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=aai-client-cso.aic.cip.att.com, OU=aai-app-client-dv, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=vm-ccd-test.client.research.att.com, OU=CCD test, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=aots-vtm.test.att.com, OU=test1, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=amdocs-ca01-ro-client.test.att.com, OU=aai-client-amdocs, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=amdocs-ca02-client.test.att.com, OU=aai-client-amdocs, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=amdocs-uk01-ro-client.test.att.com, OU=aai-client-amdocs, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=amdocs-uk02-client.test.att.com, OU=aai-client-amdocs, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=amdocs-il01-ro-client.test.att.com, OU=aai-client-amdocs, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=amdocs-il02-client.test.att.com, OU=aai-client-amdocs, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=vitalnet-test-client.test.att.com, OU=BIZOPS, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=zldcmtc2njtplg00.research.att.com, OU=DCAE, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=radcom-test-aai.eng.mobilephone.net, OU=RADCOM, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=vcamp.dev.att.com, OU=vcamp-dev, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=uo-client.test.att.com, OU=underlay-overlay-client, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=zldcmtc1njtplg00.research.att.com, OU=ATT Labs D2 ECOMP Dev, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=zldcmtc1njtplg01.research.att.com, OU=ATT Labs D2 ECOMP Dev, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=zldcmtc2njtplg00.research.att.com, OU=ATT Labs D2 ECOMP Dev, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=zldcmtc2njtplg01.research.att.com, OU=ATT Labs D2 ECOMP Dev, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=zlcp2rsrv01dmn001.eng.mobilephone.net, OU=Radcom, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=zltcmtc3njtplg00.research.att.com, OU=ATT Labs D2 ECOMP IST, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=ecomp-ist-cleanup-client-ro.test.att.com, OU=ecomp-ist-cleanup, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=amdocs-ca01-ro-client.test.att.com, OU=aai-client-amdocs, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=amdocs-il01-ro-client.test.att.com, OU=aai-client-amdocs, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"},
+            {"username": "CN=amdocs-uk01-ro-client.test.att.com, OU=aai-client-amdocs, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"}
         ]
+    },
+    {
+        "name": "actionsOnly",
+        "functions": [{
+            "name": "actions",
+            "methods": [{"name": "PUT"}]
+        }],
+        "users": [{"username": "CN=polodev.web.att.com, OU=aai-app-client-dv, O=\"ATT Services, Inc.\", L=Southfield, ST=Michigan, C=US"}]
+    },
+    {
+        "name": "licensemgt",
+        "functions": [{
+            "name": "license-management",
+            "methods": [
+                {"name": "GET"},
+                {"name": "DELETE"},
+                {"name": "PUT"}
+            ]
+        }],
+        "users": [{"username": "CN=d1gps1m15.vci.att.com, OU=gpsdev3as1_lr, O=\"AT&T Services, Inc.\", L=Southfield, ST=Michigan, C=US"}]
     },
     {
         "name": "basicauth",
@@ -41,7 +298,7 @@
         }],
         "users": [{
             "user": "aai",
-            "pass": "OBF:deadbeef"
+            "pass": "OBF:1u2a1t2v1vgb1s3g1s3m1vgj1t3b1u30"
         }]
     }
 ]}

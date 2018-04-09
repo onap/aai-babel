@@ -90,6 +90,10 @@
 			<version>${dom4j.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.att.aft</groupId>
+			<artifactId>dme2</artifactId>
+		</dependency>
 
 		<!-- Common logging framework -->
 		<dependency>

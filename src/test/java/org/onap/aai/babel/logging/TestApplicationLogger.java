@@ -23,9 +23,11 @@ package org.onap.aai.babel.logging;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import javax.ws.rs.core.HttpHeaders;
 import org.apache.commons.lang.time.StopWatch;
@@ -59,8 +61,9 @@ public class TestApplicationLogger {
     @Test
     public void logAllMessages() throws IOException {
         Logger logger = LogHelper.INSTANCE;
-        LogReader errorReader = new LogReader(LogHelper.getLogDirectory(), "error");
-        LogReader debugReader = new LogReader(LogHelper.getLogDirectory(), "debug");
+        String logDirectory = getLogDirectory();
+        LogReader errorReader = new LogReader(logDirectory, "error");
+        LogReader debugReader = new LogReader(logDirectory, "debug");
         String[] args = {"1", "2", "3", "4"};
         for (ApplicationMsgs msg : Arrays.asList(ApplicationMsgs.values())) {
             if (msg.name().endsWith("ERROR")) {
@@ -93,11 +96,12 @@ public class TestApplicationLogger {
      */
     @Test
     public void logDebugMessages() throws IOException {
-        LogReader reader = new LogReader(LogHelper.getLogDirectory(), "debug");
+        LogReader reader = new LogReader(getLogDirectory(), "debug");
         LogHelper.INSTANCE.debug("a message");
         String s = reader.getNewLines();
         assertThat(s, is(notNullValue()));
     }
+
 
     /**
      * Check logAudit with HTTP headers
@@ -107,7 +111,7 @@ public class TestApplicationLogger {
     @Test
     public void logAuditMessage() throws IOException {
         LogHelper logger = LogHelper.INSTANCE;
-        LogReader reader = new LogReader(LogHelper.getLogDirectory(), "audit");
+        LogReader reader = new LogReader(getLogDirectory(), "audit");
 
         HttpHeaders headers = Mockito.mock(HttpHeaders.class);
         Mockito.when(headers.getHeaderString("X-ECOMP-RequestID")).thenReturn("ecomp-request-id");
@@ -139,7 +143,7 @@ public class TestApplicationLogger {
     @Test
     public void logAuditMessageWithoutHeaders() throws IOException {
         LogHelper logger = LogHelper.INSTANCE;
-        LogReader reader = new LogReader(LogHelper.getLogDirectory(), "audit");
+        LogReader reader = new LogReader(getLogDirectory(), "audit");
         logger.startAudit(null, null);
         logger.logAuditSuccess("foo");
         String s = reader.getNewLines();
@@ -155,7 +159,7 @@ public class TestApplicationLogger {
      */
     @Test
     public void logMetricsMessage() throws IOException {
-        LogReader reader = new LogReader(LogHelper.getLogDirectory(), "metrics");
+        LogReader reader = new LogReader(getLogDirectory(), "metrics");
         LogHelper logger = LogHelper.INSTANCE;
         logger.logMetrics("metrics: fred");
         String s = reader.getNewLines();
@@ -166,7 +170,7 @@ public class TestApplicationLogger {
 
     @Test
     public void logMetricsMessageWithStopwatch() throws IOException {
-        LogReader reader = new LogReader(LogHelper.getLogDirectory(), "metrics");
+        LogReader reader = new LogReader(getLogDirectory(), "metrics");
         LogHelper logger = LogHelper.INSTANCE;
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -201,6 +205,13 @@ public class TestApplicationLogger {
         } catch (UnsupportedOperationException e) {
             // Expected to reach here
         }
+    }
+
+    private String getLogDirectory() {
+        String logDirectory = LogHelper.getLogDirectory();
+        assertThat(Paths.get(logDirectory).toAbsolutePath().toString(),
+                startsWith(Paths.get(System.getProperty("AJSC_HOME")).toAbsolutePath().toString()));
+        return logDirectory;
     }
 
     /**
