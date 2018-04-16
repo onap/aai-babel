@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y software-properties-common
 ## sudo -E is required to preserve the environment. If you remove that line, it will most like freeze at this step
 RUN sudo -E add-apt-repository ppa:openjdk-r/ppa && apt-get update && apt-get install -y openjdk-8-jdk
 ## Setup JAVA_HOME, this is useful for docker commandline
-ENV JAVA_HOME usr/lib/jvm/java-8-openjdk-amd64
+ENV JAVA_HOME usr/lib/jvm/java-8-openjdk-$(dpkg --print-architecture)
 RUN export JAVA_HOME
 
 # Build up the deployment folder structure
