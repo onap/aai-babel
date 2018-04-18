@@ -29,7 +29,7 @@
 		<groupId>com.att.ajsc</groupId>
 		<version>2.0.0</version>
 	</parent>
-	<groupId>org.onap.aai</groupId>
+	<groupId>org.onap.aai.babel</groupId>
 	<artifactId>babel</artifactId>
 	<version>1.2.0-SNAPSHOT</version>
 	<name>aai-babel</name>
