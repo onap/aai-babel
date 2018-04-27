@@ -1,5 +1,5 @@
 /**
- * ============LICENSE_START=======================================================
+ * ﻿============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -50,8 +50,8 @@ import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 public class TestToscaParser {
 
     static {
-        if (System.getProperty("AJSC_HOME") == null) {
-            System.setProperty("AJSC_HOME", ".");
+        if (System.getProperty("APP_HOME") == null) {
+            System.setProperty("APP_HOME", ".");
         }
     }
 

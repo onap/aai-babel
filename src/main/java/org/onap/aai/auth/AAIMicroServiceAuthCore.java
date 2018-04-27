@@ -1,5 +1,5 @@
 /**
- * ============LICENSE_START=======================================================
+ * ﻿============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -46,7 +46,7 @@ public class AAIMicroServiceAuthCore {
     public static final String FILESEP =
             (System.getProperty("file.separator") == null) ? "/" : System.getProperty("file.separator");
     public static final String APPCONFIG_DIR = (System.getProperty("CONFIG_HOME") == null)
-            ? System.getProperty("AJSC_HOME") + FILESEP + "appconfig" : System.getProperty("CONFIG_HOME");
+            ? System.getProperty("APP_HOME") + FILESEP + "appconfig" : System.getProperty("CONFIG_HOME");
 
     private static String appConfigAuthDir = APPCONFIG_DIR + FILESEP + "auth";
     private static String defaultAuthFileName = appConfigAuthDir + FILESEP + "auth_policy.json";
@@ -85,7 +85,7 @@ public class AAIMicroServiceAuthCore {
             throw new AAIAuthException(e.getMessage());
         }
         if (policyAuthFileName == null) {
-            throw new AAIAuthException("Auth policy file could not be found");
+            throw new AAIAuthException("Auth policy file could not be found" + System.getProperty("CONFIG_HOME") + APPCONFIG_DIR);
         }
         AAIMicroServiceAuthCore.reloadUsers();
 

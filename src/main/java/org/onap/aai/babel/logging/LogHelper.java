@@ -1,5 +1,5 @@
 /**
- * ============LICENSE_START=======================================================
+ * ﻿============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -37,7 +37,7 @@ import java.util.function.Consumer;
 import javax.servlet.ServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response.Status;
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import org.onap.aai.babel.request.RequestHeaders;
 import org.onap.aai.cl.api.LogFields;
 import org.onap.aai.cl.api.Logger;

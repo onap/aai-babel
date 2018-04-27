@@ -1,5 +1,5 @@
 /**
- * ============LICENSE_START=======================================================
+ * ﻿============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -22,7 +22,7 @@ package org.onap.aai.babel.csar.fixture;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.openecomp.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.notification.IArtifactInfo;
 
 /**
  * This class builds an instance of IArtifactInfo for test purposes.
