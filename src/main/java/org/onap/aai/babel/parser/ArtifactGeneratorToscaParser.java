@@ -1,5 +1,5 @@
 /**
- * ============LICENSE_START=======================================================
+ * ﻿============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
+
 import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.xml.generator.data.GeneratorConstants;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
@@ -64,7 +65,7 @@ public class ArtifactGeneratorToscaParser {
 
     /**
      * Constructs using csarHelper
-     * 
+     *
      * @param csarHelper The csar helper
      */
     public ArtifactGeneratorToscaParser(ISdcCsarHelper csarHelper) {
@@ -73,7 +74,7 @@ public class ArtifactGeneratorToscaParser {
 
     /**
      * Returns the artifact description
-     * 
+     *
      * @param model the artifact model
      * @return the artifact model's description
      */
@@ -89,7 +90,7 @@ public class ArtifactGeneratorToscaParser {
 
     /**
      * Initialises the widget configuration.
-     * 
+     *
      * @throws IOException
      */
     public static void initWidgetConfiguration() throws IOException {
@@ -111,7 +112,7 @@ public class ArtifactGeneratorToscaParser {
 
     /**
      * Generates a Resource List using input Service Node Templates
-     * 
+     *
      * @param serviceNodes input Service Node Templates
      * @param idTypeStore ID->Type mapping
      * @return the processed resource models
@@ -213,11 +214,11 @@ public class ArtifactGeneratorToscaParser {
 
     /**
      * Process the service tosca
-     * 
+     *
      * @param service model of the service artifact
      * @param idTypeStore ID->Type mapping
      * @param nodeTemplates a list of service nodes
-     * 
+     *
      */
     public void processServiceTosca(Service service, Map<String, String> idTypeStore,
             List<NodeTemplate> nodeTemplates) {
@@ -262,7 +263,7 @@ public class ArtifactGeneratorToscaParser {
 
     /**
      * Create a Map of property name against String property value from the input Map
-     * 
+     *
      * @param inputMap The input Map
      * @return Map of property name against String property value
      */
