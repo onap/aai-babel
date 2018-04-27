@@ -64,6 +64,10 @@ _babel-auth.properties_
 _artifact-generator.properties_ <br />
 Contains model invariants ids used by SDC artifact generator library
 
+_logback.xml_
+
+Logging configuration.
+
 ##### Contents of /opt/app/babel/appconfig/auth 
 _auth_policy.json_
  

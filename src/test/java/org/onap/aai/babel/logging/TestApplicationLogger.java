@@ -1,5 +1,5 @@
 /**
- * ============LICENSE_START=======================================================
+ * ﻿============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -28,7 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.IOException;
 import java.util.Arrays;
 import javax.ws.rs.core.HttpHeaders;
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -47,7 +47,7 @@ public class TestApplicationLogger {
 
     @BeforeClass
     public static void setupClass() {
-        System.setProperty("AJSC_HOME", ".");
+        System.setProperty("APP_HOME", ".");
     }
 
     /**

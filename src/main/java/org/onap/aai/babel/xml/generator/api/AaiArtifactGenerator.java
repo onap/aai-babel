@@ -1,5 +1,5 @@
 /**
- * ============LICENSE_START=======================================================
+ * ﻿============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
@@ -132,7 +133,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
     /**
      * Method to generate the artifact label for AAI model
-     * 
+     *
      * @param model
      * @return the artifact label as String
      */

@@ -1,1 +1,0 @@
-The bundleconfig-local directory contains the necessary configuration files 
