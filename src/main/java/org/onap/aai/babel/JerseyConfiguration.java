@@ -18,34 +18,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.aai.babel.logging;
+package org.onap.aai.babel;
 
-import com.att.eelf.i18n.EELFResourceManager;
-import org.onap.aai.cl.eelf.LogMessageEnum;
+import javax.ws.rs.ApplicationPath;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.onap.aai.babel.service.GenerateArtifactsServiceImpl;
+import org.onap.aai.babel.service.InfoService;
+import org.springframework.context.annotation.Configuration;
 
-public enum ApplicationMsgs implements LogMessageEnum {
-    /** Arguments: {0} = message. */
-    // @formatter:off
-  DISTRIBUTION_EVENT,
-  MESSAGE_AUDIT,
-  MESSAGE_METRIC,
-  MISSING_REQUEST_ID,
-  PROCESS_REQUEST_ERROR,
-  INVALID_CSAR_FILE,
-  INVALID_REQUEST_JSON,
-  BABEL_REQUEST_PAYLOAD,
-  BABEL_RESPONSE_PAYLOAD,
-  LOAD_PROPERTIES,
-  PROCESSING_VNF_CATALOG_ERROR,
-  TEMP_FILE_ERROR;
-    
-  // @formatter:on
+@Configuration
+@ApplicationPath("/v1")
+public class JerseyConfiguration extends ResourceConfig {
 
-    /**
-     * Static initializer to ensure the resource bundles for this class are loaded... Here this application loads
-     * messages from three bundles
-     */
-    static {
-        EELFResourceManager.loadMessageBundle("babel-logging-resources");
+    public JerseyConfiguration() {
+        register(GenerateArtifactsServiceImpl.class);
+        register(InfoService.class);
     }
+
 }

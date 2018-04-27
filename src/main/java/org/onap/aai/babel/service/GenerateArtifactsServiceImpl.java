@@ -1,5 +1,5 @@
 /**
- * ============LICENSE_START=======================================================
+ * ﻿============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -20,9 +20,9 @@
  */
 package org.onap.aai.babel.service;
 
-import com.att.aft.dme2.internal.gson.Gson;
-import com.att.aft.dme2.internal.gson.GsonBuilder;
-import com.att.aft.dme2.internal.gson.JsonSyntaxException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +33,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import org.onap.aai.auth.AAIMicroServiceAuth;
 import org.onap.aai.auth.AAIMicroServiceAuthCore;
 import org.onap.aai.babel.csar.CsarConverterException;
@@ -56,9 +56,7 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
 
     private AAIMicroServiceAuth aaiMicroServiceAuth;
 
-    /**
-     * @param authorization
-     */
+    /** @param authorization */
     @Inject
     public GenerateArtifactsServiceImpl(final AAIMicroServiceAuth authorization) {
         this.aaiMicroServiceAuth = authorization;

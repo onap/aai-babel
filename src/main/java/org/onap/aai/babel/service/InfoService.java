@@ -1,5 +1,5 @@
 /**
- * ============LICENSE_START=======================================================
+ * ﻿============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -37,7 +37,7 @@ import javax.ws.rs.QueryParam;
  *
  * @exclude
  */
-@Path("/core-service")
+@Path("/core/core-service")
 public class InfoService {
 
     private Clock clock = Clock.systemDefaultZone();
