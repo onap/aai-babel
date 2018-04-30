@@ -1,5 +1,5 @@
 /**
- * ============LICENSE_START=======================================================
+ * ﻿============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -33,7 +33,7 @@ import javax.ws.rs.core.UriInfo;
 import org.onap.aai.auth.AAIAuthException;
 
 /** Generate artifacts from the specified request content */
-@Path("/")
+@Path("/app")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public interface GenerateArtifactsService {

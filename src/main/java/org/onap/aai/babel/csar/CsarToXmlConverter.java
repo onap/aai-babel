@@ -1,5 +1,5 @@
 /**
- * ============LICENSE_START=======================================================
+ * ﻿============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -22,7 +22,8 @@ package org.onap.aai.babel.csar;
 
 import java.util.List;
 import java.util.Objects;
-import org.apache.commons.lang.time.StopWatch;
+
+import org.apache.commons.lang3.time.StopWatch;
 import org.onap.aai.babel.csar.extractor.InvalidArchiveException;
 import org.onap.aai.babel.csar.extractor.YamlExtractor;
 import org.onap.aai.babel.logging.ApplicationMsgs;
@@ -45,7 +46,7 @@ public class CsarToXmlConverter {
      * @param csarArchive the artifact that contains the csar archive to generate xml artifacts from
      * @param name the name of the archive file
      * @param version the version of the archive file
-     * @return List<org.openecomp.sdc.generator.data.Artifact> a list of generated xml artifacts
+     * @return List<org.onap.sdc.generator.data.Artifact> a list of generated xml artifacts
      * @throws CsarConverterException if there is an error either extracting the yaml files or generating xml artifacts
      */
     public List<BabelArtifact> generateXmlFromCsar(byte[] csarArchive, String name, String version)

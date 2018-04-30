@@ -1,5 +1,5 @@
 /**
- * ============LICENSE_START=======================================================
+ * ﻿============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -79,7 +79,7 @@ public class ArtifactTestUtils {
     }
 
     public String loadResourceAsString(String resourceName) throws IOException {
-        return IOUtils.toString(getResource(resourceName));
+        return IOUtils.toString(getResource(resourceName), Charset.defaultCharset());
     }
 
     private void compareXMLPayloads(List<Artifact> toscaFiles, Set<String> ymlPayloads) {
