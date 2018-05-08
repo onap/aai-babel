@@ -51,30 +51,6 @@ public class AAIMicroServiceAuth {
     }
 
     /**
-     * @param username
-     * @param policyFunction
-     * @return
-     * @throws AAIAuthException
-     */
-    public boolean authorize(String username, String policyFunction) throws AAIAuthException {
-        return AAIMicroServiceAuthCore.authorize(username, policyFunction);
-    }
-
-    /**
-     * @param authUser
-     * @param policyFunction
-     * @return
-     * @throws AAIAuthException
-     */
-    public String authenticate(String authUser, String policyFunction) throws AAIAuthException {
-        if (authorize(authUser, policyFunction)) {
-            return "OK";
-        } else {
-            return "AAI_9101";
-        }
-    }
-
-    /**
      * @param headers
      * @param req
      * @param action
@@ -94,11 +70,7 @@ public class AAIMicroServiceAuth {
         }
 
         String[] ps = apiPath.split("/");
-        String authPolicyFunctionName = ps[0];
-        if (ps.length > 1 && authPolicyFunctionName.matches("v\\d+")) {
-            authPolicyFunctionName = ps[1];
-        }
-
+        String authPolicyFunctionName = ps[ps.length - 1];
         String cipherSuite = (String) req.getAttribute("javax.servlet.request.cipher_suite");
         String authUser = null;
 
@@ -110,7 +82,8 @@ public class AAIMicroServiceAuth {
         }
 
         if (authUser != null) {
-            return "OK".equals(authenticate(authUser.toLowerCase(), action.toString() + ":" + authPolicyFunctionName));
+            return AAIMicroServiceAuthCore.authorize(authUser.toLowerCase(),
+                    action.toString() + ":" + authPolicyFunctionName);
         } else {
             return false;
         }

@@ -20,7 +20,6 @@
  */
 package org.onap.aai.babel;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -80,9 +79,9 @@ public class MicroServiceAuthTest {
     @Test
     public void createLocalAuthFile() throws AAIAuthException, IOException, JSONException {
         JSONObject roles = createRoleObject("role", createUserObject("user"), createFunctionObject("func"));
-        AAIMicroServiceAuth auth = createAuthService(roles);
-        assertThat(auth.authorize("nosuchuser", "method:func"), is(false));
-        assertThat(auth.authorize("user", "method:func"), is(true));
+        createAuthService(roles);
+        assertThat(AAIMicroServiceAuthCore.authorize("nosuchuser", "method:func"), is(false));
+        assertThat(AAIMicroServiceAuthCore.authorize("user", "method:func"), is(true));
     }
 
     /**
@@ -112,9 +111,9 @@ public class MicroServiceAuthTest {
 
     @Test
     public void testAuthUser() throws AAIAuthException {
-        AAIMicroServiceAuth auth = createStandardAuth();
-        assertThat(auth.authenticate(VALID_ADMIN_USER, "GET:actions"), is(equalTo("OK")));
-        assertThat(auth.authenticate(VALID_ADMIN_USER, "WRONG:action"), is(equalTo("AAI_9101")));
+        createStandardAuth();
+        assertThat(AAIMicroServiceAuthCore.authorize(VALID_ADMIN_USER, "GET:actions"), is(true));
+        assertThat(AAIMicroServiceAuthCore.authorize(VALID_ADMIN_USER, "WRONG:action"), is(false));
     }
 
 
@@ -158,10 +157,10 @@ public class MicroServiceAuthTest {
      * @throws AAIAuthException
      */
     private void assertAdminUserAuthorisation(AAIMicroServiceAuth auth, String adminUser) throws AAIAuthException {
-        assertThat(auth.authorize(adminUser, "GET:actions"), is(true));
-        assertThat(auth.authorize(adminUser, "POST:actions"), is(true));
-        assertThat(auth.authorize(adminUser, "PUT:actions"), is(true));
-        assertThat(auth.authorize(adminUser, "DELETE:actions"), is(true));
+        assertThat(AAIMicroServiceAuthCore.authorize(adminUser, "GET:actions"), is(true));
+        assertThat(AAIMicroServiceAuthCore.authorize(adminUser, "POST:actions"), is(true));
+        assertThat(AAIMicroServiceAuthCore.authorize(adminUser, "PUT:actions"), is(true));
+        assertThat(AAIMicroServiceAuthCore.authorize(adminUser, "DELETE:actions"), is(true));
     }
 
     private JSONArray createFunctionObject(String functionName) throws JSONException {

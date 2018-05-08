@@ -31,6 +31,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import org.springframework.stereotype.Service;
 
 /**
  * Information service for the micro-service. Return status details to the caller.
@@ -38,6 +39,7 @@ import javax.ws.rs.QueryParam;
  * @exclude
  */
 @Path("/core/core-service")
+@Service
 public class InfoService {
 
     private Clock clock = Clock.systemDefaultZone();

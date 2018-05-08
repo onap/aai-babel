@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -49,8 +50,10 @@ import org.onap.aai.babel.service.data.BabelArtifact;
 import org.onap.aai.babel.service.data.BabelRequest;
 import org.onap.aai.babel.util.RequestValidationException;
 import org.onap.aai.babel.util.RequestValidator;
+import org.springframework.stereotype.Service;
 
 /** Generate SDC Artifacts by passing in a CSAR payload, Artifact Name and Artifact version */
+@Service
 public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
     private static final LogHelper applicationLogger = LogHelper.INSTANCE;
 
@@ -96,8 +99,12 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
 
         Response response;
         try {
+            // Get last URI path segment to use for authentication
+            List<PathSegment> pathSegments = uriInfo.getPathSegments();
+            String lastPathSegment = pathSegments.isEmpty() ? "" : pathSegments.get(pathSegments.size() - 1).getPath();
+
             boolean authorized = aaiMicroServiceAuth.validateRequest(headers, servletRequest,
-                    AAIMicroServiceAuthCore.HTTP_METHODS.POST, uriInfo.getPath(false));
+                    AAIMicroServiceAuthCore.HTTP_METHODS.POST, lastPathSegment);
 
             response = authorized ? generateArtifacts(requestBody)
                     : buildResponse(Status.UNAUTHORIZED, "User not authorized to perform the operation.");
