@@ -24,6 +24,7 @@ import java.util.List;
 import org.onap.aai.babel.service.data.BabelArtifact;
 import org.onap.aai.babel.xml.generator.data.Artifact;
 
+@FunctionalInterface
 public interface ArtifactGenerator {
 
     /**
