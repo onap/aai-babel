@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -67,7 +68,7 @@ public class LogReader {
         if (cachedLog == null) {
             Optional<Path> latestFilePath = Files.list(Paths.get(logDirectory))
                     .filter(f -> Files.isDirectory(f) == false && f.getFileName().toString().startsWith(filenamePrefix))
-                    .max((f1, f2) -> (int) (f1.toFile().lastModified() - f2.toFile().lastModified()));
+                    .max(Comparator.comparingLong(f -> f.toFile().lastModified()));
             if (latestFilePath.isPresent()) {
                 cachedLog = latestFilePath.get();
             } else {

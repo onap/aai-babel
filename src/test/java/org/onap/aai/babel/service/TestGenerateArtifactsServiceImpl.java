@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -26,14 +26,10 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.security.auth.x500.X500Principal;
 import javax.ws.rs.core.HttpHeaders;
@@ -45,6 +41,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.onap.aai.auth.AAIMicroServiceAuth;
+import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.data.GeneratorConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
@@ -55,7 +52,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/babel-beans.xml"})
+@ContextConfiguration(locations = { "classpath:/babel-beans.xml" })
 public class TestGenerateArtifactsServiceImpl {
 
     static {
@@ -70,58 +67,55 @@ public class TestGenerateArtifactsServiceImpl {
 
     @BeforeClass
     public static void setup() {
-        URL url = TestGenerateArtifactsServiceImpl.class.getClassLoader().getResource("artifact-generator.properties");
-        System.setProperty(GeneratorConstants.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE, url.getPath());
+        System.setProperty(GeneratorConstants.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
+                new ArtifactTestUtils().getResourcePath("artifact-generator.properties"));
     }
 
     @Test
     public void testInvalidCsarFile() throws URISyntaxException, IOException {
-        String jsonRequest = readstringFromFile("jsonFiles/invalid_csar_request.json");
-        Response response = processJsonRequest(jsonRequest);
+        Response response = processJsonRequest("invalid_csar_request.json");
         assertThat(response.getStatus(), is(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
         assertThat(response.getEntity(), is("Error converting CSAR artifact to XML model."));
     }
 
     @Test
     public void testInvalidJsonFile() throws URISyntaxException, IOException {
-        String jsonRequest = readstringFromFile("jsonFiles/invalid_json_request.json");
-        Response response = processJsonRequest(jsonRequest);
+        Response response = processJsonRequest("invalid_json_request.json");
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("Malformed request."));
     }
 
     @Test
     public void testMissingArtifactName() throws Exception {
-        String jsonRequest = readstringFromFile("jsonFiles/missing_artifact_name_request.json");
-        Response response = processJsonRequest(jsonRequest);
+        Response response = processJsonRequest("missing_artifact_name_request.json");
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("No artifact name attribute found in the request body."));
     }
 
     @Test
     public void testMissingArtifactVersion() throws Exception {
-        String jsonRequest = readstringFromFile("jsonFiles/missing_artifact_version_request.json");
-        Response response = processJsonRequest(jsonRequest);
+        Response response = processJsonRequest("missing_artifact_version_request.json");
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("No artifact version attribute found in the request body."));
     }
 
     @Test
     public void testMissingCsarFile() throws Exception {
-        String jsonRequest = readstringFromFile("jsonFiles/missing_csar_request.json");
-        Response response = processJsonRequest(jsonRequest);
+        Response response = processJsonRequest("missing_csar_request.json");
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("No csar attribute found in the request body."));
     }
 
     /**
      * Create a (mocked) HTTPS request and invoke the Babel generate artifacts API
-     * 
-     * @param request for the Babel Service
+     *
+     * @param resource
+     *            path to the incoming JSON request
      * @return the Response from the HTTP API
      * @throws URISyntaxException
+     * @throws IOException
      */
-    private Response processJsonRequest(String jsonRequest) throws URISyntaxException {
+    private Response processJsonRequest(String resource) throws URISyntaxException, IOException {
         UriInfo mockUriInfo = Mockito.mock(UriInfo.class);
         Mockito.when(mockUriInfo.getRequestUri()).thenReturn(new URI("/validate")); // NOSONAR (mocked)
         Mockito.when(mockUriInfo.getPath(false)).thenReturn("validate"); // URI prefix is stripped by AJSC routing
@@ -150,22 +144,24 @@ public class TestGenerateArtifactsServiceImpl {
         Mockito.when(mockCertificate.getSubjectX500Principal())
                 .thenReturn(new X500Principal("CN=test, OU=qa, O=Test Ltd, L=London, ST=London, C=GB"));
 
-        servletRequest.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] {mockCertificate});
+        servletRequest.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] { mockCertificate });
         servletRequest.setAttribute("javax.servlet.request.cipher_suite", "");
 
         GenerateArtifactsServiceImpl service = new GenerateArtifactsServiceImpl(auth);
-        return service.generateArtifacts(mockUriInfo, headers, servletRequest, jsonRequest);
+        String jsonString = getRequestJson(resource);
+        return service.generateArtifacts(mockUriInfo, headers, servletRequest, jsonString);
+    }
+
+    private String getRequestJson(String resource) throws IOException, URISyntaxException {
+        return new ArtifactTestUtils().getRequestJson(resource);
+    }
+
+    private String getResponseJson(String jsonResponse) throws IOException, URISyntaxException {
+        return new ArtifactTestUtils().getResponseJson(jsonResponse);
     }
 
     private List<String> createSingletonList(String listItem) {
         return Collections.<String>singletonList(listItem);
-    }
-
-    private String readstringFromFile(String resourceFile) throws IOException, URISyntaxException {
-        return Files
-                .lines(Paths
-                        .get(TestGenerateArtifactsServiceImpl.class.getClassLoader().getResource(resourceFile).toURI()))
-                .collect(Collectors.joining());
     }
 
 }

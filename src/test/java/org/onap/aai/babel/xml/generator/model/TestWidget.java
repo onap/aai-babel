@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -50,6 +50,5 @@ public class TestWidget {
         new ServiceWidget().addWidget(new TenantWidget());
         new VolumeGroupWidget().getWidgetType();
     }
-
 
 }

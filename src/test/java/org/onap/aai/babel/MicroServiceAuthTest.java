@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -116,8 +116,6 @@ public class MicroServiceAuthTest {
         assertThat(AAIMicroServiceAuthCore.authorize(VALID_ADMIN_USER, "WRONG:action"), is(false));
     }
 
-
-
     @Test
     public void testValidateRequest() throws AAIAuthException {
         AAIMicroServiceAuth auth = createStandardAuth();
@@ -137,7 +135,6 @@ public class MicroServiceAuthTest {
      * @throws AAIAuthException
      */
     private AAIMicroServiceAuth createAuthService(JSONObject roles) throws IOException, AAIAuthException {
-        BabelAuthConfig babelAuthConfig = new BabelAuthConfig();
         File file = File.createTempFile("auth-policy", "json");
         file.deleteOnExit();
         FileWriter fileWriter = new FileWriter(file);
@@ -145,6 +142,7 @@ public class MicroServiceAuthTest {
         fileWriter.flush();
         fileWriter.close();
 
+        BabelAuthConfig babelAuthConfig = new BabelAuthConfig();
         babelAuthConfig.setAuthPolicyFile(file.getAbsolutePath());
         return new AAIMicroServiceAuth(babelAuthConfig);
     }
@@ -190,8 +188,6 @@ public class MicroServiceAuthTest {
 
     private JSONObject createRoleObject(String roleName, JSONArray usersArray, JSONArray functionsArray)
             throws JSONException {
-        JSONObject roles = new JSONObject();
-
         JSONObject role = new JSONObject();
         role.put("name", roleName);
         role.put("functions", functionsArray);
@@ -199,8 +195,9 @@ public class MicroServiceAuthTest {
 
         JSONArray rolesArray = new JSONArray();
         rolesArray.put(role);
-        roles.put("roles", rolesArray);
 
+        JSONObject roles = new JSONObject();
+        roles.put("roles", rolesArray);
         return roles;
     }
 

@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -102,19 +102,18 @@ public class TestArtifactInfoImpl implements IArtifactInfo {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TestArtifactInfoImpl)) {
-            return false;
-        } else if (obj == this) {
+        if (this == obj) {
             return true;
         }
+        if (!(obj instanceof TestArtifactInfoImpl)) {
+            return false;
+        }
         TestArtifactInfoImpl rhs = (TestArtifactInfoImpl) obj;
-     // @formatter:off
-     return new EqualsBuilder()
-                  .append(artifactType, rhs.artifactType)
-                  .append(artifactDescription, rhs.artifactDescription)
-                  .append(artifactVersion, rhs.artifactVersion)
-                  .isEquals();
-     // @formatter:on
+        return new EqualsBuilder() //
+                .append(artifactType, rhs.artifactType) //
+                .append(artifactDescription, rhs.artifactDescription) //
+                .append(artifactVersion, rhs.artifactVersion) //
+                .isEquals();
     }
 
     @Override

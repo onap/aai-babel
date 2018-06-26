@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -39,9 +39,8 @@ public class TestRequestValidator {
         request.setCsar("UEsDBBQACAgIAGsrz0oAAAAAAAAAAAAAAAAJAAAAY3Nhci5tZXRhC3Z");
         request.setArtifactVersion("1.0");
         request.setArtifactName(null);
-        RequestValidator.validateRequest(request);
+        new RequestValidator().validateRequest(request);
     }
-
 
     @Test
     public void testMissingArtifactVersionExceptionThrown() throws Exception {
@@ -52,7 +51,7 @@ public class TestRequestValidator {
         request.setCsar("UEsDBBQACAgIAGsrz0oAAAAAAAAAAAAAAAAJAAAAY3Nhci5tZXRhC3Z");
         request.setArtifactVersion(null);
         request.setArtifactName("hello");
-        RequestValidator.validateRequest(request);
+        new RequestValidator().validateRequest(request);
     }
 
     @Test
@@ -64,7 +63,7 @@ public class TestRequestValidator {
         request.setCsar(null);
         request.setArtifactVersion("1.0");
         request.setArtifactName("hello");
-        RequestValidator.validateRequest(request);
+        new RequestValidator().validateRequest(request);
     }
 
 }

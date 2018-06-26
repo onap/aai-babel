@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -22,20 +22,20 @@ package org.onap.aai.babel.util;
 
 import org.onap.aai.babel.service.data.BabelRequest;
 
-/** Utility class */
+/**
+ * Validator for a Babel request.
+ *
+ */
 public class RequestValidator {
-
-    /** Empty constructor */
-    private RequestValidator() {
-        // Prevent instantiation
-    }
 
     /**
      * Validates that the request body contains the required attributes
      *
-     * @param request the request body to validate
+     * @param request
+     *            the request body to validate
+     * @throws RequestValidationException
      */
-    public static void validateRequest(BabelRequest request) throws RequestValidationException {
+    public void validateRequest(BabelRequest request) throws RequestValidationException {
         if (request.getCsar() == null) {
             throw new RequestValidationException("No csar attribute found in the request body.");
         }

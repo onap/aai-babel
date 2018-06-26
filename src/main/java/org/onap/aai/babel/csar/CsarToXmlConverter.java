@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -22,7 +22,6 @@ package org.onap.aai.babel.csar;
 
 import java.util.List;
 import java.util.Objects;
-
 import org.apache.commons.lang3.time.StopWatch;
 import org.onap.aai.babel.csar.extractor.InvalidArchiveException;
 import org.onap.aai.babel.csar.extractor.YamlExtractor;
@@ -34,47 +33,51 @@ import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.data.Artifact;
 
 /**
- * This class is responsible for converting content in a csar archive into one or more xml artifacts.
+ * This class is responsible for converting CSAR content into one or more XML artifacts.
  */
 public class CsarToXmlConverter {
     private static final LogHelper logger = LogHelper.INSTANCE;
 
+    private final YamlExtractor yamlExtractor;
+
+    public CsarToXmlConverter() {
+        yamlExtractor = new YamlExtractor();
+    }
+
     /**
-     * This method is responsible for extracting one or more yaml files from the given csarArtifact and then using them
-     * to generate xml artifacts.
+     * This method is responsible for generating Artifacts from YAML files within CSAR content.
      *
-     * @param csarArchive the artifact that contains the csar archive to generate xml artifacts from
-     * @param name the name of the archive file
-     * @param version the version of the archive file
-     * @return List<org.onap.sdc.generator.data.Artifact> a list of generated xml artifacts
-     * @throws CsarConverterException if there is an error either extracting the yaml files or generating xml artifacts
+     * @param csarArchive
+     *            the artifact that contains the csar archive to generate XML artifacts from
+     * @param name
+     *            the name of the archive file
+     * @param version
+     *            the version of the archive file
+     * @return List<org.onap.sdc.generator.data.Artifact> a list of generated XML artifacts
+     * @throws CsarConverterException
+     *             if there is an error either extracting the YAML files or generating XML artifacts
      */
     public List<BabelArtifact> generateXmlFromCsar(byte[] csarArchive, String name, String version)
             throws CsarConverterException {
+        validateArguments(csarArchive, name, version);
 
         StopWatch stopwatch = new StopWatch();
         stopwatch.start();
 
-        validateArguments(csarArchive, name, version);
-
         logger.info(ApplicationMsgs.DISTRIBUTION_EVENT,
-                "Starting to process csarArchive to convert contents to xml artifacts");
+                "Starting to process csarArchive to convert contents to XML artifacts");
         List<BabelArtifact> xmlArtifacts;
 
         try {
-            logger.debug("Calling YamlExtractor to extract ymlFiles");
-            List<Artifact> ymlFiles = YamlExtractor.extract(csarArchive, name, version);
-
-            logger.debug("Calling XmlArtifactGenerator to generateXmlArtifacts");
+            List<Artifact> ymlFiles = yamlExtractor.extract(csarArchive, name, version);
             xmlArtifacts = new ModelGenerator().generateArtifacts(csarArchive, ymlFiles);
-
-            logger.debug(xmlArtifacts.size() + " xml artifacts have been generated");
+            logger.debug(xmlArtifacts.size() + " XML artifact(s) have been generated");
         } catch (InvalidArchiveException e) {
             throw new CsarConverterException(
-                    "An error occurred trying to extract the yml files from the csar file : " + e);
+                    "An error occurred trying to extract the YMAL files from the csar file : " + e);
         } catch (XmlArtifactGenerationException e) {
             throw new CsarConverterException(
-                    "An error occurred trying to generate xml files from a collection of yml files : " + e);
+                    "An error occurred trying to generate XML files from a collection of YAML files : " + e);
         } finally {
             logger.logMetrics(stopwatch, LogHelper.getCallerMethodName(0));
         }
