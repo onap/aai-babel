@@ -26,6 +26,7 @@ import org.onap.aai.babel.xml.generator.data.Artifact;
 import org.onap.aai.babel.xml.generator.data.GenerationData;
 
 /** Artifact Generation. Note that there is only one implementation of this interface currently. */
+@FunctionalInterface
 public interface ArtifactGenerator {
 
     /**

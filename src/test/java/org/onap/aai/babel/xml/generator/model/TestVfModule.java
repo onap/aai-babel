@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -70,7 +70,7 @@ public class TestVfModule {
     }
 
     @Test
-    public void testNonMemberWidgetToVF() {
+    public void testNonMemberWidgetToVf() {
         VfModule vf = new VfModule();
         Widget widget = Widget.getWidget(Type.SERVICE);
         vf.setMembers(Collections.singletonList(widget.getId()));
@@ -78,19 +78,19 @@ public class TestVfModule {
     }
 
     @Test
-    public void testAddServiceWidgetToVF() {
+    public void testAddServiceWidgetToVf() {
         VfModule vf = new VfModule();
         addWidgetToModule(vf, Type.SERVICE);
     }
 
     @Test
-    public void testAddVServerWidgetToVF() {
+    public void testAddVServerWidgetToVf() {
         VfModule vf = new VfModule();
         addWidgetToModule(vf, Type.VSERVER);
     }
 
     @Test
-    public void testAddLIntfWidgetToVF() {
+    public void testAddLIntfWidgetToVf() {
         VfModule vf = new VfModule();
         addWidgetToModule(vf, Type.LINT);
         addWidgetToModule(vf, Type.VSERVER);
@@ -98,7 +98,7 @@ public class TestVfModule {
     }
 
     @Test
-    public void testAddVolumeWidgetToVF() {
+    public void testAddVolumeWidgetToVf() {
         VfModule vf = new VfModule();
         addWidgetToModule(vf, Type.VOLUME);
         addWidgetToModule(vf, Type.VSERVER);
@@ -106,7 +106,7 @@ public class TestVfModule {
     }
 
     @Test
-    public void testAddOAMNetworkWidgetToVF() {
+    public void testAddOamNetworkWidgetToVf() {
         VfModule vf = new VfModule();
         addWidgetToModule(vf, Type.OAM_NETWORK);
     }

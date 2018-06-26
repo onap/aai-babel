@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -27,16 +27,15 @@ import static org.junit.Assert.assertThat;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.aai.babel.csar.extractor.InvalidArchiveException;
 import org.onap.aai.babel.csar.extractor.YamlExtractor;
+import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.api.AaiArtifactGenerator;
 import org.onap.aai.babel.xml.generator.data.AdditionalParams;
 import org.onap.aai.babel.xml.generator.data.Artifact;
@@ -57,9 +56,8 @@ public class TestToscaParser {
 
     @Before
     public void setup() throws FileNotFoundException, IOException {
-        URL url = TestToscaParser.class.getClassLoader().getResource("artifact-generator.properties");
-        System.setProperty(GeneratorConstants.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE, url.getPath());
-
+        System.setProperty(GeneratorConstants.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
+                new ArtifactTestUtils().getResourcePath("artifact-generator.properties"));
         InputStream in = TestToscaParser.class.getClassLoader().getResourceAsStream("artifact-generator.properties");
         Properties properties = new Properties();
         properties.load(in);
@@ -69,20 +67,18 @@ public class TestToscaParser {
 
     @Test
     public void testParserWithCsarFile() throws IOException, InvalidArchiveException {
-        byte[] csar = loadResource("compressedArtifacts/catalog_csar.csar");
-        List<Artifact> ymlFiles = YamlExtractor.extract(csar, "catalog_csar.csar", "1.0");
+        String csarResourceName = "catalog_csar.csar";
+        byte[] csarBytes = new ArtifactTestUtils().getCompressedArtifact(csarResourceName);
+        List<Artifact> ymlFiles = new YamlExtractor().extract(csarBytes, csarResourceName, "1.0");
 
         Map<String, String> additionalParams = new HashMap<>();
         additionalParams.put(AdditionalParams.SERVICE_VERSION.getName(), "1.0");
 
         AaiArtifactGenerator generator = new AaiArtifactGenerator();
-        GenerationData data = generator.generateArtifact(csar, ymlFiles, additionalParams);
+        GenerationData data = generator.generateArtifact(csarBytes, ymlFiles, additionalParams);
 
         assertThat(data.getErrorData().size(), is(equalTo(0)));
         assertThat(data.getResultData().size(), is(equalTo(2)));
     }
 
-    private byte[] loadResource(String resourceName) throws IOException {
-        return IOUtils.toByteArray(TestToscaParser.class.getClassLoader().getResource(resourceName));
-    }
 }

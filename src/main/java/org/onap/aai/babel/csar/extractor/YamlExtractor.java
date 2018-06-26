@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -37,35 +37,29 @@ import org.onap.aai.babel.xml.generator.data.Artifact;
 import org.onap.aai.cl.api.Logger;
 
 /**
- * The purpose of this class is to process a .csar file in the form of a byte array and extract yaml files from it.
+ * This class extracts YAML files from CSAR (compressed archive) content.
  *
- * A .csar file is a compressed archive like a zip file and this class will treat the byte array as it if were a zip
- * file.
  */
 public class YamlExtractor {
     private static Logger logger = LogHelper.INSTANCE;
 
     private static final Pattern YAMLFILE_EXTENSION_REGEX = Pattern.compile("(?i).*\\.ya?ml$");
 
-    /** Private constructor */
-    private YamlExtractor() {
-        throw new IllegalAccessError("Utility class");
-    }
-
     /**
      * This method is responsible for filtering the contents of the supplied archive and returning a collection of
-     * {@link Artifact}s that represent the yml files that have been found in the archive.<br>
-     * <br>
-     * If the archive contains no yml files it will return an empty list.<br>
+     * {@link Artifact}s that represent the YAML files that have been found in the archive.
      *
-     * @param archive the zip file in the form of a byte array containing one or more yml files
-     * @param name the name of the archive file
-     * @param version the version of the archive file
-     * @return List<Artifact> collection of yml files found in the archive
-     * @throws InvalidArchiveException if an error occurs trying to extract the yml files from the archive, if the
-     *         archive is not a zip file or there are no yml files
+     * @param archive
+     *            the compressed archive in the form of a byte array, expected to contain one or more YAML files
+     * @param name
+     *            the name of the archive
+     * @param version
+     *            the version of the archive
+     * @return List&lt;Artifact&gt; collection of YAML artifacts found in the archive
+     * @throws InvalidArchiveException
+     *             if an error occurs trying to extract the YAML file(s) from the archive, or no files were found
      */
-    public static List<Artifact> extract(byte[] archive, String name, String version) throws InvalidArchiveException {
+    public List<Artifact> extract(byte[] archive, String name, String version) throws InvalidArchiveException {
         validateRequest(archive, name, version);
 
         logger.info(ApplicationMsgs.DISTRIBUTION_EVENT, "Extracting CSAR archive: " + name);
@@ -81,7 +75,7 @@ public class YamlExtractor {
                 }
             }
             if (ymlFiles.isEmpty()) {
-                throw new InvalidArchiveException("No valid yml files were found in the csar file.");
+                throw new InvalidArchiveException("No valid YAML files were found in the csar file.");
             }
         } catch (IOException e) {
             throw new InvalidArchiveException(
@@ -94,7 +88,15 @@ public class YamlExtractor {
         return ymlFiles;
     }
 
-    private static void validateRequest(byte[] archive, String name, String version) throws InvalidArchiveException {
+    /**
+     * Throw an error if the supplied parameters are not valid.
+     * 
+     * @param archive
+     * @param name
+     * @param version
+     * @throws InvalidArchiveException
+     */
+    private void validateRequest(byte[] archive, String name, String version) throws InvalidArchiveException {
         if (archive == null || archive.length == 0) {
             throw new InvalidArchiveException("An archive must be supplied for processing.");
         } else if (StringUtils.isBlank(name)) {
@@ -105,13 +107,15 @@ public class YamlExtractor {
     }
 
     /**
+     * Determine whether the file name matches the pattern for YAML content.
+     *
      * @param entry
-     * @return
+     *            the entry
+     * @return true, if successful
      */
-    private static boolean fileShouldBeExtracted(ZipArchiveEntry entry) {
+    private boolean fileShouldBeExtracted(ZipArchiveEntry entry) {
         boolean extractFile = YAMLFILE_EXTENSION_REGEX.matcher(entry.getName()).matches();
-        logger.debug(ApplicationMsgs.DISTRIBUTION_EVENT,
-                "Checking if " + entry.getName() + " should be extracted... " + extractFile);
+        logger.debug(ApplicationMsgs.DISTRIBUTION_EVENT, "Extraction of " + entry.getName() + "=" + extractFile);
         return extractFile;
     }
 }

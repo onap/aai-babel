@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -27,13 +27,12 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.data.Artifact;
 
 /**
- * Tests @see YamlExtractor
+ * Tests {@link YamlExtractor}.
  */
 public class YamlExtractorTest {
 
@@ -44,90 +43,72 @@ public class YamlExtractorTest {
     private static final String SUPPLY_VERSION = "The version must be supplied for processing.";
 
     @Test
-    public void extract_nullContentSupplied() {
+    public void testNullContentSupplied() {
         invalidArgumentsTest(null, FOO, FOO, SUPPLY_AN_ARCHIVE);
     }
 
-    private void invalidArgumentsTest(byte[] archive, String name, String version, String expectedErrorMessage) {
-        try {
-            YamlExtractor.extract(archive, name, version);
-            fail("An instance of InvalidArchiveException should have been thrown");
-        } catch (Exception ex) {
-            assertTrue(ex instanceof InvalidArchiveException);
-            assertEquals(expectedErrorMessage, ex.getLocalizedMessage());
-        }
-    }
-
     @Test
-    public void extract_emptyContentSupplied() {
+    public void testEmptyContentSupplied() {
         invalidArgumentsTest(new byte[0], FOO, FOO, SUPPLY_AN_ARCHIVE);
     }
 
     @Test
-    public void extract_nullNameSupplied() {
+    public void testNullNameSupplied() {
         invalidArgumentsTest(SOME_BYTES.getBytes(), null, FOO, SUPPLY_NAME);
     }
 
     @Test
-    public void extract_blankNameSupplied() {
+    public void testBlankNameSupplied() {
         invalidArgumentsTest("just some bytes that will pass the firsts validation".getBytes(), "  \t  ", FOO,
                 SUPPLY_NAME);
     }
 
     @Test
-    public void extract_emptyNameSupplied() {
+    public void testEmptyNameSupplied() {
         invalidArgumentsTest("just some bytes that will pass the firsts validation".getBytes(), "", FOO, SUPPLY_NAME);
     }
 
     @Test
-    public void extract_nullVersionSupplied() {
+    public void testNullVersionSupplied() {
         invalidArgumentsTest("just some bytes that will pass the firsts validation".getBytes(), FOO, null,
                 SUPPLY_VERSION);
     }
 
     @Test
-    public void extract_blankVersionSupplied() {
+    public void testBlankVersionSupplied() {
         invalidArgumentsTest("just some bytes that will pass the firsts validation".getBytes(), FOO, "  \t  ",
                 SUPPLY_VERSION);
     }
 
     @Test
-    public void extract_emptyVersionSupplied() {
+    public void testEmptyVersionSupplied() {
         invalidArgumentsTest("just some bytes that will pass the firsts validation".getBytes(), FOO, "",
                 SUPPLY_VERSION);
     }
 
     @Test
-    public void extract_invalidContentSupplied() {
+    public void testInvalidContentSupplied() {
         invalidArgumentsTest("This is a piece of nonsense and not a zip file".getBytes(), FOO, FOO,
                 "An error occurred trying to create a ZipFile. Is the content being converted really a csar file?");
     }
 
     @Test
-    public void extract_archiveContainsNoYmlFiles() throws IOException {
+    public void testArchiveContainsNoYmlFiles() throws IOException {
         try {
-            YamlExtractor.extract(loadResource("compressedArtifacts/noYmlFilesArchive.zip"), "noYmlFilesArchive.zip",
-                    "v1");
+            extractArchive("noYmlFilesArchive.zip");
             fail("An instance of InvalidArchiveException should have been thrown.");
         } catch (Exception e) {
             assertTrue("An instance of InvalidArchiveException should have been thrown.",
                     e instanceof InvalidArchiveException);
-            assertEquals("Incorrect message was returned", "No valid yml files were found in the csar file.",
+            assertEquals("Incorrect message was returned", "No valid YAML files were found in the csar file.",
                     e.getMessage());
         }
     }
 
-    private byte[] loadResource(final String archiveName) throws IOException {
-        return IOUtils.toByteArray(YamlExtractor.class.getClassLoader().getResource(archiveName));
-    }
-
     @Test
-    public void extract_archiveContainsOnlyTheExpectedYmlFilesFromSdWanService()
+    public void testArchiveContainsOnlyTheExpectedYmlFilesFromSdWanService()
             throws IOException, InvalidArchiveException {
-        List<Artifact> ymlFiles =
-                YamlExtractor.extract(loadResource("compressedArtifacts/service-SdWanServiceTest-csar.csar"),
-                        "service-SdWanServiceTest-csar.csar", "v1");
-
+        final List<Artifact> ymlFiles = extractArchive("service-SdWanServiceTest-csar.csar");
         List<String> payloads = new ArrayList<>();
         payloads.add("ymlFiles/resource-SdWanTestVsp-template.yml");
         payloads.add("ymlFiles/resource-TunnelXconntest-template.yml");
@@ -137,5 +118,30 @@ public class YamlExtractorTest {
 
         new ArtifactTestUtils().performYmlAsserts(ymlFiles, payloads);
     }
-}
 
+    /**
+     * @param archive
+     * @param name
+     * @param version
+     * @param expectedErrorMessage
+     */
+    private void invalidArgumentsTest(byte[] archive, String name, String version, String expectedErrorMessage) {
+        try {
+            new YamlExtractor().extract(archive, name, version);
+            fail("An instance of InvalidArchiveException should have been thrown");
+        } catch (Exception ex) {
+            assertTrue(ex instanceof InvalidArchiveException);
+            assertEquals(expectedErrorMessage, ex.getLocalizedMessage());
+        }
+    }
+
+    /**
+     * @param resourceName
+     * @return
+     * @throws InvalidArchiveException
+     * @throws IOException
+     */
+    private List<Artifact> extractArchive(String resourceName) throws InvalidArchiveException, IOException {
+        return new YamlExtractor().extract(new ArtifactTestUtils().getCompressedArtifact(resourceName), resourceName, "v1");
+    }
+}

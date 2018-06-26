@@ -144,7 +144,7 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
             Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 
             BabelRequest babelRequest = gson.fromJson(requestBody, BabelRequest.class);
-            RequestValidator.validateRequest(babelRequest);
+            new RequestValidator().validateRequest(babelRequest);
             byte[] csarFile = Base64.getDecoder().decode(babelRequest.getCsar());
 
             List<BabelArtifact> babelArtifacts = new CsarToXmlConverter().generateXmlFromCsar(csarFile,

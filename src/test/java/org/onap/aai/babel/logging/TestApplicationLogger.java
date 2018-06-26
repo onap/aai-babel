@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -61,7 +61,7 @@ public class TestApplicationLogger {
         Logger logger = LogHelper.INSTANCE;
         LogReader errorReader = new LogReader(LogHelper.getLogDirectory(), "error");
         LogReader debugReader = new LogReader(LogHelper.getLogDirectory(), "debug");
-        String[] args = {"1", "2", "3", "4"};
+        String[] args = { "1", "2", "3", "4" };
         for (ApplicationMsgs msg : Arrays.asList(ApplicationMsgs.values())) {
             if (msg.name().endsWith("ERROR")) {
                 logger.error(msg, args);
@@ -106,8 +106,8 @@ public class TestApplicationLogger {
      */
     @Test
     public void logAuditMessage() throws IOException {
-        LogHelper logger = LogHelper.INSTANCE;
-        LogReader reader = new LogReader(LogHelper.getLogDirectory(), "audit");
+        final LogHelper logger = LogHelper.INSTANCE;
+        final LogReader reader = new LogReader(LogHelper.getLogDirectory(), "audit");
 
         HttpHeaders headers = Mockito.mock(HttpHeaders.class);
         Mockito.when(headers.getHeaderString("X-ECOMP-RequestID")).thenReturn("ecomp-request-id");
@@ -115,20 +115,20 @@ public class TestApplicationLogger {
 
         // Call logAudit without first calling startAudit
         logger.logAuditSuccess("first call: bob");
-        String s = reader.getNewLines();
-        assertThat(s, is(notNullValue()));
-        assertThat("audit message log level", s, containsString("INFO"));
-        assertThat("audit message content", s, containsString("bob"));
+        String str = reader.getNewLines();
+        assertThat(str, is(notNullValue()));
+        assertThat("audit message log level", str, containsString("INFO"));
+        assertThat("audit message content", str, containsString("bob"));
 
         // This time call the start method
         logger.startAudit(headers, null);
         logger.logAuditSuccess("second call: foo");
-        s = reader.getNewLines();
-        assertThat(s, is(notNullValue()));
-        assertThat("audit message log level", s, containsString("INFO"));
-        assertThat("audit message content", s, containsString("foo"));
-        assertThat("audit message content", s, containsString("ecomp-request-id"));
-        assertThat("audit message content", s, containsString("app-id"));
+        str = reader.getNewLines();
+        assertThat(str, is(notNullValue()));
+        assertThat("audit message log level", str, containsString("INFO"));
+        assertThat("audit message content", str, containsString("foo"));
+        assertThat("audit message content", str, containsString("ecomp-request-id"));
+        assertThat("audit message content", str, containsString("app-id"));
     }
 
     /**
@@ -142,10 +142,10 @@ public class TestApplicationLogger {
         LogReader reader = new LogReader(LogHelper.getLogDirectory(), "audit");
         logger.startAudit(null, null);
         logger.logAuditSuccess("foo");
-        String s = reader.getNewLines();
-        assertThat(s, is(notNullValue()));
-        assertThat("audit message log level", s, containsString("INFO"));
-        assertThat("audit message content", s, containsString("foo"));
+        String str = reader.getNewLines();
+        assertThat(str, is(notNullValue()));
+        assertThat("audit message log level", str, containsString("INFO"));
+        assertThat("audit message content", str, containsString("foo"));
     }
 
     /**
@@ -158,10 +158,10 @@ public class TestApplicationLogger {
         LogReader reader = new LogReader(LogHelper.getLogDirectory(), "metrics");
         LogHelper logger = LogHelper.INSTANCE;
         logger.logMetrics("metrics: fred");
-        String s = reader.getNewLines();
-        assertThat(s, is(notNullValue()));
-        assertThat("metrics message log level", s, containsString("INFO"));
-        assertThat("metrics message content", s, containsString("fred"));
+        String str = reader.getNewLines();
+        assertThat(str, is(notNullValue()));
+        assertThat("metrics message log level", str, containsString("INFO"));
+        assertThat("metrics message content", str, containsString("fred"));
     }
 
     @Test
@@ -212,7 +212,7 @@ public class TestApplicationLogger {
     private void callUnsupportedOperationMethod(TriConsumer<Enum<?>, LogFields, String[]> logMethod,
             ApplicationMsgs dummyMsg) {
         try {
-            logMethod.accept(dummyMsg, new LogFields(), new String[] {""});
+            logMethod.accept(dummyMsg, new LogFields(), new String[] { "" });
             org.junit.Assert.fail("method should have thrown execption"); // NOSONAR as code not reached
         } catch (UnsupportedOperationException e) {
             // Expected to reach here
@@ -228,8 +228,8 @@ public class TestApplicationLogger {
      * @throws IOException
      */
     private void validateLoggedMessage(ApplicationMsgs msg, LogReader reader, String severity) throws IOException {
-        String s = reader.getNewLines();
-        assertThat(s, is(notNullValue()));
-        assertThat(msg.toString() + " log level", s, containsString(severity));
+        String str = reader.getNewLines();
+        assertThat(str, is(notNullValue()));
+        assertThat(msg.toString() + " log level", str, containsString(severity));
     }
 }

@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -22,7 +22,6 @@ package org.onap.aai.babel.service;
 
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,12 +48,8 @@ import org.onap.aai.babel.xml.generator.data.GeneratorConstants;
 public class CsarToXmlConverterTest {
 
     private static final String ARTIFACT_GENERATOR_CONFIG = "artifact-generator.properties";
-    private static final String CSAR_FOLDER = "compressedArtifacts";
-    private static final String VALID_CSAR_FILE = "service-SdWanServiceTest-csar.csar";
     private static final String INCORRECT_CSAR_NAME = "the_name_of_the_csar_file.csar";
     private static final String SERVICE_VERSION = "1.0";
-
-    private CsarToXmlConverter converter;
 
     static {
         if (System.getProperty("APP_HOME") == null) {
@@ -62,16 +57,36 @@ public class CsarToXmlConverterTest {
         }
     }
 
+    private enum CsarTest {
+        VALID_CSAR_FILE("service-SdWanServiceTest-csar.csar"), NO_YAML_FILES("noYmlFilesArchive.zip");
+
+        private String filename;
+        private ArtifactTestUtils artifactTestUtils = new ArtifactTestUtils();
+
+        CsarTest(String filename) {
+            this.filename = filename;
+        }
+
+        public String getName() {
+            return filename;
+        }
+
+        public byte[] getContent() throws IOException {
+            return artifactTestUtils.getCompressedArtifact(filename);
+        }
+    }
+
+    // The class to be tested.
+    private CsarToXmlConverter converter;
+
     @Rule
     public ExpectedException exception = ExpectedException.none();
-    private ArtifactTestUtils artifactTestUtils;
 
     @Before
     public void setup() {
         System.setProperty(GeneratorConstants.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
-                CsarToXmlConverterTest.class.getClassLoader().getResource(ARTIFACT_GENERATOR_CONFIG).getPath());
+                new ArtifactTestUtils().getResourcePath(ARTIFACT_GENERATOR_CONFIG));
         converter = new CsarToXmlConverter();
-        artifactTestUtils = new ArtifactTestUtils();
     }
 
     @After
@@ -86,12 +101,12 @@ public class CsarToXmlConverterTest {
 
     @Test(expected = NullPointerException.class)
     public void generateXmlFromCsar_missingName() throws CsarConverterException, IOException {
-        converter.generateXmlFromCsar(getCsar(VALID_CSAR_FILE), null, null);
+        converter.generateXmlFromCsar(CsarTest.VALID_CSAR_FILE.getContent(), null, null);
     }
 
     @Test(expected = NullPointerException.class)
     public void generateXmlFromCsar_missingVersion() throws CsarConverterException, IOException {
-        converter.generateXmlFromCsar(getCsar(VALID_CSAR_FILE), INCORRECT_CSAR_NAME, null);
+        converter.generateXmlFromCsar(CsarTest.VALID_CSAR_FILE.getContent(), INCORRECT_CSAR_NAME, null);
     }
 
     @Test(expected = CsarConverterException.class)
@@ -101,25 +116,26 @@ public class CsarToXmlConverterTest {
 
     @Test(expected = CsarConverterException.class)
     public void generateXmlFromCsar_csarFileHasNoYmlFiles() throws CsarConverterException, IOException {
-        converter.generateXmlFromCsar(getCsar("noYmlFilesArchive.zip"), "noYmlFilesArchive.zip", SERVICE_VERSION);
+        converter.generateXmlFromCsar(CsarTest.NO_YAML_FILES.getContent(), "noYmlFilesArchive.zip", SERVICE_VERSION);
     }
 
     @Test
-    public void generateXmlFromCsar_artifactgenerator_config_systemPropertyNotSet()
+    public void testArtifactGeneratorConfigMissing()
             throws IOException, XmlArtifactGenerationException, CsarConverterException {
         exception.expect(CsarConverterException.class);
         exception.expectMessage("Cannot generate artifacts. artifactgenerator.config system property not configured");
 
         // Unset the required system property
         System.clearProperty(GeneratorConstants.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE);
-        converter.generateXmlFromCsar(getCsar(VALID_CSAR_FILE), VALID_CSAR_FILE, SERVICE_VERSION);
+        converter.generateXmlFromCsar(CsarTest.VALID_CSAR_FILE.getContent(), CsarTest.VALID_CSAR_FILE.getName(),
+                SERVICE_VERSION);
     }
 
     @Test
     public void generateXmlFromCsar() throws CsarConverterException, IOException, XmlArtifactGenerationException {
         Map<String, String> expectedXmlFiles = createExpectedXmlFiles();
-        List<BabelArtifact> generatedArtifacts =
-                converter.generateXmlFromCsar(getCsar(VALID_CSAR_FILE), VALID_CSAR_FILE, SERVICE_VERSION);
+        List<BabelArtifact> generatedArtifacts = converter.generateXmlFromCsar(CsarTest.VALID_CSAR_FILE.getContent(),
+                CsarTest.VALID_CSAR_FILE.getName(), SERVICE_VERSION);
 
         generatedArtifacts
                 .forEach(ga -> assertThat("The content of " + ga.getName() + " must match the expected content",
@@ -131,8 +147,8 @@ public class CsarToXmlConverterTest {
             protected String theExpected = expected;
 
             @Override
-            public boolean matches(Object o) {
-                return artifactTestUtils.compareXMLStrings((String) o, theExpected);
+            public boolean matches(Object item) {
+                return new ArtifactTestUtils().compareXmlStrings((String) item, theExpected);
             }
 
             @Override
@@ -140,10 +156,6 @@ public class CsarToXmlConverterTest {
                 description.appendText(theExpected.toString());
             }
         };
-    }
-
-    private byte[] getCsar(String csarFileName) throws IOException {
-        return artifactTestUtils.loadResource(CSAR_FOLDER + File.separator + csarFileName);
     }
 
     private Map<String, String> createExpectedXmlFiles() throws IOException {
@@ -156,7 +168,7 @@ public class CsarToXmlConverterTest {
         filesToLoad.add("AAI-SD-WAN-Test-VSP-resource-1.0.xml");
 
         for (String filename : filesToLoad) {
-            xmlMap.put(filename, artifactTestUtils.loadResourceAsString("generatedXml" + File.separator + filename));
+            xmlMap.put(filename, new ArtifactTestUtils().loadResourceAsString("generatedXml/" + filename));
         }
 
         return xmlMap;
