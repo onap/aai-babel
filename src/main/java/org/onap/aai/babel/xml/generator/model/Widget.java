@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -20,15 +20,12 @@
  */
 package org.onap.aai.babel.xml.generator.model;
 
-import static org.onap.aai.babel.xml.generator.data.GeneratorConstants.GENERATOR_AAI_CONFIGLPROP_NOT_FOUND;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import org.onap.aai.babel.xml.generator.data.ArtifactType;
-import org.onap.aai.babel.xml.generator.data.GeneratorConstants;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.error.IllegalAccessException;
 import org.onap.aai.babel.xml.generator.types.ModelType;
@@ -36,16 +33,22 @@ import org.onap.aai.babel.xml.generator.types.ModelWidget;
 
 public abstract class Widget extends Model {
 
+    public static final String GENERATOR_AAI_CONFIGLPROP_NOT_FOUND = "Cannot generate artifacts. Widget configuration not found for %s";
+
+    public enum Type {
+        SERVICE, VF, VFC, VSERVER, VOLUME, FLAVOR, TENANT, VOLUME_GROUP, LINT, L3_NET, VFMODULE, IMAGE, OAM_NETWORK, ALLOTTED_RESOURCE, TUNNEL_XCONNECT;
+    }
+
     private Set<String> keys = new HashSet<>();
 
     /**
      * Gets widget.
      *
-     * @param type the type
+     * @param type
+     *            the type
      * @return the widget
      */
     public static Widget getWidget(Type type) {
-
         switch (type) {
             case SERVICE:
                 return new ServiceWidget();
@@ -82,11 +85,6 @@ public abstract class Widget extends Model {
         }
     }
 
-    /**
-     * Gets id.
-     *
-     * @return the id
-     */
     public String getId() {
         Properties properties = WidgetConfigurationUtil.getConfig();
         String id = properties.getProperty(ArtifactType.AAI.name() + ".model-version-id." + getName());
@@ -136,7 +134,8 @@ public abstract class Widget extends Model {
     /**
      * Equals.
      *
-     * @param obj Object
+     * @param obj
+     *            Object
      * @return the boolean
      */
     @Override
@@ -159,7 +158,8 @@ public abstract class Widget extends Model {
     /**
      * Member of boolean.
      *
-     * @param keys the keys
+     * @param keys
+     *            the keys
      * @return the boolean
      */
     public boolean memberOf(List<String> keys) {
@@ -172,7 +172,8 @@ public abstract class Widget extends Model {
     /**
      * All instances used boolean.
      *
-     * @param collection the collection
+     * @param collection
+     *            the collection
      * @return the boolean
      */
     public boolean allInstancesUsed(Set<String> collection) {
@@ -183,7 +184,7 @@ public abstract class Widget extends Model {
 
     @Override
     public boolean addResource(Resource resource) {
-        throw new IllegalAccessException(GeneratorConstants.GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION);
+        throw new IllegalAccessException(Model.GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION);
     }
 
     @Override
@@ -191,21 +192,4 @@ public abstract class Widget extends Model {
         return true;
     }
 
-    public enum Type {
-        SERVICE,
-        VF,
-        VFC,
-        VSERVER,
-        VOLUME,
-        FLAVOR,
-        TENANT,
-        VOLUME_GROUP,
-        LINT,
-        L3_NET,
-        VFMODULE,
-        IMAGE,
-        OAM_NETWORK,
-        ALLOTTED_RESOURCE,
-        TUNNEL_XCONNECT
-    }
 }

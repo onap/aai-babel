@@ -24,12 +24,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import org.onap.aai.babel.xml.generator.data.GeneratorConstants;
 import org.onap.aai.babel.xml.generator.error.IllegalAccessException;
 import org.onap.aai.babel.xml.generator.types.Cardinality;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 
 public abstract class Model {
+    public static final String GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION = "Operation Not Supported for Widgets";
 
     protected Set<Resource> resources = new HashSet<>();
     protected Set<Widget> widgets = new HashSet<>();
@@ -242,7 +242,7 @@ public abstract class Model {
 
     private void checkSupported() {
         if (this instanceof Widget) {
-            throw new IllegalAccessException(GeneratorConstants.GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION);
+            throw new IllegalAccessException(GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION);
         }
     }
 }

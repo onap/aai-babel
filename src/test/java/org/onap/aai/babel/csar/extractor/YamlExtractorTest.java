@@ -129,7 +129,7 @@ public class YamlExtractorTest {
         try {
             new YamlExtractor().extract(archive, name, version);
             fail("An instance of InvalidArchiveException should have been thrown");
-        } catch (Exception ex) {
+        } catch (InvalidArchiveException ex) {
             assertTrue(ex instanceof InvalidArchiveException);
             assertEquals(expectedErrorMessage, ex.getLocalizedMessage());
         }

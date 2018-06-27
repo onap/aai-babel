@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.io.FileUtils;
 import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
@@ -35,7 +34,6 @@ import org.onap.aai.babel.xml.generator.data.AdditionalParams;
 import org.onap.aai.babel.xml.generator.data.Artifact;
 import org.onap.aai.babel.xml.generator.data.ArtifactType;
 import org.onap.aai.babel.xml.generator.data.GenerationData;
-import org.onap.aai.babel.xml.generator.data.GeneratorConstants;
 import org.onap.aai.babel.xml.generator.data.GeneratorUtil;
 import org.onap.aai.babel.xml.generator.data.GroupType;
 import org.onap.aai.babel.xml.generator.model.Model;
@@ -49,9 +47,15 @@ import org.slf4j.MDC;
 
 public class AaiArtifactGenerator implements ArtifactGenerator {
 
-    private static final String ARTIFACT_MODEL_INFO = "ARTIFACT_MODEL_INFO";
-
     private static Logger log = LogHelper.INSTANCE;
+
+    private static final String MDC_PARAM_MODEL_INFO = "ARTIFACT_MODEL_INFO";
+    private static final String GENERATOR_AAI_GENERATED_ARTIFACT_EXTENSION = "xml";
+    private static final String GENERATOR_AAI_ERROR_MISSING_SERVICE_TOSCA = "Service tosca missing from list of input artifacts";
+    private static final String GENERATOR_AAI_ERROR_MISSING_SERVICE_VERSION = "Cannot generate artifacts. Service version is not specified";
+    private static final String GENERATOR_AAI_INVALID_SERVICE_VERSION = "Cannot generate artifacts. Service version is incorrect";
+
+    private AaiModelGenerator modelGenerator = new AaiModelGeneratorImpl();
 
     @Override
     public GenerationData generateArtifact(byte[] csarArchive, List<Artifact> input,
@@ -65,15 +69,14 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
             path = createTempFile(csarArchive);
             if (path != null) {
-                ISdcCsarHelper csarHelper =
-                        SdcToscaParserFactory.getInstance().getSdcCsarHelper(path.toAbsolutePath().toString());
+                ISdcCsarHelper csarHelper = SdcToscaParserFactory.getInstance()
+                        .getSdcCsarHelper(path.toAbsolutePath().toString());
 
-                List<NodeTemplate> serviceNodes =
-                        csarHelper.getServiceNodeTemplates();
+                List<NodeTemplate> serviceNodes = csarHelper.getServiceNodeTemplates();
                 Map<String, String> serviceMetaData = csarHelper.getServiceMetadataAllProperties();
 
                 if (serviceNodes == null) {
-                    throw new IllegalArgumentException(GeneratorConstants.GENERATOR_AAI_ERROR_MISSING_SERVICE_TOSCA);
+                    throw new IllegalArgumentException(GENERATOR_AAI_ERROR_MISSING_SERVICE_TOSCA);
                 }
 
                 // Populate basic service model metadata
@@ -91,15 +94,13 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
                 // Process the resource TOSCA files
                 List<Resource> resources = parser.processResourceToscas(serviceNodes, idTypeStore);
 
-                // Generate AAI XML service model
-                AaiModelGenerator modelGenerator = AaiModelGenerator.getInstance();
-                MDC.put(ARTIFACT_MODEL_INFO, serviceModel.getModelName() + "," + getArtifactLabel(serviceModel));
+                MDC.put(MDC_PARAM_MODEL_INFO, serviceModel.getModelName() + "," + getArtifactLabel(serviceModel));
                 String aaiServiceModel = modelGenerator.generateModelFor(serviceModel);
                 generationData.add(getServiceArtifact(serviceModel, aaiServiceModel));
 
                 // Generate AAI XML resource model
                 for (Resource res : resources) {
-                    MDC.put(ARTIFACT_MODEL_INFO, res.getModelName() + "," + getArtifactLabel(res));
+                    MDC.put(MDC_PARAM_MODEL_INFO, res.getModelName() + "," + getArtifactLabel(res));
                     String aaiResourceModel = modelGenerator.generateModelFor(res);
                     generationData.add(getResourceArtifact(res, aaiResourceModel));
 
@@ -149,7 +150,8 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     /**
      * Method to generate the artifact name for an AAI model.
      *
-     * @param model AAI artifact model
+     * @param model
+     *            AAI artifact model
      * @return Model artifact name
      */
     private String getArtifactName(Model model) {
@@ -165,15 +167,17 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         artifactName.append(model.getModelVersion());
 
         artifactName.append(".");
-        artifactName.append(GeneratorConstants.GENERATOR_AAI_GENERATED_ARTIFACT_EXTENSION);
+        artifactName.append(GENERATOR_AAI_GENERATED_ARTIFACT_EXTENSION);
         return artifactName.toString();
     }
 
     /**
      * Create Resource artifact model from the AAI xml model string.
      *
-     * @param resourceModel Model of the resource artifact
-     * @param aaiResourceModel AAI model as string
+     * @param resourceModel
+     *            Model of the resource artifact
+     * @param aaiResourceModel
+     *            AAI model as string
      * @return Generated {@link Artifact} model for the resource
      */
     private Artifact getResourceArtifact(Model resourceModel, String aaiResourceModel) {
@@ -191,8 +195,10 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     /**
      * Create Service artifact model from the AAI xml model string.
      *
-     * @param serviceModel Model of the service artifact
-     * @param aaiServiceModel AAI model as string
+     * @param serviceModel
+     *            Model of the service artifact
+     * @param aaiServiceModel
+     *            AAI model as string
      * @return Generated {@link Artifact} model for the service
      */
     private Artifact getServiceArtifact(Service serviceModel, String aaiServiceModel) {
@@ -227,12 +233,12 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         String serviceVersion;
         serviceVersion = additionalParams.get(AdditionalParams.SERVICE_VERSION.getName());
         if (serviceVersion == null) {
-            throw new IllegalArgumentException(GeneratorConstants.GENERATOR_AAI_ERROR_MISSING_SERVICE_VERSION);
+            throw new IllegalArgumentException(GENERATOR_AAI_ERROR_MISSING_SERVICE_VERSION);
         } else {
             String versionRegex = "^[1-9]\\d*(\\.0)$";
             if (!(serviceVersion.matches(versionRegex))) {
                 throw new IllegalArgumentException(
-                        String.format(GeneratorConstants.GENERATOR_AAI_INVALID_SERVICE_VERSION));
+                        String.format(GENERATOR_AAI_INVALID_SERVICE_VERSION));
             }
         }
         return serviceVersion;

@@ -40,7 +40,6 @@ import org.onap.aai.babel.xml.generator.api.AaiArtifactGenerator;
 import org.onap.aai.babel.xml.generator.data.AdditionalParams;
 import org.onap.aai.babel.xml.generator.data.Artifact;
 import org.onap.aai.babel.xml.generator.data.GenerationData;
-import org.onap.aai.babel.xml.generator.data.GeneratorConstants;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 
 /**
@@ -54,10 +53,12 @@ public class TestToscaParser {
         }
     }
 
+    private static final String ARTIFACT_GENERATOR_CONFIG = "artifact-generator.properties";
+
     @Before
     public void setup() throws FileNotFoundException, IOException {
-        System.setProperty(GeneratorConstants.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
-                new ArtifactTestUtils().getResourcePath("artifact-generator.properties"));
+        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
+                new ArtifactTestUtils().getResourcePath(ARTIFACT_GENERATOR_CONFIG));
         InputStream in = TestToscaParser.class.getClassLoader().getResourceAsStream("artifact-generator.properties");
         Properties properties = new Properties();
         properties.load(in);

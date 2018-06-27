@@ -37,10 +37,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.onap.aai.babel.csar.CsarConverterException;
 import org.onap.aai.babel.csar.CsarToXmlConverter;
+import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
 import org.onap.aai.babel.service.data.BabelArtifact;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
-import org.onap.aai.babel.xml.generator.data.GeneratorConstants;
 
 /**
  * Tests {@link CsarToXmlConverter}
@@ -84,7 +84,7 @@ public class CsarToXmlConverterTest {
 
     @Before
     public void setup() {
-        System.setProperty(GeneratorConstants.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
+        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
                 new ArtifactTestUtils().getResourcePath(ARTIFACT_GENERATOR_CONFIG));
         converter = new CsarToXmlConverter();
     }
@@ -126,7 +126,7 @@ public class CsarToXmlConverterTest {
         exception.expectMessage("Cannot generate artifacts. artifactgenerator.config system property not configured");
 
         // Unset the required system property
-        System.clearProperty(GeneratorConstants.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE);
+        System.clearProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE);
         converter.generateXmlFromCsar(CsarTest.VALID_CSAR_FILE.getContent(), CsarTest.VALID_CSAR_FILE.getName(),
                 SERVICE_VERSION);
     }

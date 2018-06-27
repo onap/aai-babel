@@ -41,8 +41,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.onap.aai.auth.AAIMicroServiceAuth;
+import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
 import org.onap.aai.babel.util.ArtifactTestUtils;
-import org.onap.aai.babel.xml.generator.data.GeneratorConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -52,7 +52,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/babel-beans.xml" })
+@ContextConfiguration(locations = {"classpath:/babel-beans.xml"})
 public class TestGenerateArtifactsServiceImpl {
 
     static {
@@ -62,13 +62,14 @@ public class TestGenerateArtifactsServiceImpl {
         System.setProperty("CONFIG_HOME", "src/test/resources");
     }
 
+    private static final String ARTIFACT_GENERATOR_CONFIG = "artifact-generator.properties";
     @Inject
     private AAIMicroServiceAuth auth;
 
     @BeforeClass
     public static void setup() {
-        System.setProperty(GeneratorConstants.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
-                new ArtifactTestUtils().getResourcePath("artifact-generator.properties"));
+        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
+                new ArtifactTestUtils().getResourcePath(ARTIFACT_GENERATOR_CONFIG));
     }
 
     @Test
@@ -109,8 +110,7 @@ public class TestGenerateArtifactsServiceImpl {
     /**
      * Create a (mocked) HTTPS request and invoke the Babel generate artifacts API
      *
-     * @param resource
-     *            path to the incoming JSON request
+     * @param resource path to the incoming JSON request
      * @return the Response from the HTTP API
      * @throws URISyntaxException
      * @throws IOException
@@ -144,7 +144,7 @@ public class TestGenerateArtifactsServiceImpl {
         Mockito.when(mockCertificate.getSubjectX500Principal())
                 .thenReturn(new X500Principal("CN=test, OU=qa, O=Test Ltd, L=London, ST=London, C=GB"));
 
-        servletRequest.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] { mockCertificate });
+        servletRequest.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] {mockCertificate});
         servletRequest.setAttribute("javax.servlet.request.cipher_suite", "");
 
         GenerateArtifactsServiceImpl service = new GenerateArtifactsServiceImpl(auth);
@@ -154,10 +154,6 @@ public class TestGenerateArtifactsServiceImpl {
 
     private String getRequestJson(String resource) throws IOException, URISyntaxException {
         return new ArtifactTestUtils().getRequestJson(resource);
-    }
-
-    private String getResponseJson(String jsonResponse) throws IOException, URISyntaxException {
-        return new ArtifactTestUtils().getResponseJson(jsonResponse);
     }
 
     private List<String> createSingletonList(String listItem) {

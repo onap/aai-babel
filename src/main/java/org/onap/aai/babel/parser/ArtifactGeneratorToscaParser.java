@@ -18,12 +18,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.aai.babel.parser;
 
-import static org.onap.aai.babel.xml.generator.data.GeneratorConstants.GENERATOR_AAI_CONFIGFILE_NOT_FOUND;
-import static org.onap.aai.babel.xml.generator.data.GeneratorConstants.GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND;
-import static org.onap.aai.babel.xml.generator.data.GeneratorConstants.GENERATOR_AAI_PROVIDING_SERVICE_METADATA_MISSING;
-import static org.onap.aai.babel.xml.generator.data.GeneratorConstants.GENERATOR_AAI_PROVIDING_SERVICE_MISSING;
+package org.onap.aai.babel.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,9 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
-
 import org.onap.aai.babel.logging.LogHelper;
-import org.onap.aai.babel.xml.generator.data.GeneratorConstants;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.model.AllotedResource;
 import org.onap.aai.babel.xml.generator.model.L3NetworkWidget;
@@ -55,11 +49,26 @@ import org.onap.sdc.toscaparser.api.Property;
 
 public class ArtifactGeneratorToscaParser {
 
-    public static final String GENERATOR_AAI_ERROR_INVALID_ID =
-            "Invalid value for mandatory attribute <%s> in Artifact: <%s>";
-    private static final String ALLOTTED_RESOURCE = "Allotted Resource";
-    private static final String TUNNEL_XCONNECT = "Tunnel XConnect";
     private static Logger log = LogHelper.INSTANCE;
+
+    public static final String PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE = "artifactgenerator.config";
+
+    private static final String GENERATOR_AAI_CONFIGFILE_NOT_FOUND =
+            "Cannot generate artifacts. Artifact Generator Configuration file not found at %s";
+    private static final String GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND =
+            "Cannot generate artifacts. artifactgenerator.config system property not configured";
+    private static final String GENERATOR_AAI_PROVIDING_SERVICE_METADATA_MISSING =
+            "Cannot generate artifacts. Providing Service Metadata is missing for allotted resource %s";
+    private static final String GENERATOR_AAI_PROVIDING_SERVICE_MISSING =
+            "Cannot generate artifacts. Providing Service is missing for allotted resource %s";
+
+    // Metadata properties
+    private static final String CATEGORY = "category";
+    private static final String ALLOTTED_RESOURCE = "Allotted Resource";
+    private static final String SUBCATEGORY = "subcategory";
+    private static final String TUNNEL_XCONNECT = "Tunnel XConnect";
+
+    private static final String VERSION = "version";
 
     private ISdcCsarHelper csarHelper;
 
@@ -95,7 +104,7 @@ public class ArtifactGeneratorToscaParser {
      */
     public static void initWidgetConfiguration() throws IOException {
         log.debug("Getting Widget Configuration");
-        String configLocation = System.getProperty(GeneratorConstants.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE);
+        String configLocation = System.getProperty(PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE);
         if (configLocation != null) {
             File file = new File(configLocation);
             if (file.exists()) {
@@ -111,7 +120,7 @@ public class ArtifactGeneratorToscaParser {
     }
 
     /**
-     * Generates a Resource List using input Service Node Templates
+     * Generates a Resource List using input Service Node Templates.
      *
      * @param serviceNodes input Service Node Templates
      * @param idTypeStore ID->Type mapping
@@ -254,11 +263,11 @@ public class ArtifactGeneratorToscaParser {
     }
 
     private boolean hasAllottedResource(Map<String, String> metadata) {
-        return ALLOTTED_RESOURCE.equals(metadata.get(GeneratorConstants.CATEGORY));
+        return ALLOTTED_RESOURCE.equals(metadata.get(CATEGORY));
     }
 
     private boolean hasSubCategoryTunnelXConnect(Map<String, String> metadata) {
-        return TUNNEL_XCONNECT.equals(metadata.get(GeneratorConstants.SUBCATEGORY));
+        return TUNNEL_XCONNECT.equals(metadata.get(SUBCATEGORY));
     }
 
     /**
@@ -286,7 +295,7 @@ public class ArtifactGeneratorToscaParser {
                             String.format(GENERATOR_AAI_PROVIDING_SERVICE_METADATA_MISSING, model.getModelId()));
                 }
                 Map<String, String> properties = populateStringProperties(nodeProperties);
-                properties.put(GeneratorConstants.VERSION, "1.0");
+                properties.put(VERSION, "1.0");
                 resourceNode.populateModelIdentificationInformation(properties);
                 model.addResource((Resource) resourceNode);
             } else if (resourceNode instanceof Resource && !(resourceNode.getWidgetType().equals(Widget.Type.L3_NET))) {
