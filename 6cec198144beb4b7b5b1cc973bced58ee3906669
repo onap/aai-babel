@@ -1,0 +1,170 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_11d581b6",
+        "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2018-06-27T16:00:10Z",
+      "side": 1,
+      "message": "this is not correct - note that other files have \"org.onap.aai\" here",
+      "range": {
+        "startLine": 3,
+        "startChar": 3,
+        "endLine": 3,
+        "endChar": 10
+      },
+      "revId": "6cec198144beb4b7b5b1cc973bced58ee3906669",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_31e75dae",
+        "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2018-06-27T16:00:10Z",
+      "side": 1,
+      "message": "the Copyright years for the project are 2017-2018 - see the file License.txt in the project",
+      "range": {
+        "startLine": 5,
+        "startChar": 17,
+        "endLine": 5,
+        "endChar": 21
+      },
+      "revId": "6cec198144beb4b7b5b1cc973bced58ee3906669",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_51ea2975",
+        "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2018-06-27T16:00:10Z",
+      "side": 1,
+      "message": "extra lines are not needed",
+      "revId": "6cec198144beb4b7b5b1cc973bced58ee3906669",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b1e36da3",
+        "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2018-06-27T16:00:10Z",
+      "side": 1,
+      "message": "method names should not contain underscores. See https://google.github.io/styleguide/javaguide.html#s5.3-camel-case",
+      "range": {
+        "startLine": 31,
+        "startChar": 16,
+        "endLine": 31,
+        "endChar": 41
+      },
+      "revId": "6cec198144beb4b7b5b1cc973bced58ee3906669",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d1de39da",
+        "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2018-06-27T16:00:10Z",
+      "side": 1,
+      "message": "use static imports\nuse assertThat() instead of older junit methods",
+      "range": {
+        "startLine": 37,
+        "startChar": 15,
+        "endLine": 37,
+        "endChar": 32
+      },
+      "revId": "6cec198144beb4b7b5b1cc973bced58ee3906669",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f1001537",
+        "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2018-06-27T16:00:10Z",
+      "side": 1,
+      "message": "it is clearer to just pass null to the method",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 28
+      },
+      "revId": "6cec198144beb4b7b5b1cc973bced58ee3906669",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_319e7d08",
+        "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2018-06-27T16:00:10Z",
+      "side": 1,
+      "message": "invalid formatting",
+      "revId": "6cec198144beb4b7b5b1cc973bced58ee3906669",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_919751eb",
+        "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2018-06-27T16:00:10Z",
+      "side": 1,
+      "message": "please format according to ONAP standards. There should be whitespace here",
+      "revId": "6cec198144beb4b7b5b1cc973bced58ee3906669",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
