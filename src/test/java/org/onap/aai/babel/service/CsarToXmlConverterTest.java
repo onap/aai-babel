@@ -58,7 +58,12 @@ public class CsarToXmlConverterTest {
     }
 
     private enum CsarTest {
-        VALID_CSAR_FILE("service-SdWanServiceTest-csar.csar"), NO_YAML_FILES("noYmlFilesArchive.zip");
+        VALID_CSAR_FILE(
+                "service-SdWanServiceTest-csar.csar"
+        ),
+        NO_YAML_FILES(
+                "noYmlFilesArchive.zip"
+        );
 
         private String filename;
         private ArtifactTestUtils artifactTestUtils = new ArtifactTestUtils();
@@ -95,27 +100,27 @@ public class CsarToXmlConverterTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void generateXmlFromCsar_nullArtifactSupplied() throws CsarConverterException {
+    public void testNullArtifactSupplied() throws CsarConverterException {
         converter.generateXmlFromCsar(null, null, null);
     }
 
     @Test(expected = NullPointerException.class)
-    public void generateXmlFromCsar_missingName() throws CsarConverterException, IOException {
+    public void testMissingName() throws CsarConverterException, IOException {
         converter.generateXmlFromCsar(CsarTest.VALID_CSAR_FILE.getContent(), null, null);
     }
 
     @Test(expected = NullPointerException.class)
-    public void generateXmlFromCsar_missingVersion() throws CsarConverterException, IOException {
+    public void testMissingVersion() throws CsarConverterException, IOException {
         converter.generateXmlFromCsar(CsarTest.VALID_CSAR_FILE.getContent(), INCORRECT_CSAR_NAME, null);
     }
 
     @Test(expected = CsarConverterException.class)
-    public void generateXmlFromCsar_noPayloadExists() throws CsarConverterException {
+    public void testNoPayloadExists() throws CsarConverterException {
         converter.generateXmlFromCsar(new byte[0], INCORRECT_CSAR_NAME, SERVICE_VERSION);
     }
 
     @Test(expected = CsarConverterException.class)
-    public void generateXmlFromCsar_csarFileHasNoYmlFiles() throws CsarConverterException, IOException {
+    public void testCsarFileHasNoYmlFiles() throws CsarConverterException, IOException {
         converter.generateXmlFromCsar(CsarTest.NO_YAML_FILES.getContent(), "noYmlFilesArchive.zip", SERVICE_VERSION);
     }
 

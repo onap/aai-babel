@@ -48,7 +48,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * Direct invocation of the generate artifacts service implementation
+ * Direct invocation of the generate artifacts service implementation.
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -63,6 +63,7 @@ public class TestGenerateArtifactsServiceImpl {
     }
 
     private static final String ARTIFACT_GENERATOR_CONFIG = "artifact-generator.properties";
+
     @Inject
     private AAIMicroServiceAuth auth;
 
@@ -70,6 +71,13 @@ public class TestGenerateArtifactsServiceImpl {
     public static void setup() {
         System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
                 new ArtifactTestUtils().getResourcePath(ARTIFACT_GENERATOR_CONFIG));
+    }
+
+    @Test
+    public void testGenerateArtifacts() throws Exception {
+        Response response = processJsonRequest("success_request_vnf_catalog.json");
+        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
 
     @Test
@@ -108,12 +116,12 @@ public class TestGenerateArtifactsServiceImpl {
     }
 
     /**
-     * Create a (mocked) HTTPS request and invoke the Babel generate artifacts API
+     * Create a (mocked) HTTPS request and invoke the Babel generate artifacts API.
      *
      * @param resource path to the incoming JSON request
      * @return the Response from the HTTP API
-     * @throws URISyntaxException
-     * @throws IOException
+     * @throws URISyntaxException if the URI cannot be created
+     * @throws IOException if the resource cannot be loaded
      */
     private Response processJsonRequest(String resource) throws URISyntaxException, IOException {
         UriInfo mockUriInfo = Mockito.mock(UriInfo.class);
@@ -154,6 +162,10 @@ public class TestGenerateArtifactsServiceImpl {
 
     private String getRequestJson(String resource) throws IOException, URISyntaxException {
         return new ArtifactTestUtils().getRequestJson(resource);
+    }
+
+    private String getResponseJson(String jsonResponse) throws IOException, URISyntaxException {
+        return new ArtifactTestUtils().getResponseJson(jsonResponse);
     }
 
     private List<String> createSingletonList(String listItem) {
