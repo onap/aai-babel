@@ -24,14 +24,12 @@ import java.util.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 
 /** Utility method class for artifact generation. */
-public class GeneratorUtil {
+public final class GeneratorUtil {
 
     /*
      * Private constructor to prevent instantiation
      */
-    private GeneratorUtil() {
-        throw new UnsupportedOperationException("This static class should not be instantiated!");
-    }
+    private GeneratorUtil() {}
 
     /**
      * Decodes Base64 encode byte array input.
@@ -39,7 +37,7 @@ public class GeneratorUtil {
      * @param input Base64 encoded byte array
      * @return Decoded byte array
      */
-    public static byte[] decoder(byte[] input) {
+    public static byte[] decode(byte[] input) {
         return input != null ? Base64.getDecoder().decode(input) : new byte[0];
     }
 
