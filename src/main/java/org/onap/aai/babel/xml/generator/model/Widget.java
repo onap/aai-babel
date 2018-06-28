@@ -36,7 +36,7 @@ public abstract class Widget extends Model {
     public static final String GENERATOR_AAI_CONFIGLPROP_NOT_FOUND = "Cannot generate artifacts. Widget configuration not found for %s";
 
     public enum Type {
-        SERVICE, VF, VFC, VSERVER, VOLUME, FLAVOR, TENANT, VOLUME_GROUP, LINT, L3_NET, VFMODULE, IMAGE, OAM_NETWORK, ALLOTTED_RESOURCE, TUNNEL_XCONNECT;
+        SERVICE, VF, VFC, VSERVER, VOLUME, FLAVOR, TENANT, VOLUME_GROUP, LINT, L3_NET, VFMODULE, IMAGE, OAM_NETWORK, ALLOTTED_RESOURCE, TUNNEL_XCONNECT, CONFIGURATION;
     }
 
     private Set<String> keys = new HashSet<>();
@@ -80,6 +80,8 @@ public abstract class Widget extends Model {
                 return new AllotedResourceWidget();
             case TUNNEL_XCONNECT:
                 return new TunnelXconnectWidget();
+            case CONFIGURATION:
+                return new ConfigurationWidget();
             default:
                 return null;
         }

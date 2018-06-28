@@ -76,6 +76,9 @@ public abstract class Model {
                 case "org.openecomp.resource.vfc.nodes.heat.cinder":
                     modelToBeReturned = new VolumeWidget();
                     break;
+                case "org.openecomp.nodes.PortMirroringConfiguration":
+                    modelToBeReturned = new Configuration();
+                    break;
                 default:
                     modelToBeReturned = null;
                     break;

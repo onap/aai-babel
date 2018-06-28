@@ -1,0 +1,32 @@
+<model xmlns="http://org.onap.aai.inventory/v13">
+    <model-invariant-id>cf53c1d6-8708-4b4e-a056-ead7daa57cd5</model-invariant-id>
+    <model-type>resource</model-type>
+    <model-vers>
+        <model-ver>
+            <model-version-id>ea4e93c3-1a6d-4314-8165-c284a91422dc</model-version-id>
+            <model-name>Port Mirroring Configuration</model-name>
+            <model-version>35.0</model-version>
+            <model-description>A port mirroring configuration object</model-description>
+            <model-elements>
+                <model-element>
+                    <new-data-del-flag>T</new-data-del-flag>
+                    <cardinality>unbounded</cardinality>
+                    <model-elements/>
+                    <relationship-list>
+                        <relationship>
+                            <related-to>model-ver</related-to>
+                            <relationship-data>
+                                <relationship-key>model-ver.model-version-id</relationship-key>
+                                <relationship-value>5a175add-57e4-4a5d-8b02-c36f1d69c52b</relationship-value>
+                            </relationship-data>
+                            <relationship-data>
+                                <relationship-key>model.model-invariant-id</relationship-key>
+                                <relationship-value>166c050d-f69d-4305-943e-0bc58c3a26cf</relationship-value>
+                            </relationship-data>
+                        </relationship>
+                    </relationship-list>
+                </model-element>
+            </model-elements>
+        </model-ver>
+    </model-vers>
+</model>

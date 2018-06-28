@@ -63,6 +63,9 @@ public class CsarToXmlConverterTest {
         ),
         NO_YAML_FILES(
                 "noYmlFilesArchive.zip"
+        ),
+        PORT_MIRROR_CSAR(
+                "service_PortMirror.csar"
         );
 
         private String filename;
@@ -147,6 +150,18 @@ public class CsarToXmlConverterTest {
                         ga.getPayload(), matches(expectedXmlFiles.get(ga.getName()))));
     }
 
+    @Test
+    public void generatePortMirrorConfigurationModel()
+            throws CsarConverterException, IOException, XmlArtifactGenerationException {
+        Map<String, String> expectedXmlFiles = createExpectedXmlFiles();
+        List<BabelArtifact> generatedArtifacts = converter.generateXmlFromCsar(CsarTest.PORT_MIRROR_CSAR.getContent(),
+                CsarTest.PORT_MIRROR_CSAR.getName(), SERVICE_VERSION);
+
+        generatedArtifacts
+                .forEach(ga -> assertThat("The content of " + ga.getName() + " must match the expected content",
+                        ga.getPayload(), matches(expectedXmlFiles.get(ga.getName()))));
+    }
+
     public Matcher<String> matches(final String expected) {
         return new BaseMatcher<String>() {
             protected String theExpected = expected;
@@ -171,6 +186,8 @@ public class CsarToXmlConverterTest {
         filesToLoad.add("AAI-SdWanTestVsp..DUMMY..module-0-resource-2.xml");
         filesToLoad.add("AAI-Tunnel_XConnTest-resource-2.0.xml");
         filesToLoad.add("AAI-SD-WAN-Test-VSP-resource-1.0.xml");
+        filesToLoad.add("AAI-Port Mirror_Test-service-1.0.xml");
+        filesToLoad.add("AAI-Port Mirroring Configuration-resource-35.0.xml");
 
         for (String filename : filesToLoad) {
             xmlMap.put(filename, new ArtifactTestUtils().loadResourceAsString("generatedXml/" + filename));
