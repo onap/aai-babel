@@ -88,6 +88,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_59348ffa",
+        "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2018-06-28T09:00:59Z",
+      "side": 1,
+      "message": "as stated in https://google.github.io/styleguide/javaguide.html#s5.2.3-method-names \n\"Underscores may appear in JUnit test method names to separate logical components of the name, with each component written in lowerCamelCase\"\n\nIs there any official tests naming convention in ONAP?",
+      "parentUuid": "5a93c517_b1e36da3",
+      "range": {
+        "startLine": 31,
+        "startChar": 16,
+        "endLine": 31,
+        "endChar": 41
+      },
+      "revId": "6cec198144beb4b7b5b1cc973bced58ee3906669",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_d1de39da",
         "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
         "patchSetId": 2
