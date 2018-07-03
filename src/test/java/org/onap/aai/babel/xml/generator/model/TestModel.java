@@ -20,25 +20,34 @@
  */
 package org.onap.aai.babel.xml.generator.model;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
+import org.onap.aai.babel.xml.generator.model.Widget.Type;
+import org.onap.aai.babel.xml.generator.types.ModelType;
 
 /**
- * Direct tests of the Model (to improve code coverage).
+ * Direct tests of the Model abstract class (to improve code coverage). Not all methods are tested here. Some are
+ * covered by the tests of derived classes.
  */
 public class TestModel {
 
+    private Service serviceModel = new Service();
+    private Resource resourceModel = new VirtualFunction();
+    private Widget widgetModel = new OamNetwork();
+    private Model anonymousModel;
+
     static {
-        if (System.getProperty("AJSC_HOME") == null) {
-            System.setProperty("AJSC_HOME", ".");
-        }
+        System.setProperty("APP_HOME", ".");
     }
 
     @Before
@@ -48,25 +57,68 @@ public class TestModel {
         properties.load(in);
         in.close();
         WidgetConfigurationUtil.setConfig(properties);
+
+        anonymousModel = new Model() {
+            @Override
+            public boolean addResource(Resource resource) {
+                return false;
+            }
+
+            @Override
+            public boolean addWidget(Widget resource) {
+                return false;
+            }
+
+            @Override
+            public Type getWidgetType() {
+                return null;
+            }
+        };
     }
 
     @Test
     public void testGetModels() {
-        Collection<String> toscaTypes = Arrays.asList("org.openecomp.resource.vf.allottedResource",
-                "org.openecomp.resource.cp", "org.openecomp.resource.vfc.nodes.heat.cinder", "any.unknown.type", null);
-        for (String toscaType : toscaTypes) {
-            Model.getModelFor(toscaType);
-        }
+        assertThat(Model.getModelFor(null), is(nullValue()));
+        assertThat(Model.getModelFor(""), is(nullValue()));
+        assertThat(Model.getModelFor("any.unknown.type"), is(nullValue()));
+
+        assertThat(Model.getModelFor("org.openecomp.resource.vf.allottedResource"), instanceOf(AllotedResource.class));
+        assertThat(Model.getModelFor("org.openecomp.resource.vfc.AllottedResource"),
+                instanceOf(ProvidingService.class));
+        assertThat(Model.getModelFor("org.openecomp.resource.vfc"), instanceOf(VServerWidget.class));
+        assertThat(Model.getModelFor("org.openecomp.resource.cp"), instanceOf(LIntfWidget.class));
+        assertThat(Model.getModelFor("org.openecomp.cp"), instanceOf(LIntfWidget.class));
+        assertThat(Model.getModelFor("org.openecomp.cp.some.suffix"), instanceOf(LIntfWidget.class));
+        assertThat(Model.getModelFor("org.openecomp.resource.vl"), instanceOf(L3Network.class));
+        assertThat(Model.getModelFor("org.openecomp.resource.vf"), instanceOf(VirtualFunction.class));
+        assertThat(Model.getModelFor("org.openecomp.groups.vfmodule"), instanceOf(VfModule.class));
+        assertThat(Model.getModelFor("org.openecomp.groups.VfModule"), instanceOf(VfModule.class));
+        assertThat(Model.getModelFor("org.openecomp.resource.vfc.nodes.heat.cinder"), instanceOf(VolumeWidget.class));
+        assertThat(Model.getModelFor("org.openecomp.nodes.PortMirroringConfiguration"),
+                instanceOf(Configuration.class));
     }
 
     @Test
     public void testGetCardinality() {
-        new AllotedResource().getCardinality();
+        resourceModel.getCardinality();
     }
 
     @Test
     public void testGetModelType() {
-        new OamNetwork().getModelType();
+        assertThat(serviceModel.getModelType(), is(ModelType.SERVICE));
+        assertThat(resourceModel.getModelType(), is(ModelType.RESOURCE));
+        assertThat(widgetModel.getModelType(), is(ModelType.WIDGET));
+        assertThat(anonymousModel.getModelType(), is(nullValue()));
+    }
+
+    @Test
+    public void testGetModelNameVersionId() {
+        assertThat(anonymousModel.getModelNameVersionId(), is(nullValue()));
+    }
+
+    @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
+    public void testGetModelNameVersionIdIsUnsupported() {
+        assertThat(widgetModel.getModelNameVersionId(), is(nullValue()));
     }
 
 }

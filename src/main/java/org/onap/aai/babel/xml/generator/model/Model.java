@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -20,72 +20,149 @@
  */
 package org.onap.aai.babel.xml.generator.model;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import org.onap.aai.babel.logging.ApplicationMsgs;
+import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.xml.generator.error.IllegalAccessException;
 import org.onap.aai.babel.xml.generator.types.Cardinality;
 import org.onap.aai.babel.xml.generator.types.ModelType;
+import org.onap.aai.cl.api.Logger;
 
 public abstract class Model {
+
     public static final String GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION = "Operation Not Supported for Widgets";
+
+    private static Logger log = LogHelper.INSTANCE;
+
+    private static Map<String, Class<? extends Model>> typeToModel = new HashMap<>();
+    static {
+        typeToModel.put("org.openecomp.resource.vf.allottedResource", AllotedResource.class);
+        typeToModel.put("org.openecomp.resource.vfc.AllottedResource", ProvidingService.class);
+        typeToModel.put("org.openecomp.resource.vfc", VServerWidget.class);
+        typeToModel.put("org.openecomp.resource.cp", LIntfWidget.class);
+        typeToModel.put("org.openecomp.cp", LIntfWidget.class);
+        typeToModel.put("org.openecomp.resource.vl", L3Network.class);
+        typeToModel.put("org.openecomp.resource.vf", VirtualFunction.class);
+        typeToModel.put("org.openecomp.groups.vfmodule", VfModule.class);
+        typeToModel.put("org.openecomp.groups.VfModule", VfModule.class);
+        typeToModel.put("org.openecomp.resource.vfc.nodes.heat.cinder", VolumeWidget.class);
+        typeToModel.put("org.openecomp.nodes.PortMirroringConfiguration", Configuration.class);
+    }
+
+    private enum ModelIdentification {
+        ID("vfModuleModelInvariantUUID", "serviceInvariantUUID", "resourceInvariantUUID", "invariantUUID",
+                "providing_service_invariant_uuid") {
+            @Override
+            public void populate(Model model, String value) {
+                model.modelId = value;
+            }
+        },
+        NAME_VERSION_ID("vfModuleModelUUID", "resourceUUID", "serviceUUID", "UUID", "providing_service_uuid") {
+            @Override
+            public void populate(Model model, String value) {
+                model.modelNameVersionId = value;
+            }
+        },
+        VERSION("vfModuleModelVersion", "serviceVersion", "resourceversion", "version") {
+            @Override
+            public void populate(Model model, String value) {
+                model.modelVersion = value;
+            }
+        },
+        NAME("vfModuleModelName", "serviceName", "resourceName", "name") {
+            @Override
+            public void populate(Model model, String value) {
+                model.modelName = value;
+            }
+        },
+        DESCRIPTION("serviceDescription", "resourceDescription", "vf_module_description", "description") {
+            @Override
+            public void populate(Model model, String value) {
+                model.modelDescription = value;
+            }
+        },
+        NAME_AND_DESCRIPTION("providing_service_name") {
+            @Override
+            public void populate(Model model, String value) {
+                model.modelName = model.modelDescription = value;
+            }
+        };
+
+        private static final Map<String, ModelIdentification> propertyToModelIdent;
+        private String[] keys;
+
+        ModelIdentification(String... keys) {
+            this.keys = keys;
+        }
+
+        static {
+            Map<String, ModelIdentification> mappings = new HashMap<>();
+            for (ModelIdentification ident : ModelIdentification.values()) {
+                for (String key : ident.keys) {
+                    mappings.put(key, ident);
+                }
+            }
+            propertyToModelIdent = Collections.unmodifiableMap(mappings);
+        }
+
+        private static Optional<ModelIdentification> getModelIdentFromProperty(String property) {
+            return Optional.ofNullable(propertyToModelIdent.get(property));
+        }
+
+        public abstract void populate(Model model, String value);
+    }
+
+    private String modelId;
+    private String modelName;
+    private String modelNameVersionId;
+    private String modelVersion;
+    private String modelDescription;
 
     protected Set<Resource> resources = new HashSet<>();
     protected Set<Widget> widgets = new HashSet<>();
-    private String modelId;
-    private String modelName;
-    private String modelVersion;
-    private String modelNameVersionId;
-    private String modelDescription;
 
     /**
      * Gets the object (model) corresponding to the supplied TOSCA type.
      *
-     * @param toscaType the tosca type
+     * @param toscaType
+     *            the tosca type
      * @return the model for the type, or null
      */
     public static Model getModelFor(String toscaType) {
-        Model modelToBeReturned = null;
-        String typePrefix = toscaType;
-        while (modelToBeReturned == null && typePrefix != null && typePrefix.lastIndexOf('.') != -1) {
-            switch (typePrefix) {
-                case "org.openecomp.resource.vf.allottedResource":
-                    modelToBeReturned = new AllotedResource();
-                    break;
-                case "org.openecomp.resource.vfc.AllottedResource":
-                    modelToBeReturned = new ProvidingService();
-                    break;
-                case "org.openecomp.resource.vfc":
-                    modelToBeReturned = new VServerWidget();
-                    break;
-                case "org.openecomp.resource.cp":
-                case "org.openecomp.cp":
-                    modelToBeReturned = new LIntfWidget();
-                    break;
-                case "org.openecomp.resource.vl":
-                    modelToBeReturned = new L3Network();
-                    break;
-                case "org.openecomp.resource.vf":
-                    modelToBeReturned = new VirtualFunction();
-                    break;
-                case "org.openecomp.groups.vfmodule":
-                case "org.openecomp.groups.VfModule":
-                    modelToBeReturned = new VfModule();
-                    break;
-                case "org.openecomp.resource.vfc.nodes.heat.cinder":
-                    modelToBeReturned = new VolumeWidget();
-                    break;
-                case "org.openecomp.nodes.PortMirroringConfiguration":
-                    modelToBeReturned = new Configuration();
-                    break;
-                default:
-                    modelToBeReturned = null;
-                    break;
-            }
-            typePrefix = typePrefix.substring(0, typePrefix.lastIndexOf('.'));
+        Model model = null;
+        if (toscaType != null && !toscaType.isEmpty()) {
+            model = getModelFromType(toscaType).orElseGet(() -> Model.getModelFromPrefix(toscaType));
         }
+        return model;
+    }
 
+    private static Model getModelFromPrefix(String toscaType) {
+        Model model = null;
+        int lastSeparator = toscaType.lastIndexOf('.');
+        if (lastSeparator != -1) {
+            model = getModelFor(toscaType.substring(0, lastSeparator));
+        }
+        return model;
+    }
+
+    private static Optional<Model> getModelFromType(String typePrefix) {
+        Optional<Model> modelToBeReturned = Optional.empty();
+        Class<? extends Model> clazz = typeToModel.get(typePrefix);
+        if (clazz != null) {
+            try {
+                modelToBeReturned = Optional.ofNullable(clazz.getConstructor().newInstance());
+            } catch (InstantiationException | java.lang.IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                log.error(ApplicationMsgs.INVALID_CSAR_FILE, e);
+            }
+        }
         return modelToBeReturned;
     }
 
@@ -93,26 +170,17 @@ public abstract class Model {
 
     public abstract boolean addWidget(Widget resource);
 
-    /**
-     * Gets widget version id.
-     *
-     * @return the widget version id
-     */
-    public String getWidgetId() {
-        org.onap.aai.babel.xml.generator.types.Model model =
-                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
-        return Widget.getWidget(model.widget()).getId();
-    }
+    public abstract Widget.Type getWidgetType();
 
     /**
-     * Gets invariant id.
+     * Gets cardinality.
      *
-     * @return the invariant id
+     * @return the cardinality
      */
-    public String getWidgetInvariantId() {
-        org.onap.aai.babel.xml.generator.types.Model model =
-                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
-        return Widget.getWidget(model.widget()).getWidgetId();
+    public Cardinality getCardinality() {
+        org.onap.aai.babel.xml.generator.types.Model model = this.getClass()
+                .getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
+        return model.cardinality();
     }
 
     /**
@@ -121,27 +189,31 @@ public abstract class Model {
      * @return the delete flag
      */
     public boolean getDeleteFlag() {
-        org.onap.aai.babel.xml.generator.types.Model model =
-                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
+        org.onap.aai.babel.xml.generator.types.Model model = this.getClass()
+                .getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
         return model.dataDeleteFlag();
     }
 
-    /**
-     * Gets cardinality.
-     *
-     * @return the cardinality
-     */
-    public Cardinality getCardinality() {
-        org.onap.aai.babel.xml.generator.types.Model model =
-                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
-        return model.cardinality();
+    public String getModelDescription() {
+        return modelDescription;
     }
-
-    public abstract Widget.Type getWidgetType();
 
     public String getModelId() {
         checkSupported();
         return modelId;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public String getModelVersion() {
+        return modelVersion;
+    }
+
+    public String getModelNameVersionId() {
+        checkSupported();
+        return modelNameVersionId;
     }
 
     /**
@@ -161,72 +233,42 @@ public abstract class Model {
         }
     }
 
-    public String getModelName() {
-        return modelName;
+    /**
+     * Gets widget version id.
+     *
+     * @return the widget version id
+     */
+    public String getWidgetId() {
+        org.onap.aai.babel.xml.generator.types.Model model = this.getClass()
+                .getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
+        return Widget.getWidget(model.widget()).getId();
     }
 
-    public String getModelVersion() {
-        return modelVersion;
-    }
-
-    public String getModelNameVersionId() {
-        checkSupported();
-        return modelNameVersionId;
-    }
-
-    public String getModelDescription() {
-        return modelDescription;
+    /**
+     * Gets invariant id.
+     *
+     * @return the invariant id
+     */
+    public String getWidgetInvariantId() {
+        org.onap.aai.babel.xml.generator.types.Model model = this.getClass()
+                .getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
+        return Widget.getWidget(model.widget()).getWidgetId();
     }
 
     /**
      * Populate model identification information.
      *
-     * @param modelIdentInfo the model ident info
+     * @param modelIdentInfo
+     *            the model ident info
      */
     public void populateModelIdentificationInformation(Map<String, String> modelIdentInfo) {
         Iterator<String> iter = modelIdentInfo.keySet().iterator();
         String property;
         while (iter.hasNext()) {
             property = iter.next();
-            switch (property) {
-                case "vfModuleModelInvariantUUID":
-                case "serviceInvariantUUID":
-                case "resourceInvariantUUID":
-                case "invariantUUID":
-                case "providing_service_invariant_uuid":
-                    modelId = modelIdentInfo.get(property);
-                    break;
-                case "vfModuleModelUUID":
-                case "resourceUUID":
-                case "serviceUUID":
-                case "UUID":
-                case "providing_service_uuid":
-                    modelNameVersionId = modelIdentInfo.get(property);
-                    break;
-                case "vfModuleModelVersion":
-                case "serviceVersion":
-                case "resourceversion":
-                case "version":
-                    modelVersion = modelIdentInfo.get(property);
-                    break;
-                case "vfModuleModelName":
-                case "serviceName":
-                case "resourceName":
-                case "name":
-                    modelName = modelIdentInfo.get(property);
-                    break;
-                case "serviceDescription":
-                case "resourceDescription":
-                case "vf_module_description":
-                case "description":
-                    modelDescription = modelIdentInfo.get(property);
-                    break;
-                case "providing_service_name":
-                    modelName = modelIdentInfo.get(property);
-                    modelDescription = modelIdentInfo.get(property);
-                    break;
-                default:
-                    break;
+            Optional<ModelIdentification> modelIdent = ModelIdentification.getModelIdentFromProperty(property);
+            if (modelIdent.isPresent()) {
+                modelIdent.get().populate(this, modelIdentInfo.get(property));
             }
         }
     }
