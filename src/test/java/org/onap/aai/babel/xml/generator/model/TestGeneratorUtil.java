@@ -19,15 +19,17 @@
  */
 package org.onap.aai.babel.xml.generator.model;
 
-import java.util.Base64;
-import org.junit.Test;
-import org.onap.aai.babel.xml.generator.data.GeneratorUtil;
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
+import java.util.Base64;
+import org.junit.Test;
+import org.onap.aai.babel.xml.generator.data.GeneratorUtil;
+
 public class TestGeneratorUtil {
+
+    private static final byte[] TEST_BYTES = "TestBytes".getBytes();
 
     @Test
     public void shouldEncodeUsingBase64() {
@@ -48,7 +50,7 @@ public class TestGeneratorUtil {
 
     @Test
     public void shouldDecodeUsingBase64() {
-        byte[] input = Base64.getEncoder().encode("TestBytes".getBytes());
+        byte[] input = Base64.getEncoder().encode(TEST_BYTES);
         byte[] expected = Base64.getDecoder().decode(input);
 
         byte[] result = GeneratorUtil.decode(input);
