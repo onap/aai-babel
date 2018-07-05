@@ -112,6 +112,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_78993c78",
+        "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2018-07-05T13:30:37Z",
+      "side": 1,
+      "message": "This is more a question of consistency with the other Java code already present in this git repo. I do not know of any Junit test naming conventions for ONAP (other than the previously mentioned https://wiki.onap.org/display/DW/Java+code+style). However, the repos that I have worked on do not tend to favour underscores. We have been phasing out prefixes that simply repeat the test Class name. I do not perceive any value to having a common prefix that simply extends the method name.",
+      "parentUuid": "5a93c517_59348ffa",
+      "range": {
+        "startLine": 31,
+        "startChar": 16,
+        "endLine": 31,
+        "endChar": 41
+      },
+      "revId": "6cec198144beb4b7b5b1cc973bced58ee3906669",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_d1de39da",
         "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
         "patchSetId": 2
