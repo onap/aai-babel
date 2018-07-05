@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_584800cc",
+        "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2018-07-05T14:15:37Z",
+      "side": 1,
+      "message": "Please order the import statements according to the Google Style Guide: https://google.github.io/styleguide/javaguide.html#s3.3-import-statements",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 42
+      },
+      "revId": "3ac5cb957755ae76a65c51e0368f5dc3760b98f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f80eac8b",
+        "filename": "src/test/java/org/onap/aai/babel/xml/generator/model/TestGeneratorUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2018-07-05T14:15:37Z",
+      "side": 1,
+      "message": "I realise that this is a very minor point, but I do prefer to avoid code repetition. Some code analysis tools will pick this up and advise the creation of a constant.",
+      "range": {
+        "startLine": 51,
+        "startChar": 50,
+        "endLine": 51,
+        "endChar": 72
+      },
+      "revId": "3ac5cb957755ae76a65c51e0368f5dc3760b98f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
