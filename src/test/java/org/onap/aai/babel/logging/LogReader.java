@@ -79,8 +79,10 @@ public class LogReader {
     }
 
     /**
+     * Wait for and read new log entries.
+     *
      * @return new lines appended to the log file
-     * @throws IOException
+     * @throws IOException If an I/O error occurs
      */
     public String getNewLines() throws IOException {
         StopWatch stopwatch = new StopWatch();

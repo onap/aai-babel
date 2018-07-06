@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.model;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -50,6 +51,12 @@ public class TestModel {
         System.setProperty("APP_HOME", ".");
     }
 
+    /**
+     * Load the Widget to UUID mappings from the Artifact Generator properties.
+     *
+     * @throws FileNotFoundException if the properties file is missing
+     * @throws IOException if the properties file is not loaded
+     */
     @Before
     public void setup() throws FileNotFoundException, IOException {
         InputStream in = TestModel.class.getClassLoader().getResourceAsStream("artifact-generator.properties");

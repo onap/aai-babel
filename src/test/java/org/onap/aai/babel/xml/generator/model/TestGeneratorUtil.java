@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.model;
 
 import static org.hamcrest.core.Is.is;
@@ -35,7 +36,6 @@ public class TestGeneratorUtil {
     @Test
     public void shouldEncodeUsingBase64() {
         byte[] expected = Base64.getEncoder().encode(TEST_BYTES);
-
         byte[] result = GeneratorUtil.encode(TEST_BYTES);
 
         assertThat(result, is(expected));

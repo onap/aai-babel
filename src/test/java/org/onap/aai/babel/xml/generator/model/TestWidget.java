@@ -18,37 +18,84 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.model;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Properties;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
+import org.onap.aai.babel.xml.generator.types.ModelType;
 
 /**
- * Direct tests of the Model so as to improve code coverage
+ * Direct tests of the Widget class for code coverage.
  */
 public class TestWidget {
 
     static {
-        if (System.getProperty("APP_HOME") == null) {
-            System.setProperty("APP_HOME", ".");
+        System.setProperty("APP_HOME", ".");
+    }
+
+    /**
+     * Load the Widget to UUID mappings from the Artifact Generator properties.
+     *
+     * @throws FileNotFoundException if the properties file is missing
+     * @throws IOException if the properties file is not loaded
+     */
+    @BeforeClass
+    public static void setup() throws FileNotFoundException, IOException {
+        final Properties properties = new Properties();
+        try (InputStream in = TestWidget.class.getClassLoader().getResourceAsStream("artifact-generator.properties")) {
+            properties.load(in);
         }
+        WidgetConfigurationUtil.setConfig(properties);
     }
 
     @Test
     public void testGetWidgets() {
-        Widget.getWidget(Type.VFC);
-        Widget.getWidget(Type.FLAVOR);
-        Widget.getWidget(Type.TENANT);
-        Widget.getWidget(Type.VOLUME_GROUP);
-        Widget.getWidget(Type.L3_NET);
-        Widget.getWidget(Type.IMAGE);
-        Widget.getWidget(Type.TUNNEL_XCONNECT);
+        assertThat(Widget.getWidget(Type.SERVICE), instanceOf(ServiceWidget.class));
+        assertThat(Widget.getWidget(Type.VF), instanceOf(VfWidget.class));
+        assertThat(Widget.getWidget(Type.VFC), instanceOf(VfcWidget.class));
+        assertThat(Widget.getWidget(Type.VSERVER), instanceOf(VServerWidget.class));
+        assertThat(Widget.getWidget(Type.VOLUME), instanceOf(VolumeWidget.class));
+        assertThat(Widget.getWidget(Type.FLAVOR), instanceOf(FlavorWidget.class));
+        assertThat(Widget.getWidget(Type.TENANT), instanceOf(TenantWidget.class));
+        assertThat(Widget.getWidget(Type.VOLUME_GROUP), instanceOf(VolumeGroupWidget.class));
+        assertThat(Widget.getWidget(Type.LINT), instanceOf(LIntfWidget.class));
+        assertThat(Widget.getWidget(Type.L3_NET), instanceOf(L3NetworkWidget.class));
+        assertThat(Widget.getWidget(Type.VFMODULE), instanceOf(VfModuleWidget.class));
+        assertThat(Widget.getWidget(Type.IMAGE), instanceOf(ImageWidget.class));
+        assertThat(Widget.getWidget(Type.OAM_NETWORK), instanceOf(OamNetwork.class));
+        assertThat(Widget.getWidget(Type.ALLOTTED_RESOURCE), instanceOf(AllotedResourceWidget.class));
+        assertThat(Widget.getWidget(Type.TUNNEL_XCONNECT), instanceOf(TunnelXconnectWidget.class));
+        assertThat(Widget.getWidget(Type.CONFIGURATION), instanceOf(ConfigurationWidget.class));
     }
 
     @Test
-    public void testMethods() {
-        new ServiceWidget().addWidget(new TenantWidget());
-        new VolumeGroupWidget().getWidgetType();
+    public void testWidgetMethods() {
+        Widget widget = new ServiceWidget();
+        assertThat(widget.getType(), is(ModelType.WIDGET));
+        assertThat(widget.getWidgetId(), is("82194af1-3c2c-485a-8f44-420e22a9eaa4"));
+        assertThat(widget.addWidget(new TenantWidget()), is(true));
+        assertThat(widget.memberOf(null), is(false));
+        assertThat(widget.memberOf(Collections.emptyList()), is(false));
+
+        widget = new VolumeGroupWidget(); // just for variety
+        assertThat(widget.getWidgetType(), is(nullValue()));
     }
 
+    @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
+    public void testAddResourceIsUnsupported() {
+        new OamNetwork().addResource(null);
+    }
 }

@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.logging;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -39,7 +40,7 @@ import org.onap.aai.cl.mdc.MdcOverride;
 
 /**
  * Simple test to log each of the validation messages in turn.
- * 
+ *
  * This version tests only the error logger at INFO level.
  *
  */
@@ -53,8 +54,8 @@ public class TestApplicationLogger {
     /**
      * Check that each message can be logged and that (by implication of successful logging) there is a corresponding
      * resource (message format).
-     * 
-     * @throws IOException
+     *
+     * @throws IOException if the log files cannot be read
      */
     @Test
     public void logAllMessages() throws IOException {
@@ -88,21 +89,21 @@ public class TestApplicationLogger {
     /**
      * Check that each message can be logged and that (by implication of successful logging) there is a corresponding
      * resource (message format).
-     * 
-     * @throws IOException
+     *
+     * @throws IOException if the log file cannot be read
      */
     @Test
     public void logDebugMessages() throws IOException {
         LogReader reader = new LogReader(LogHelper.getLogDirectory(), "debug");
         LogHelper.INSTANCE.debug("a message");
-        String s = reader.getNewLines();
-        assertThat(s, is(notNullValue()));
+        String str = reader.getNewLines();
+        assertThat(str, is(notNullValue()));
     }
 
     /**
-     * Check logAudit with HTTP headers
-     * 
-     * @throws IOException
+     * Check logAudit with HTTP headers.
+     *
+     * @throws IOException if the log file cannot be read
      */
     @Test
     public void logAuditMessage() throws IOException {
@@ -132,9 +133,9 @@ public class TestApplicationLogger {
     }
 
     /**
-     * Check logAudit with no HTTP headers
-     * 
-     * @throws IOException
+     * Check logAudit with no HTTP headers.
+     *
+     * @throws IOException if the log file cannot be read
      */
     @Test
     public void logAuditMessageWithoutHeaders() throws IOException {
@@ -149,9 +150,9 @@ public class TestApplicationLogger {
     }
 
     /**
-     * Check logMetrics
-     * 
-     * @throws IOException
+     * Check logMetrics.
+     *
+     * @throws IOException if the log file cannot be read
      */
     @Test
     public void logMetricsMessage() throws IOException {
@@ -204,10 +205,10 @@ public class TestApplicationLogger {
     }
 
     /**
-     * Call a logger method which is expected to throw an UnsupportedOperationException
-     * 
-     * @param logMethod
-     * @param dummyMsg
+     * Call a logger method which is expected to throw an UnsupportedOperationException.
+     *
+     * @param logMethod the logger method to invoke
+     * @param dummyMsg any Application Message enumeration value
      */
     private void callUnsupportedOperationMethod(TriConsumer<Enum<?>, LogFields, String[]> logMethod,
             ApplicationMsgs dummyMsg) {
@@ -220,12 +221,12 @@ public class TestApplicationLogger {
     }
 
     /**
-     * Assert that a log message was logged to the expected log file at the expected severity
-     * 
-     * @param msg
-     * @param reader
-     * @param severity
-     * @throws IOException
+     * Assert that a log message was logged to the expected log file at the expected severity.
+     *
+     * @param msg the Application Message enumeration value
+     * @param reader the log reader for the message
+     * @param severity log level
+     * @throws IOException if the log file cannot be read
      */
     private void validateLoggedMessage(ApplicationMsgs msg, LogReader reader, String severity) throws IOException {
         String str = reader.getNewLines();
