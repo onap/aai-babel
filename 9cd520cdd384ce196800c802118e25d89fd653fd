@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Mark Leonard <mark.j.leonard@gmail.com>
+Code-Review+1: Bogumil Zebek <bogumil.zebek@nokia.com>
+Code-Review+2: Tian Lee <TianL@amdocs.com>
+Submitted-by: Tian Lee <TianL@amdocs.com>
+Submitted-at: Fri, 06 Jul 2018 10:32:55 +0000
+Reviewed-on: https://gerrit.onap.org/r/55495
+Project: aai/babel
+Branch: refs/heads/master
