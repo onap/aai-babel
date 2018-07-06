@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -29,7 +29,7 @@ import org.onap.aai.babel.xml.generator.types.ModelWidget;
 @ModelWidget(type = ModelType.WIDGET, name = "vserver")
 public class VServerWidget extends Widget {
 
-    /** Instantiates a new V server widget. */
+    /** Instantiates a new vserver widget. */
     public VServerWidget() {
         addWidget(new FlavorWidget());
         addWidget(new ImageWidget());

@@ -20,16 +20,21 @@
  */
 package org.onap.aai.babel.xml.generator.model;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import org.onap.aai.babel.logging.ApplicationMsgs;
+import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.xml.generator.data.ArtifactType;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.error.IllegalAccessException;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 import org.onap.aai.babel.xml.generator.types.ModelWidget;
+import org.onap.aai.cl.api.Logger;
 
 public abstract class Widget extends Model {
 
@@ -39,7 +44,29 @@ public abstract class Widget extends Model {
         SERVICE, VF, VFC, VSERVER, VOLUME, FLAVOR, TENANT, VOLUME_GROUP, LINT, L3_NET, VFMODULE, IMAGE, OAM_NETWORK, ALLOTTED_RESOURCE, TUNNEL_XCONNECT, CONFIGURATION;
     }
 
+    private static Logger log = LogHelper.INSTANCE;
+
     private Set<String> keys = new HashSet<>();
+
+    private static EnumMap<Widget.Type, Class<? extends Widget>> typeToWidget = new EnumMap<>(Widget.Type.class);
+    static {
+        typeToWidget.put(Type.SERVICE, ServiceWidget.class);
+        typeToWidget.put(Type.VF, VfWidget.class);
+        typeToWidget.put(Type.VFC, VfcWidget.class);
+        typeToWidget.put(Type.VSERVER, VServerWidget.class);
+        typeToWidget.put(Type.VOLUME, VolumeWidget.class);
+        typeToWidget.put(Type.FLAVOR, FlavorWidget.class);
+        typeToWidget.put(Type.TENANT, TenantWidget.class);
+        typeToWidget.put(Type.VOLUME_GROUP, VolumeGroupWidget.class);
+        typeToWidget.put(Type.LINT, LIntfWidget.class);
+        typeToWidget.put(Type.L3_NET, L3NetworkWidget.class);
+        typeToWidget.put(Type.VFMODULE, VfModuleWidget.class);
+        typeToWidget.put(Type.IMAGE, ImageWidget.class);
+        typeToWidget.put(Type.OAM_NETWORK, OamNetwork.class);
+        typeToWidget.put(Type.ALLOTTED_RESOURCE, AllotedResourceWidget.class);
+        typeToWidget.put(Type.TUNNEL_XCONNECT, TunnelXconnectWidget.class);
+        typeToWidget.put(Type.CONFIGURATION, ConfigurationWidget.class);
+    }
 
     /**
      * Gets widget.
@@ -49,42 +76,17 @@ public abstract class Widget extends Model {
      * @return the widget
      */
     public static Widget getWidget(Type type) {
-        switch (type) {
-            case SERVICE:
-                return new ServiceWidget();
-            case VF:
-                return new VfWidget();
-            case VFC:
-                return new VfcWidget();
-            case VSERVER:
-                return new VServerWidget();
-            case VOLUME:
-                return new VolumeWidget();
-            case FLAVOR:
-                return new FlavorWidget();
-            case TENANT:
-                return new TenantWidget();
-            case VOLUME_GROUP:
-                return new VolumeGroupWidget();
-            case LINT:
-                return new LIntfWidget();
-            case L3_NET:
-                return new L3NetworkWidget();
-            case VFMODULE:
-                return new VfModuleWidget();
-            case IMAGE:
-                return new ImageWidget();
-            case OAM_NETWORK:
-                return new OamNetwork();
-            case ALLOTTED_RESOURCE:
-                return new AllotedResourceWidget();
-            case TUNNEL_XCONNECT:
-                return new TunnelXconnectWidget();
-            case CONFIGURATION:
-                return new ConfigurationWidget();
-            default:
-                return null;
+        Widget widget = null;
+        Class<? extends Widget> clazz = typeToWidget.get(type);
+        if (clazz != null) {
+            try {
+                widget = clazz.getConstructor().newInstance();
+            } catch (InstantiationException | java.lang.IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                log.error(ApplicationMsgs.INVALID_CSAR_FILE, e);
+            }
         }
+        return widget;
     }
 
     public String getId() {
@@ -134,23 +136,23 @@ public abstract class Widget extends Model {
     }
 
     /**
-     * Equals.
+     * Equals method that compares Widget IDs.
      *
      * @param obj
-     *            Object
-     * @return the boolean
+     *            the Widget object to compare
+     * @return whether or not obj is equal to this Widget
      */
     @Override
     public boolean equals(Object obj) {
+        boolean isEqual = false;
         if (obj instanceof Widget) {
-            if (getId().equals(((Widget) obj).getId())) {
-                ((Widget) obj).keys.addAll(this.keys);
-                return true;
+            Widget other = (Widget) obj;
+            if (getId().equals(other.getId())) {
+                other.keys.addAll(this.keys);
+                isEqual = true;
             }
-            return false;
-        } else {
-            return false;
         }
+        return isEqual;
     }
 
     public void addKey(String key) {
@@ -158,30 +160,17 @@ public abstract class Widget extends Model {
     }
 
     /**
-     * Member of boolean.
+     * Determine whether one or more keys belonging to this Widget appear in the specified Collection.
      *
      * @param keys
      *            the keys
      * @return the boolean
      */
-    public boolean memberOf(List<String> keys) {
+    public boolean memberOf(Collection<String> keys) {
         if (keys == null) {
             return false;
         }
         return !Collections.disjoint(this.keys, keys);
-    }
-
-    /**
-     * All instances used boolean.
-     *
-     * @param collection
-     *            the collection
-     * @return the boolean
-     */
-    public boolean allInstancesUsed(Set<String> collection) {
-        Set<String> keyCopy = new HashSet<>(keys);
-        keyCopy.removeAll(collection);
-        return keyCopy.isEmpty();
     }
 
     @Override
