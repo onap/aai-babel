@@ -41,7 +41,7 @@ public abstract class Widget extends Model {
     public static final String GENERATOR_AAI_CONFIGLPROP_NOT_FOUND = "Cannot generate artifacts. Widget configuration not found for %s";
 
     public enum Type {
-        SERVICE, VF, VFC, VSERVER, VOLUME, FLAVOR, TENANT, VOLUME_GROUP, LINT, L3_NET, VFMODULE, IMAGE, OAM_NETWORK, ALLOTTED_RESOURCE, TUNNEL_XCONNECT, CONFIGURATION;
+        SERVICE, VF, VFC, VSERVER, VOLUME, FLAVOR, TENANT, VOLUME_GROUP, LINT, L3_NET, VFMODULE, IMAGE, OAM_NETWORK, ALLOTTED_RESOURCE, TUNNEL_XCONNECT, CONFIGURATION, CR;
     }
 
     private static Logger log = LogHelper.INSTANCE;
@@ -66,6 +66,7 @@ public abstract class Widget extends Model {
         typeToWidget.put(Type.ALLOTTED_RESOURCE, AllotedResourceWidget.class);
         typeToWidget.put(Type.TUNNEL_XCONNECT, TunnelXconnectWidget.class);
         typeToWidget.put(Type.CONFIGURATION, ConfigurationWidget.class);
+        typeToWidget.put(Type.CR, CRWidget.class);
     }
 
     /**

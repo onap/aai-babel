@@ -54,6 +54,7 @@ public abstract class Model {
         typeToModel.put("org.openecomp.groups.VfModule", VfModule.class);
         typeToModel.put("org.openecomp.resource.vfc.nodes.heat.cinder", VolumeWidget.class);
         typeToModel.put("org.openecomp.nodes.PortMirroringConfiguration", Configuration.class);
+        typeToModel.put("org.openecomp.resource.cr.Kk1806Cr1", CR.class);
     }
 
     private enum ModelIdentification {
