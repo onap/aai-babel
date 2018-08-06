@@ -45,7 +45,7 @@ public class TestRequestHeaders {
      * Tests compatibility with the X-ECOMP-* request headers.
      */
     @Test
-    public void testECOMPHeaders() {
+    public void testEcompHeaders() {
         String transactionId = "transaction-id";
         String serviceInstanceId = "service-instance-id";
 

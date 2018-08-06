@@ -21,7 +21,7 @@
 package org.onap.aai.babel.csar;
 
 /**
- * This class represents an exception encountered when attempting to convert the yml files in a csar archive into xml.
+ * This class represents an exception encountered when attempting to convert the YAML files in a CSAR archive into XML.
  */
 public class CsarConverterException extends Exception {
 

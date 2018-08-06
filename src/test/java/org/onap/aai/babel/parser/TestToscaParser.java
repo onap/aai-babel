@@ -43,7 +43,7 @@ import org.onap.aai.babel.xml.generator.data.GenerationData;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 
 /**
- * Direct tests of the Model so as to improve code coverage
+ * Direct tests of the Model to improve code coverage.
  */
 public class TestToscaParser {
 

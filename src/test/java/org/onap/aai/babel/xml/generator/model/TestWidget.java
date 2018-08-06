@@ -49,8 +49,10 @@ public class TestWidget {
     /**
      * Load the Widget to UUID mappings from the Artifact Generator properties.
      *
-     * @throws FileNotFoundException if the properties file is missing
-     * @throws IOException if the properties file is not loaded
+     * @throws FileNotFoundException
+     *             if the properties file is missing
+     * @throws IOException
+     *             if the properties file is not loaded
      */
     @BeforeClass
     public static void setup() throws FileNotFoundException, IOException {

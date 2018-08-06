@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.logging;
 
 import java.io.BufferedReader;
@@ -32,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Assert;
 
@@ -58,9 +60,15 @@ public class LogReader {
     }
 
     /**
+     * Find the most recently modified log file with a name starting with the specified prefix.
+     *
      * @param logDirectory
-     * @return the most recently created log file.
+     *            the root folder storing log files
+     * @param filenamePrefix
+     *            the log file name prefix
+     * @return the most recently created log file
      * @throws IOException
+     *             if an I/O error occurs
      */
     public File getLogFile(String logDirectory, String filenamePrefix) throws IOException {
         Path cachedLog = cachedLogMap.get(filenamePrefix);
@@ -82,7 +90,8 @@ public class LogReader {
      * Wait for and read new log entries.
      *
      * @return new lines appended to the log file
-     * @throws IOException If an I/O error occurs
+     * @throws IOException
+     *             If an I/O error occurs
      */
     public String getNewLines() throws IOException {
         StopWatch stopwatch = new StopWatch();
