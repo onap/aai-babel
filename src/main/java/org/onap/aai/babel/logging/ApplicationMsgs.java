@@ -37,7 +37,8 @@ public enum ApplicationMsgs implements LogMessageEnum {
   BABEL_RESPONSE_PAYLOAD,
   LOAD_PROPERTIES,
   PROCESSING_VNF_CATALOG_ERROR,
-  TEMP_FILE_ERROR;
+  TEMP_FILE_ERROR,
+  MISSING_SERVICE_METADATA;
     
   // @formatter:on
 
