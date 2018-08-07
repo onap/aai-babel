@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.service;
 
 import static org.junit.Assert.assertThat;
@@ -43,7 +44,7 @@ import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 
 /**
- * Tests {@link CsarToXmlConverter}
+ * Tests {@link CsarToXmlConverter}.
  */
 public class CsarToXmlConverterTest {
 
@@ -60,6 +61,9 @@ public class CsarToXmlConverterTest {
     private enum CsarTest {
         VALID_CSAR_FILE(
                 "service-SdWanServiceTest-csar.csar"
+        ),
+        MISSING_METADATA_CSAR(
+                "service-MissingMetadataTest.csar"
         ),
         NO_YAML_FILES(
                 "noYmlFilesArchive.zip"
@@ -137,6 +141,13 @@ public class CsarToXmlConverterTest {
         System.clearProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE);
         converter.generateXmlFromCsar(CsarTest.VALID_CSAR_FILE.getContent(), CsarTest.VALID_CSAR_FILE.getName(),
                 SERVICE_VERSION);
+    }
+
+    @Test
+    public void testServiceMetadataMissing()
+            throws IOException, XmlArtifactGenerationException, CsarConverterException {
+        converter.generateXmlFromCsar(CsarTest.MISSING_METADATA_CSAR.getContent(),
+                CsarTest.MISSING_METADATA_CSAR.getName(), SERVICE_VERSION);
     }
 
     @Test
