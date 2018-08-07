@@ -1,0 +1,62 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: cf3ccc9c-b6ea-468e-8eef-f45479978fc1
+  UUID: 76ba485f-50a3-480d-895e-5c319191bc11
+  name: Allotedresource
+  description: Allotedresource
+  type: VFC
+  category: Allotted Resource
+  subcategory: Allotted Resource
+  resourceVendor: '123'
+  resourceVendorRelease: '123'
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+node_types:
+  org.openecomp.resource.vfc.AllottedResource1235:
+    derived_from: tosca.nodes.Root
+    description: Allotedresource
+    properties:
+      target_network_role:
+        type: string
+        description: Target network role
+      providing_service_invariant_uuid:
+        type: string
+        description: The depending service invariant uuid in order to map the allotted resource to the specific service version
+      role:
+        type: string
+        description: Unique label that defines the role that this allotted resource performs
+      providing_service_uuid:
+        type: string
+        description: The depending service uuid in order to map the allotted resource to the specific service version
+      ecomp_naming:
+        type: org.openecomp.datatypes.EcompNaming
+      providing_service_name:
+        type: string
+        description: The depending service name in order to map the allotted resource to the specific service version
+      max_instances:
+        type: integer
+        default: 1
+      min_instances:
+        type: integer
+        default: 1
+      ecomp_homing:
+        type: org.openecomp.datatypes.EcompHoming
+    requirements:
+    - service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn

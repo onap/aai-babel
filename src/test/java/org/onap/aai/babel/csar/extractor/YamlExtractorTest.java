@@ -113,13 +113,17 @@ public class YamlExtractorTest {
         payloads.add("ymlFiles/resource-SdWanTestVsp-template.yml");
         payloads.add("ymlFiles/resource-TunnelXconntest-template.yml");
         payloads.add("ymlFiles/service-SdWanServiceTest-template.yml");
+        payloads.add("ymlFiles/resource-Allotedresource-template.yml");
         payloads.add("ymlFiles/artifacts.yml");
         payloads.add("ymlFiles/data.yml");
+        payloads.add("ymlFiles/groups.yml");
 
         new ArtifactTestUtils().performYmlAsserts(ymlFiles, payloads);
     }
 
     /**
+     * Call the extractor with the specified arguments and assert that an exception is thrown.
+     *
      * @param archive
      * @param name
      * @param version
@@ -136,12 +140,17 @@ public class YamlExtractorTest {
     }
 
     /**
+     * Extract Artifacts from the specified CSAR resource.
+     *
      * @param resourceName
-     * @return
+     *            the CSAR file
+     * @return the extracted artifacts
      * @throws InvalidArchiveException
      * @throws IOException
+     *             for I/O errors
      */
     private List<Artifact> extractArchive(String resourceName) throws InvalidArchiveException, IOException {
-        return new YamlExtractor().extract(new ArtifactTestUtils().getCompressedArtifact(resourceName), resourceName, "v1");
+        byte[] csar = new ArtifactTestUtils().getCompressedArtifact(resourceName);
+        return new YamlExtractor().extract(csar, resourceName, "v1");
     }
 }

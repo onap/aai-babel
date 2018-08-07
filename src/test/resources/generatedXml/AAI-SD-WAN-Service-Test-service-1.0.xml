@@ -11,7 +11,44 @@
                 <model-element>
                     <new-data-del-flag>T</new-data-del-flag>
                     <cardinality>unbounded</cardinality>
-                    <model-elements/>
+                    <model-elements>
+                        <model-element>
+                            <new-data-del-flag>T</new-data-del-flag>
+                            <cardinality>unbounded</cardinality>
+                            <model-elements />
+                            <relationship-list>
+                                <relationship>
+                                    <related-to>model-ver</related-to>
+                                    <relationship-data>
+                                        <relationship-key>model-ver.model-version-id</relationship-key>
+                                        <relationship-value>2a111111-1111-1111-1111-111111111111</relationship-value>
+                                    </relationship-data>
+                                    <relationship-data>
+                                        <relationship-key>model.model-invariant-id</relationship-key>
+                                        <relationship-value>1a111111-1111-1111-1111-111111111111</relationship-value>
+                                    </relationship-data>
+                                </relationship>
+                            </relationship-list>
+                        </model-element>
+                        <model-element>
+                            <new-data-del-flag>T</new-data-del-flag>
+                            <cardinality>unbounded</cardinality>
+                            <model-elements />
+                            <relationship-list>
+                                <relationship>
+                                    <related-to>model-ver</related-to>
+                                    <relationship-data>
+                                        <relationship-key>model-ver.model-version-id</relationship-key>
+                                        <relationship-value>2b111111-1111-1111-1111-111111111111</relationship-value>
+                                    </relationship-data>
+                                    <relationship-data>
+                                        <relationship-key>model.model-invariant-id</relationship-key>
+                                        <relationship-value>1b111111-1111-1111-1111-111111111111</relationship-value>
+                                    </relationship-data>
+                                </relationship>
+                            </relationship-list>
+                        </model-element>
+                    </model-elements>
                     <relationship-list>
                         <relationship>
                             <related-to>model-ver</related-to>
