@@ -131,28 +131,17 @@ public class ArtifactGeneratorToscaParser {
      */
     public void processServiceTosca(Service service, Map<String, String> idTypeStore,
             List<NodeTemplate> nodeTemplates) {
-        log.debug("Inside Service Tosca ");
+        log.debug("Processing (TOSCA) Service object");
 
-        // Get the resource/widgets in the service according to the node-template types
-        for (NodeTemplate node : nodeTemplates) {
-            if (node.getMetaData() != null) {
-                Model model = Model.getModelFor(correctNodeType(node));
-                if (model != null) {
-                    model.populateModelIdentificationInformation(node.getMetaData().getAllProperties());
-                    if (model instanceof Resource) {
-                        // Keeping track of resource types and
-                        // their uuid for identification during resource tosca processing
-                        idTypeStore.put(model.getModelNameVersionId(), correctNodeType(node));
-                        service.addResource((Resource) model);
-                    } else {
-                        service.addWidget((Widget) model);
-                    }
-                }
+        for (NodeTemplate nodeTemplate : nodeTemplates) {
+            if (nodeTemplate.getMetaData() != null) {
+                addNodeToService(idTypeStore, service, nodeTemplate);
             } else {
-                log.warn(ApplicationMsgs.MISSING_SERVICE_METADATA, node.getName());
+                log.warn(ApplicationMsgs.MISSING_SERVICE_METADATA, nodeTemplate.getName());
             }
         }
     }
+
 
     /**
      * Generates a Resource List using input Service Node Templates.
@@ -198,6 +187,31 @@ public class ArtifactGeneratorToscaParser {
                 model.addWidget(new TunnelXconnectWidget());
             }
             resources.add((Resource) model);
+        }
+    }
+
+    /**
+     * Add the supplied Node Template to the Service, provided that it is a valid Resource or Widget. If the Node
+     * Template is a Resource type, this is also recorded in the supplied nodesById Map.
+     *
+     * @param nodesById a map of Resource node type names, keyed by UUID
+     * @param service the Service to which the Node Template should be added
+     * @param nodeTemplate the Node Template to add (only if this is a Resource or Widget type)
+     */
+    private void addNodeToService(Map<String, String> nodesById, Service service, NodeTemplate nodeTemplate) {
+        String nodeTypeName = normaliseNodeTypeName(nodeTemplate);
+        Model model = Model.getModelFor(nodeTypeName);
+        if (model != null) {
+            if (nodeTemplate.getMetaData() != null) {
+                model.populateModelIdentificationInformation(nodeTemplate.getMetaData().getAllProperties());
+            }
+
+            if (model instanceof Resource) {
+                nodesById.put(model.getModelNameVersionId(), nodeTypeName);
+                service.addResource((Resource) model);
+            } else {
+                service.addWidget((Widget) model);
+            }
         }
     }
 
@@ -257,18 +271,18 @@ public class ArtifactGeneratorToscaParser {
         }
     }
 
-    private String correctNodeType(NodeTemplate nodeType) {
-        String correctedNodeType = nodeType.getType();
+    private String normaliseNodeTypeName(NodeTemplate nodeType) {
+        String nodeTypeName = nodeType.getType();
         Metadata metadata = nodeType.getMetaData();
         if (metadata != null && hasAllottedResource(metadata.getAllProperties())) {
             if (nodeType.getType().contains("org.openecomp.resource.vf.")) {
-                correctedNodeType = "org.openecomp.resource.vf.allottedResource";
+                nodeTypeName = "org.openecomp.resource.vf.allottedResource";
             }
             if (nodeType.getType().contains("org.openecomp.resource.vfc.")) {
-                correctedNodeType = "org.openecomp.resource.vfc.AllottedResource";
+                nodeTypeName = "org.openecomp.resource.vfc.AllottedResource";
             }
         }
-        return correctedNodeType;
+        return nodeTypeName;
     }
 
     private boolean hasAllottedResource(Map<String, String> metadata) {
@@ -295,7 +309,8 @@ public class ArtifactGeneratorToscaParser {
         boolean providingServiceFound = false;
 
         for (NodeTemplate resourceNodeTemplate : resourceNodes) {
-            Model resourceNode = Model.getModelFor(correctNodeType(resourceNodeTemplate));
+            String nodeTypeName = normaliseNodeTypeName(resourceNodeTemplate);
+            Model resourceNode = Model.getModelFor(nodeTypeName);
             if (resourceNode instanceof ProvidingService) {
                 providingServiceFound = true;
                 Map<String, Property> nodeProperties = resourceNodeTemplate.getProperties();
@@ -309,7 +324,7 @@ public class ArtifactGeneratorToscaParser {
                 resourceNode.populateModelIdentificationInformation(properties);
                 resourceModel.addResource((Resource) resourceNode);
             } else if (resourceNode instanceof Resource && !(resourceNode.getWidgetType().equals(Widget.Type.L3_NET))) {
-                idTypeStore.put(resourceNode.getModelNameVersionId(), correctNodeType(resourceNodeTemplate));
+                idTypeStore.put(resourceNode.getModelNameVersionId(), nodeTypeName);
                 resourceModel.addResource((Resource) resourceNode);
             }
         }
