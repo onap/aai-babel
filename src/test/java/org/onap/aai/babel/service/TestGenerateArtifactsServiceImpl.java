@@ -23,6 +23,7 @@ package org.onap.aai.babel.service;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,7 +43,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.onap.aai.auth.AAIMicroServiceAuth;
 import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
+import org.onap.aai.babel.service.data.BabelRequest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
+import org.onap.aai.babel.xml.generator.data.GeneratorUtil;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -75,42 +78,61 @@ public class TestGenerateArtifactsServiceImpl {
 
     @Test
     public void testGenerateArtifacts() throws Exception {
-        Response response = processJsonRequest("success_request_vnf_catalog.json");
+        Response response = processJsonRequest(getRequestJson("success_request_vnf_catalog.json"));
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
 
+    /**
+     * No VNF Configuration exists.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateArtifactsWithoutVnfConfiguration() throws Exception {
+        final byte[] csarContent = new ArtifactTestUtils().getCompressedArtifact("noVnfConfiguration.csar");
+
+        BabelRequest babelRequest = new BabelRequest();
+        babelRequest.setCsar(new String(GeneratorUtil.encode(csarContent)));
+        babelRequest.setArtifactVersion("3.0");
+        babelRequest.setArtifactName("service-Vscpass-Test");
+
+        Response response = processJsonRequest(new Gson().toJson(babelRequest));
+        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(response.getEntity(), is(getResponseJson("validNoVnfConfigurationResponse.json")));
+    }
+
     @Test
     public void testInvalidCsarFile() throws URISyntaxException, IOException {
-        Response response = processJsonRequest("invalid_csar_request.json");
+        Response response = processJsonRequest(getRequestJson("invalid_csar_request.json"));
         assertThat(response.getStatus(), is(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
         assertThat(response.getEntity(), is("Error converting CSAR artifact to XML model."));
     }
 
     @Test
     public void testInvalidJsonFile() throws URISyntaxException, IOException {
-        Response response = processJsonRequest("invalid_json_request.json");
+        Response response = processJsonRequest(getRequestJson("invalid_json_request.json"));
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("Malformed request."));
     }
 
     @Test
     public void testMissingArtifactName() throws Exception {
-        Response response = processJsonRequest("missing_artifact_name_request.json");
+        Response response = processJsonRequest(getRequestJson("missing_artifact_name_request.json"));
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("No artifact name attribute found in the request body."));
     }
 
     @Test
     public void testMissingArtifactVersion() throws Exception {
-        Response response = processJsonRequest("missing_artifact_version_request.json");
+        Response response = processJsonRequest(getRequestJson("missing_artifact_version_request.json"));
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("No artifact version attribute found in the request body."));
     }
 
     @Test
     public void testMissingCsarFile() throws Exception {
-        Response response = processJsonRequest("missing_csar_request.json");
+        Response response = processJsonRequest(getRequestJson("missing_csar_request.json"));
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("No csar attribute found in the request body."));
     }
@@ -123,7 +145,7 @@ public class TestGenerateArtifactsServiceImpl {
      * @throws URISyntaxException if the URI cannot be created
      * @throws IOException if the resource cannot be loaded
      */
-    private Response processJsonRequest(String resource) throws URISyntaxException, IOException {
+    private Response processJsonRequest(String jsonString) throws URISyntaxException, IOException {
         UriInfo mockUriInfo = Mockito.mock(UriInfo.class);
         Mockito.when(mockUriInfo.getRequestUri()).thenReturn(new URI("/validate")); // NOSONAR (mocked)
         Mockito.when(mockUriInfo.getPath(false)).thenReturn("validate"); // URI prefix is stripped by AJSC routing
@@ -156,7 +178,6 @@ public class TestGenerateArtifactsServiceImpl {
         servletRequest.setAttribute("javax.servlet.request.cipher_suite", "");
 
         GenerateArtifactsServiceImpl service = new GenerateArtifactsServiceImpl(auth);
-        String jsonString = getRequestJson(resource);
         return service.generateArtifacts(mockUriInfo, headers, servletRequest, jsonString);
     }
 

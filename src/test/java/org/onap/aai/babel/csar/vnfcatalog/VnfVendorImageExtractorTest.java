@@ -18,9 +18,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.csar.vnfcatalog;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -54,6 +56,18 @@ public class VnfVendorImageExtractorTest {
     @Test(expected = ToscaToCatalogException.class)
     public void createVendorImageMappingsInvalidFile() throws IOException, ToscaToCatalogException {
         extractArtifact("Duff.txt");
+    }
+
+    @Test
+    public void createVendorImageMappingsMoreThanOneVnfConfigurationExists() throws IOException {
+        try {
+            extractArtifact("catalog_csar_too_many_vnfConfigurations.csar");
+        } catch (Exception e) {
+            assertThat(e, is(instanceOf(ToscaToCatalogException.class)));
+            assertThat(e.getLocalizedMessage(),
+                    is(equalTo("An error occurred trying to get the vnf catalog from a csar file. "
+                            + "2 vnfConfigurations were found in the csar file and only one is allowed.")));
+        }
     }
 
     @Test
