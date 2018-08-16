@@ -10,18 +10,10 @@ metadata:
   ecompGeneratedNaming: true
   namingPolicy: ''
 imports:
-- nodes:
-    file: nodes.yml
 - datatypes:
     file: data.yml
-- capabilities:
-    file: capabilities.yml
-- relationships:
-    file: relationships.yml
 - groups:
     file: groups.yml
-- policies:
-    file: policies.yml
 - service-SD-WAN-Service-Test-interface:
     file: service-SdWanServiceTest-template-interface.yml
 - resource-SD-WAN-Test-VSP:

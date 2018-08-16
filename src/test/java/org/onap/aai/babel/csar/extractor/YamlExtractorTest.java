@@ -111,9 +111,15 @@ public class YamlExtractorTest {
         final List<Artifact> ymlFiles = extractArchive("service-SdWanServiceTest-csar.csar");
         List<String> payloads = new ArrayList<>();
         payloads.add("ymlFiles/resource-SdWanTestVsp-template.yml");
+        payloads.add("ymlFiles/resource-SdWanTestVsp-template-interface.yml");
         payloads.add("ymlFiles/resource-TunnelXconntest-template.yml");
+        payloads.add("ymlFiles/resource-TunnelXconntest-template-interface.yml");
         payloads.add("ymlFiles/service-SdWanServiceTest-template.yml");
+        payloads.add("ymlFiles/service-SdWanServiceTest-template-interface.yml");
         payloads.add("ymlFiles/resource-Allotedresource-template.yml");
+        payloads.add("ymlFiles/resource-SdwantestvspNodesDummyServer-template.yml");
+        payloads.add("ymlFiles/nodes.yml");
+        payloads.add("ymlFiles/capabilities.yml");
         payloads.add("ymlFiles/artifacts.yml");
         payloads.add("ymlFiles/data.yml");
         payloads.add("ymlFiles/groups.yml");

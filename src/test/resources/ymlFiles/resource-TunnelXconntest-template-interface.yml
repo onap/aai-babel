@@ -1,0 +1,56 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+node_types:
+  org.openecomp.resource.vf.TunnelXconntest:
+    derived_from: org.openecomp.resource.abstract.nodes.VF
+    properties:
+      nf_naming:
+        type: org.openecomp.datatypes.Naming
+      nf_naming_code:
+        type: string
+      nf_function:
+        type: string
+      availability_zone_max_count:
+        type: integer
+        default: 1
+      nf_role:
+        type: string
+      max_instances:
+        type: integer
+      min_instances:
+        type: integer
+      nf_type:
+        type: string
+    capabilities:
+      allotedresource0.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+    requirements:
+    - allotedresource0.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+    - allotedresource0.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn

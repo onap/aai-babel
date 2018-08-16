@@ -43,7 +43,7 @@ data_types:
 
     json:
       derived_from: tosca.datatypes.Root
-	  
+
     scalar-unit:
       derived_from: tosca.datatypes.Root
 
@@ -2090,7 +2090,7 @@ data_types:
     org.openecomp.datatypes.Root:
       derived_from: tosca.datatypes.Root
       description: >
-        The AT&T root Data Type all other Data Types derive from
+        The root Data Type all other Data Types derive from
       properties:
         supplemental_data:
           type: map

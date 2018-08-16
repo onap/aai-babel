@@ -1,7 +1,7 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 metadata:
-  invariantUUID: cf3ccc9c-b6ea-468e-8eef-f45479978fc1
-  UUID: 76ba485f-50a3-480d-895e-5c319191bc11
+  invariantUUID: 3b111111-1111-1111-1111-111111111111
+  UUID: 4b111111-1111-1111-1111-111111111111
   name: Allotedresource
   description: Allotedresource
   type: VFC

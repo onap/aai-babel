@@ -113,7 +113,7 @@ topology_template:
       metadata:
         vfModuleModelName: SdWanTestVsp..DUMMY..module-0
         vfModuleModelInvariantUUID: 6a111111-1111-1111-1111-111111111111
-        vfModuleModelUUID: 7a111111-1111-1111-1111-111111111111
+        vfModuleModelUUID: 5c111111-1111-1111-1111-111111111111
         vfModuleModelVersion: '2'
       properties:
         min_vf_module_instances: 0
