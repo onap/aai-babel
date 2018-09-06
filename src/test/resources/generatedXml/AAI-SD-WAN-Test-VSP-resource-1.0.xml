@@ -36,11 +36,11 @@
                             <related-to>model-ver</related-to>
                             <relationship-data>
                                 <relationship-key>model-ver.model-version-id</relationship-key>
-                                <relationship-value>93a6166f-b3d5-4f06-b4ba-aed48d009ad9</relationship-value>
+                                <relationship-value>generic-vnf-version-id</relationship-value>
                             </relationship-data>
                             <relationship-data>
                                 <relationship-key>model.model-invariant-id</relationship-key>
-                                <relationship-value>acc6edd8-a8d4-4b93-afaa-0994068be14c</relationship-value>
+                                <relationship-value>generic-vnf-invariant-id</relationship-value>
                             </relationship-data>
                         </relationship>
                     </relationship-list>

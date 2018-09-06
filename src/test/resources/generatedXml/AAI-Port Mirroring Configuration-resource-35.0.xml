@@ -17,11 +17,11 @@
                             <related-to>model-ver</related-to>
                             <relationship-data>
                                 <relationship-key>model-ver.model-version-id</relationship-key>
-                                <relationship-value>5a175add-57e4-4a5d-8b02-c36f1d69c52b</relationship-value>
+                                <relationship-value>configuration-version-id</relationship-value>
                             </relationship-data>
                             <relationship-data>
                                 <relationship-key>model.model-invariant-id</relationship-key>
-                                <relationship-value>166c050d-f69d-4305-943e-0bc58c3a26cf</relationship-value>
+                                <relationship-value>configuration-invariant-id</relationship-value>
                             </relationship-data>
                         </relationship>
                     </relationship-list>
