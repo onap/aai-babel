@@ -22,6 +22,30 @@
       "revId": "cb2d57b611eb5835df37d2d13c1b2e430906d5c3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a1f0befe",
+        "filename": "src/test/resources/artifact-generator.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2018-09-06T10:55:14Z",
+      "side": 0,
+      "message": "Yes, because it is not actually used in this version of the code. It will be added again in a future commit, where new functionality and new tests will be introduced to make use of the CR Widget.",
+      "parentUuid": "1a76adc5_8176e2a2",
+      "range": {
+        "startLine": 268,
+        "startChar": 0,
+        "endLine": 270,
+        "endChar": 60
+      },
+      "revId": "cb2d57b611eb5835df37d2d13c1b2e430906d5c3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
