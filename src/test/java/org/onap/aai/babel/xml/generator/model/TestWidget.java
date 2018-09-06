@@ -87,7 +87,7 @@ public class TestWidget {
     public void testWidgetMethods() {
         Widget widget = new ServiceWidget();
         assertThat(widget.getType(), is(ModelType.WIDGET));
-        assertThat(widget.getWidgetId(), is("82194af1-3c2c-485a-8f44-420e22a9eaa4"));
+        assertThat(widget.getWidgetId(), is("service-instance-invariant-id"));
         assertThat(widget.addWidget(new TenantWidget()), is(true));
         assertThat(widget.memberOf(null), is(false));
         assertThat(widget.memberOf(Collections.emptyList()), is(false));

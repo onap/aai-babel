@@ -36,11 +36,11 @@
                             <related-to>model-ver</related-to>
                             <relationship-data>
                                 <relationship-key>model-ver.model-version-id</relationship-key>
-                                <relationship-value>46b92144-923a-4d20-b85a-3cbd847668a9</relationship-value>
+                                <relationship-value>service-instance-version-id</relationship-value>
                             </relationship-data>
                             <relationship-data>
                                 <relationship-key>model.model-invariant-id</relationship-key>
-                                <relationship-value>82194af1-3c2c-485a-8f44-420e22a9eaa4</relationship-value>
+                                <relationship-value>service-instance-invariant-id</relationship-value>
                             </relationship-data>
                         </relationship>
                     </relationship-list>
