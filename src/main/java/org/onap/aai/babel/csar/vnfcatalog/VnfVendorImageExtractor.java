@@ -30,7 +30,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -239,7 +238,7 @@ public class VnfVendorImageExtractor {
     }
 
     @SuppressWarnings("unchecked")
-    private List<String> extractSoftwareVersions(SubstitutionMappings sm) throws ToscaToCatalogException {
+    List<String> extractSoftwareVersions(SubstitutionMappings sm) throws ToscaToCatalogException {
         applicationLogger.debug("Trying to extract the software versions for the vnf configuration");
 
         List<NodeTemplate> imagesNodes = sm.getNodeTemplates().stream()

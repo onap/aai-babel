@@ -21,6 +21,7 @@
 
 package org.onap.aai.babel.csar.vnfcatalog;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -28,6 +29,9 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import org.junit.Test;
 import org.onap.aai.babel.service.data.BabelArtifact;
 import org.onap.aai.babel.service.data.BabelArtifact.ArtifactType;
@@ -83,5 +87,54 @@ public class VnfVendorImageExtractorTest {
         assertThat(artifact.getType(), is(equalTo(ArtifactType.VNFCATALOG)));
         assertThat(artifact.getPayload(),
                 is(equalTo(new ArtifactTestUtils().getRequestJson("vnfVendorImageConfigurations.json"))));
+    }
+
+    @Test
+    public void testSoftwareVersions() throws ToscaToCatalogException {
+        VnfVendorImageExtractor extractor = new VnfVendorImageExtractor();
+        SdcToscaHelper helper = new SdcToscaHelper();
+
+        List<String> versions;
+        try {
+            versions = extractor.extractSoftwareVersions(helper.buildMappings());
+            assertThat(versions.size(), is(0));
+        } catch (ToscaToCatalogException e) {
+            assertThat(e.getMessage(), containsString("No software versions"));
+        }
+
+        helper.addNodeTemplate();
+        try {
+            versions = extractor.extractSoftwareVersions(helper.buildMappings());
+            assertThat(versions.size(), is(0));
+        } catch (ToscaToCatalogException e) {
+            assertThat(e.getMessage(), containsString("No software versions"));
+        }
+
+        helper.addNodeTemplate("string");
+        try {
+            versions = extractor.extractSoftwareVersions(helper.buildMappings());
+            assertThat(versions.size(), is(0));
+        } catch (ClassCastException e) {
+            assertThat(e.getMessage(), containsString("java.lang.String"));
+        }
+
+        HashMap<String, Object> images = new LinkedHashMap<>();
+        images.put("image", "string");
+        helper.addNodeTemplate(images);
+        try {
+            versions = extractor.extractSoftwareVersions(helper.buildMappings());
+            assertThat(versions.size(), is(1));
+        } catch (ClassCastException e) {
+            assertThat(e.getMessage(), containsString("java.lang.String"));
+        }
+
+        HashMap<String, Object> image = new LinkedHashMap<>();
+        image.put("software_version", "1.2.3");
+        images.put("image", image);
+        helper = new SdcToscaHelper();
+        helper.addNodeTemplate(images);
+        versions = extractor.extractSoftwareVersions(helper.buildMappings());
+        assertThat(versions.size(), is(1));
+        assertThat(versions.get(0), is("1.2.3"));
     }
 }

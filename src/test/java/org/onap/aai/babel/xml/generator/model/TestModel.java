@@ -29,6 +29,8 @@ import static org.junit.Assert.assertThat;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +45,7 @@ import org.onap.aai.babel.xml.generator.types.ModelType;
 public class TestModel {
 
     private Service serviceModel = new Service();
-    private Resource resourceModel = new VirtualFunction();
+    private List<Resource> resourceModels = Arrays.asList(new VirtualFunction());
     private Widget widgetModel = new OamNetwork();
     private Model anonymousModel;
 
@@ -54,8 +56,10 @@ public class TestModel {
     /**
      * Load the Widget to UUID mappings from the Artifact Generator properties.
      *
-     * @throws FileNotFoundException if the properties file is missing
-     * @throws IOException if the properties file is not loaded
+     * @throws FileNotFoundException
+     *             if the properties file is missing
+     * @throws IOException
+     *             if the properties file is not loaded
      */
     @Before
     public void setup() throws FileNotFoundException, IOException {
@@ -90,6 +94,8 @@ public class TestModel {
         assertThat(Model.getModelFor("any.unknown.type"), is(nullValue()));
 
         assertThat(Model.getModelFor("org.openecomp.resource.vf.allottedResource"), instanceOf(AllotedResource.class));
+        assertThat(Model.getModelFor("org.openecomp.resource.vf.allottedResource.with.sub.type"),
+                instanceOf(AllotedResource.class));
         assertThat(Model.getModelFor("org.openecomp.resource.vfc.AllottedResource"),
                 instanceOf(ProvidingService.class));
         assertThat(Model.getModelFor("org.openecomp.resource.vfc"), instanceOf(VServerWidget.class));
@@ -107,13 +113,15 @@ public class TestModel {
 
     @Test
     public void testGetCardinality() {
-        resourceModel.getCardinality();
+        resourceModels.get(0).getCardinality();
     }
 
     @Test
     public void testGetModelType() {
         assertThat(serviceModel.getModelType(), is(ModelType.SERVICE));
-        assertThat(resourceModel.getModelType(), is(ModelType.RESOURCE));
+        for (Resource resourceModel : resourceModels) {
+            assertThat(resourceModel.getModelType(), is(ModelType.RESOURCE));
+        }
         assertThat(widgetModel.getModelType(), is(ModelType.WIDGET));
         assertThat(anonymousModel.getModelType(), is(nullValue()));
     }
@@ -126,6 +134,9 @@ public class TestModel {
     @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
     public void testGetModelNameVersionIdIsUnsupported() {
         assertThat(widgetModel.getModelNameVersionId(), is(nullValue()));
+        assertThat(resourceModels.get(0).getModelType(), is(ModelType.RESOURCE));
+        assertThat(widgetModel.getModelType(), is(ModelType.WIDGET));
+        assertThat(anonymousModel.getModelType(), is(nullValue()));
     }
 
 }

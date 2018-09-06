@@ -155,6 +155,14 @@ public class TestGenerateArtifactsServiceImpl {
         String jsonString = csar.getJsonRequest();
         return invokeService(jsonString);
     }
+
+    /**
+     * Create a (mocked) HTTPS request and invoke the Babel generate artifacts API.
+     *
+     * @param jsonString the JSON request
+     * @return the Response from the HTTP API
+     * @throws URISyntaxException if the URI cannot be created
+     */
     private Response invokeService(String jsonString) throws URISyntaxException {
         UriInfo mockUriInfo = Mockito.mock(UriInfo.class);
         Mockito.when(mockUriInfo.getRequestUri()).thenReturn(new URI("/validate")); // NOSONAR (mocked)

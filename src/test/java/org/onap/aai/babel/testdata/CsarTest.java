@@ -42,7 +42,6 @@ public enum CsarTest {
     MISSING_METADATA_CSAR("service-MissingMetadataTest.csar"),
     NO_YAML_FILES("noYmlFilesArchive.zip"),
     PORT_MIRROR_CSAR("service_PortMirror.csar"),
-    VNFOD_SERVICE("service-Dev2devnfodservice17July-csar.csar"),
     MULTIPLE_VNF_CSAR("catalog_csar_too_many_vnfConfigurations.csar");
     // @formatter:on
 
