@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_30295537",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 703
+      },
+      "writtenOn": "2018-09-06T16:19:13Z",
+      "side": 1,
+      "message": "This should now be removed.",
+      "range": {
+        "startLine": 66,
+        "startChar": 2,
+        "endLine": 66,
+        "endChar": 41
+      },
+      "revId": "3acfbde92cc956a93fce9d7d872cb87cbe87844e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
