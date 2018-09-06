@@ -34,7 +34,7 @@ import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.aai.babel.csar.extractor.InvalidArchiveException;
-import org.onap.aai.babel.csar.extractor.YamlExtractor;
+import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.api.AaiArtifactGenerator;
 import org.onap.aai.babel.xml.generator.data.AdditionalParams;
@@ -59,6 +59,7 @@ public class TestToscaParser {
     public void setup() throws FileNotFoundException, IOException {
         System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
                 new ArtifactTestUtils().getResourcePath(ARTIFACT_GENERATOR_CONFIG));
+
         InputStream in = TestToscaParser.class.getClassLoader().getResourceAsStream("artifact-generator.properties");
         Properties properties = new Properties();
         properties.load(in);
@@ -68,15 +69,13 @@ public class TestToscaParser {
 
     @Test
     public void testParserWithCsarFile() throws IOException, InvalidArchiveException {
-        String csarResourceName = "catalog_csar.csar";
-        byte[] csarBytes = new ArtifactTestUtils().getCompressedArtifact(csarResourceName);
-        List<Artifact> ymlFiles = new YamlExtractor().extract(csarBytes, csarResourceName, "1.0");
-
+        List<Artifact> ymlFiles = CsarTest.VNF_VENDOR_CSAR.extractArtifacts();
         Map<String, String> additionalParams = new HashMap<>();
         additionalParams.put(AdditionalParams.SERVICE_VERSION.getName(), "1.0");
 
         AaiArtifactGenerator generator = new AaiArtifactGenerator();
-        GenerationData data = generator.generateArtifact(csarBytes, ymlFiles, additionalParams);
+        GenerationData data = generator.generateArtifact(CsarTest.VNF_VENDOR_CSAR.getContent(), ymlFiles,
+                additionalParams);
 
         assertThat(data.getErrorData().size(), is(equalTo(0)));
         assertThat(data.getResultData().size(), is(equalTo(2)));

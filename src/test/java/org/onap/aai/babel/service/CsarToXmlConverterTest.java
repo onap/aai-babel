@@ -21,6 +21,8 @@
 
 package org.onap.aai.babel.service;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -40,6 +42,7 @@ import org.onap.aai.babel.csar.CsarConverterException;
 import org.onap.aai.babel.csar.CsarToXmlConverter;
 import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
 import org.onap.aai.babel.service.data.BabelArtifact;
+import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 
@@ -55,36 +58,6 @@ public class CsarToXmlConverterTest {
     static {
         if (System.getProperty("APP_HOME") == null) {
             System.setProperty("APP_HOME", ".");
-        }
-    }
-
-    private enum CsarTest {
-        VALID_CSAR_FILE(
-                "service-SdWanServiceTest-csar.csar"
-        ),
-        MISSING_METADATA_CSAR(
-                "service-MissingMetadataTest.csar"
-        ),
-        NO_YAML_FILES(
-                "noYmlFilesArchive.zip"
-        ),
-        PORT_MIRROR_CSAR(
-                "service_PortMirror.csar"
-        );
-
-        private String filename;
-        private ArtifactTestUtils artifactTestUtils = new ArtifactTestUtils();
-
-        CsarTest(String filename) {
-            this.filename = filename;
-        }
-
-        public String getName() {
-            return filename;
-        }
-
-        public byte[] getContent() throws IOException {
-            return artifactTestUtils.getCompressedArtifact(filename);
         }
     }
 
@@ -113,12 +86,12 @@ public class CsarToXmlConverterTest {
 
     @Test(expected = NullPointerException.class)
     public void testMissingName() throws CsarConverterException, IOException {
-        converter.generateXmlFromCsar(CsarTest.VALID_CSAR_FILE.getContent(), null, null);
+        converter.generateXmlFromCsar(CsarTest.SD_WAN_CSAR_FILE.getContent(), null, null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testMissingVersion() throws CsarConverterException, IOException {
-        converter.generateXmlFromCsar(CsarTest.VALID_CSAR_FILE.getContent(), INCORRECT_CSAR_NAME, null);
+        converter.generateXmlFromCsar(CsarTest.SD_WAN_CSAR_FILE.getContent(), INCORRECT_CSAR_NAME, null);
     }
 
     @Test(expected = CsarConverterException.class)
@@ -128,18 +101,28 @@ public class CsarToXmlConverterTest {
 
     @Test(expected = CsarConverterException.class)
     public void testCsarFileHasNoYmlFiles() throws CsarConverterException, IOException {
-        converter.generateXmlFromCsar(CsarTest.NO_YAML_FILES.getContent(), "noYmlFilesArchive.zip", SERVICE_VERSION);
+        converter.generateXmlFromCsar(CsarTest.NO_YAML_FILES.getContent(), CsarTest.NO_YAML_FILES.getName(),
+                SERVICE_VERSION);
     }
 
+    /**
+     * Test that an Exception is thrown when the Artifact Generator properties are not present.
+     *
+     * @throws CsarConverterException if there is an error either extracting the YAML files or generating XML artifacts
+     * @throws IOException if an I/O exception occurs loading the test CSAR file
+     */
     @Test
-    public void testArtifactGeneratorConfigMissing()
-            throws IOException, XmlArtifactGenerationException, CsarConverterException {
+    public void testArtifactGeneratorConfigMissing() throws CsarConverterException, IOException {
         exception.expect(CsarConverterException.class);
-        exception.expectMessage("Cannot generate artifacts. artifactgenerator.config system property not configured");
+        exception.expectMessage(
+                "An error occurred trying to generate XML files from a collection of YAML files :"
+                        + " org.onap.aai.babel.xml.generator.XmlArtifactGenerationException: "
+                        + "Error occurred during artifact generation: "
+                        + "{AAI=[Cannot generate artifacts. artifactgenerator.config system property not configured]}");
 
         // Unset the required system property
         System.clearProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE);
-        converter.generateXmlFromCsar(CsarTest.VALID_CSAR_FILE.getContent(), CsarTest.VALID_CSAR_FILE.getName(),
+        converter.generateXmlFromCsar(CsarTest.SD_WAN_CSAR_FILE.getContent(), CsarTest.SD_WAN_CSAR_FILE.getName(),
                 SERVICE_VERSION);
     }
 
@@ -151,26 +134,22 @@ public class CsarToXmlConverterTest {
     }
 
     @Test
-    public void generateXmlFromCsar() throws CsarConverterException, IOException, XmlArtifactGenerationException {
-        Map<String, String> expectedXmlFiles = createExpectedXmlFiles();
-        List<BabelArtifact> generatedArtifacts = converter.generateXmlFromCsar(CsarTest.VALID_CSAR_FILE.getContent(),
-                CsarTest.VALID_CSAR_FILE.getName(), SERVICE_VERSION);
-
-        generatedArtifacts
-                .forEach(ga -> assertThat("The content of " + ga.getName() + " must match the expected content",
-                        ga.getPayload(), matches(expectedXmlFiles.get(ga.getName()))));
+    public void generateXmlFromSdWanCsar() throws IOException, CsarConverterException {
+        List<String> filesToLoad = new ArrayList<>();
+        filesToLoad.add("AAI-SD-WAN-Service-Test-service-1.0.xml");
+        filesToLoad.add("AAI-SdWanTestVsp..DUMMY..module-0-resource-2.xml");
+        filesToLoad.add("AAI-Tunnel_XConnTest-resource-2.0.xml");
+        filesToLoad.add("AAI-SD-WAN-Test-VSP-resource-1.0.xml");
+        assertThatGeneratedFilesMatchExpected(createExpectedXmlFiles(filesToLoad), CsarTest.SD_WAN_CSAR_FILE);
     }
 
     @Test
     public void generatePortMirrorConfigurationModel()
             throws CsarConverterException, IOException, XmlArtifactGenerationException {
-        Map<String, String> expectedXmlFiles = createExpectedXmlFiles();
-        List<BabelArtifact> generatedArtifacts = converter.generateXmlFromCsar(CsarTest.PORT_MIRROR_CSAR.getContent(),
-                CsarTest.PORT_MIRROR_CSAR.getName(), SERVICE_VERSION);
-
-        generatedArtifacts
-                .forEach(ga -> assertThat("The content of " + ga.getName() + " must match the expected content",
-                        ga.getPayload(), matches(expectedXmlFiles.get(ga.getName()))));
+        List<String> filesToLoad = new ArrayList<>();
+        filesToLoad.add("AAI-Port Mirror_Test-service-1.0.xml");
+        filesToLoad.add("AAI-Port Mirroring Configuration-resource-35.0.xml");
+        assertThatGeneratedFilesMatchExpected(createExpectedXmlFiles(filesToLoad), CsarTest.PORT_MIRROR_CSAR);
     }
 
     public Matcher<String> matches(final String expected) {
@@ -189,21 +168,22 @@ public class CsarToXmlConverterTest {
         };
     }
 
-    private Map<String, String> createExpectedXmlFiles() throws IOException {
+    private Map<String, String> createExpectedXmlFiles(List<String> filesToLoad) throws IOException {
         Map<String, String> xmlMap = new HashMap<>();
-
-        List<String> filesToLoad = new ArrayList<>();
-        filesToLoad.add("AAI-SD-WAN-Service-Test-service-1.0.xml");
-        filesToLoad.add("AAI-SdWanTestVsp..DUMMY..module-0-resource-2.xml");
-        filesToLoad.add("AAI-Tunnel_XConnTest-resource-2.0.xml");
-        filesToLoad.add("AAI-SD-WAN-Test-VSP-resource-1.0.xml");
-        filesToLoad.add("AAI-Port Mirror_Test-service-1.0.xml");
-        filesToLoad.add("AAI-Port Mirroring Configuration-resource-35.0.xml");
-
         for (String filename : filesToLoad) {
             xmlMap.put(filename, new ArtifactTestUtils().loadResourceAsString("generatedXml/" + filename));
         }
-
         return xmlMap;
+    }
+
+    private void assertThatGeneratedFilesMatchExpected(Map<String, String> expectedXmlFiles, CsarTest csarFile)
+            throws CsarConverterException, IOException {
+        List<BabelArtifact> generatedArtifacts = converter.generateXmlFromCsar(csarFile.getContent(),
+                csarFile.getName(), SERVICE_VERSION);
+        assertThat("Incorrect number of files generated", //
+                generatedArtifacts.size(), is(equalTo(expectedXmlFiles.size())));
+        generatedArtifacts
+                .forEach(ga -> assertThat("The content of " + ga.getName() + " must match the expected content",
+                        ga.getPayload(), matches(expectedXmlFiles.get(ga.getName()))));
     }
 }

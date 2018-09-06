@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.csar.extractor;
 
 import static org.junit.Assert.assertEquals;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
+import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.data.Artifact;
 
@@ -95,7 +97,7 @@ public class YamlExtractorTest {
     @Test
     public void testArchiveContainsNoYmlFiles() throws IOException {
         try {
-            extractArchive("noYmlFilesArchive.zip");
+            CsarTest.NO_YAML_FILES.extractArtifacts();
             fail("An instance of InvalidArchiveException should have been thrown.");
         } catch (Exception e) {
             assertTrue("An instance of InvalidArchiveException should have been thrown.",
@@ -108,7 +110,7 @@ public class YamlExtractorTest {
     @Test
     public void testArchiveContainsOnlyTheExpectedYmlFilesFromSdWanService()
             throws IOException, InvalidArchiveException {
-        final List<Artifact> ymlFiles = extractArchive("service-SdWanServiceTest-csar.csar");
+        final List<Artifact> ymlFiles = CsarTest.SD_WAN_CSAR_FILE.extractArtifacts();
         List<String> payloads = new ArrayList<>();
         payloads.add("ymlFiles/resource-SdWanTestVsp-template.yml");
         payloads.add("ymlFiles/resource-SdWanTestVsp-template-interface.yml");
@@ -130,10 +132,10 @@ public class YamlExtractorTest {
     /**
      * Call the extractor with the specified arguments and assert that an exception is thrown.
      *
-     * @param archive
-     * @param name
-     * @param version
-     * @param expectedErrorMessage
+     * @param archive the compressed archive in the form of a byte array, expected to contain one or more YAML files
+     * @param name the name of the archive
+     * @param version the version of the archive
+     * @param expectedErrorMessage the text of the InvalidArchiveException thrown by the extractor
      */
     private void invalidArgumentsTest(byte[] archive, String name, String version, String expectedErrorMessage) {
         try {
@@ -143,20 +145,5 @@ public class YamlExtractorTest {
             assertTrue(ex instanceof InvalidArchiveException);
             assertEquals(expectedErrorMessage, ex.getLocalizedMessage());
         }
-    }
-
-    /**
-     * Extract Artifacts from the specified CSAR resource.
-     *
-     * @param resourceName
-     *            the CSAR file
-     * @return the extracted artifacts
-     * @throws InvalidArchiveException
-     * @throws IOException
-     *             for I/O errors
-     */
-    private List<Artifact> extractArchive(String resourceName) throws InvalidArchiveException, IOException {
-        byte[] csar = new ArtifactTestUtils().getCompressedArtifact(resourceName);
-        return new YamlExtractor().extract(csar, resourceName, "v1");
     }
 }

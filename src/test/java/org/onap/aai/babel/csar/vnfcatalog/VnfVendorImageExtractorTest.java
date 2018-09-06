@@ -31,10 +31,11 @@ import java.io.IOException;
 import org.junit.Test;
 import org.onap.aai.babel.service.data.BabelArtifact;
 import org.onap.aai.babel.service.data.BabelArtifact.ArtifactType;
+import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 
 /**
- * Tests {@link VnfVendorImageExtractor}
+ * Tests {@link VnfVendorImageExtractor}.
  */
 public class VnfVendorImageExtractorTest {
 
@@ -50,18 +51,18 @@ public class VnfVendorImageExtractorTest {
 
     @Test(expected = ToscaToCatalogException.class)
     public void createVendorImageMappingsInvalidCsarFile() throws IOException, ToscaToCatalogException {
-        extractArtifact("noYmlFilesArchive.zip");
+        CsarTest.NO_YAML_FILES.extractVnfVendorImages();
     }
 
     @Test(expected = ToscaToCatalogException.class)
     public void createVendorImageMappingsInvalidFile() throws IOException, ToscaToCatalogException {
-        extractArtifact("Duff.txt");
+        new VnfVendorImageExtractor().extract("not a real file".getBytes());
     }
 
     @Test
     public void createVendorImageMappingsMoreThanOneVnfConfigurationExists() throws IOException {
         try {
-            extractArtifact("catalog_csar_too_many_vnfConfigurations.csar");
+            CsarTest.MULTIPLE_VNF_CSAR.extractArtifacts();
         } catch (Exception e) {
             assertThat(e, is(instanceOf(ToscaToCatalogException.class)));
             assertThat(e.getLocalizedMessage(),
@@ -72,19 +73,15 @@ public class VnfVendorImageExtractorTest {
 
     @Test
     public void createVendorImageMappingsNoVnfConfigurationExists() throws IOException, ToscaToCatalogException {
-        assertThat(extractArtifact("noVnfConfiguration.csar"), is(nullValue()));
+        assertThat(CsarTest.NO_VNF_CONFIG_CSAR.extractVnfVendorImages(), is(nullValue()));
     }
 
     @Test
     public void createVendorImageMappingsValidFile() throws IOException, ToscaToCatalogException {
-        BabelArtifact artifact = extractArtifact("catalog_csar.csar");
+        BabelArtifact artifact = CsarTest.VNF_VENDOR_CSAR.extractVnfVendorImages();
         assertThat(artifact.getName(), is(equalTo("vnfVendorImageConfigurations")));
         assertThat(artifact.getType(), is(equalTo(ArtifactType.VNFCATALOG)));
         assertThat(artifact.getPayload(),
                 is(equalTo(new ArtifactTestUtils().getRequestJson("vnfVendorImageConfigurations.json"))));
-    }
-
-    private BabelArtifact extractArtifact(String artifactName) throws ToscaToCatalogException, IOException {
-        return new VnfVendorImageExtractor().extract(new ArtifactTestUtils().getCompressedArtifact(artifactName));
     }
 }

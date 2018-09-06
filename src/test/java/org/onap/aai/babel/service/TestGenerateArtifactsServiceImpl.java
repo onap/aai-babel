@@ -44,8 +44,8 @@ import org.mockito.Mockito;
 import org.onap.aai.auth.AAIMicroServiceAuth;
 import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
 import org.onap.aai.babel.service.data.BabelRequest;
+import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
-import org.onap.aai.babel.xml.generator.data.GeneratorUtil;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -78,7 +78,7 @@ public class TestGenerateArtifactsServiceImpl {
 
     @Test
     public void testGenerateArtifacts() throws Exception {
-        Response response = processJsonRequest(getRequestJson("success_request_vnf_catalog.json"));
+        Response response = processJsonRequest(CsarTest.VNF_VENDOR_CSAR);
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
@@ -90,49 +90,55 @@ public class TestGenerateArtifactsServiceImpl {
      */
     @Test
     public void testGenerateArtifactsWithoutVnfConfiguration() throws Exception {
-        final byte[] csarContent = new ArtifactTestUtils().getCompressedArtifact("noVnfConfiguration.csar");
-
-        BabelRequest babelRequest = new BabelRequest();
-        babelRequest.setCsar(new String(GeneratorUtil.encode(csarContent)));
-        babelRequest.setArtifactVersion("3.0");
-        babelRequest.setArtifactName("service-Vscpass-Test");
-
-        Response response = processJsonRequest(new Gson().toJson(babelRequest));
+        Response response = processJsonRequest(CsarTest.NO_VNF_CONFIG_CSAR);
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("validNoVnfConfigurationResponse.json")));
     }
 
     @Test
     public void testInvalidCsarFile() throws URISyntaxException, IOException {
-        Response response = processJsonRequest(getRequestJson("invalid_csar_request.json"));
+        BabelRequest request = new BabelRequest();
+        request.setArtifactName("hello");
+        request.setArtifactVersion("1.0");
+        request.setCsar("xxxx");
+        Response response = invokeService(new Gson().toJson(request));
         assertThat(response.getStatus(), is(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
         assertThat(response.getEntity(), is("Error converting CSAR artifact to XML model."));
     }
 
     @Test
     public void testInvalidJsonFile() throws URISyntaxException, IOException {
-        Response response = processJsonRequest(getRequestJson("invalid_json_request.json"));
+        Response response = invokeService("{\"csar:\"xxxx\"");
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("Malformed request."));
     }
 
     @Test
     public void testMissingArtifactName() throws Exception {
-        Response response = processJsonRequest(getRequestJson("missing_artifact_name_request.json"));
+        BabelRequest request = new BabelRequest();
+        request.setArtifactVersion("1.0");
+        request.setCsar("");
+        Response response = invokeService(new Gson().toJson(request));
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("No artifact name attribute found in the request body."));
     }
 
     @Test
     public void testMissingArtifactVersion() throws Exception {
-        Response response = processJsonRequest(getRequestJson("missing_artifact_version_request.json"));
+        BabelRequest request = new BabelRequest();
+        request.setArtifactName("hello");
+        request.setCsar("");
+        Response response = invokeService(new Gson().toJson(request));
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("No artifact version attribute found in the request body."));
     }
 
     @Test
     public void testMissingCsarFile() throws Exception {
-        Response response = processJsonRequest(getRequestJson("missing_csar_request.json"));
+        BabelRequest request = new BabelRequest();
+        request.setArtifactName("test-name");
+        request.setArtifactVersion("1.0");
+        Response response = invokeService(new Gson().toJson(request));
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("No csar attribute found in the request body."));
     }
@@ -140,12 +146,16 @@ public class TestGenerateArtifactsServiceImpl {
     /**
      * Create a (mocked) HTTPS request and invoke the Babel generate artifacts API.
      *
-     * @param resource path to the incoming JSON request
+     * @param csar
      * @return the Response from the HTTP API
      * @throws URISyntaxException if the URI cannot be created
      * @throws IOException if the resource cannot be loaded
      */
-    private Response processJsonRequest(String jsonString) throws URISyntaxException, IOException {
+    private Response processJsonRequest(CsarTest csar) throws IOException, URISyntaxException {
+        String jsonString = csar.getJsonRequest();
+        return invokeService(jsonString);
+    }
+    private Response invokeService(String jsonString) throws URISyntaxException {
         UriInfo mockUriInfo = Mockito.mock(UriInfo.class);
         Mockito.when(mockUriInfo.getRequestUri()).thenReturn(new URI("/validate")); // NOSONAR (mocked)
         Mockito.when(mockUriInfo.getPath(false)).thenReturn("validate"); // URI prefix is stripped by AJSC routing
@@ -179,10 +189,6 @@ public class TestGenerateArtifactsServiceImpl {
 
         GenerateArtifactsServiceImpl service = new GenerateArtifactsServiceImpl(auth);
         return service.generateArtifacts(mockUriInfo, headers, servletRequest, jsonString);
-    }
-
-    private String getRequestJson(String resource) throws IOException, URISyntaxException {
-        return new ArtifactTestUtils().getRequestJson(resource);
     }
 
     private String getResponseJson(String jsonResponse) throws IOException, URISyntaxException {
