@@ -38,7 +38,7 @@ public class VfModule extends Resource {
     }
 
     /**
-     * Adds Widget.
+     * Adds a Widget.
      *
      * @param widget the widget
      * @return the boolean

@@ -55,7 +55,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/babel-beans.xml"})
+@ContextConfiguration(locations = { "classpath:/babel-beans.xml" })
 public class TestGenerateArtifactsServiceImpl {
 
     static {
@@ -66,6 +66,7 @@ public class TestGenerateArtifactsServiceImpl {
     }
 
     private static final String ARTIFACT_GENERATOR_CONFIG = "artifact-generator.properties";
+    private static final String FILTER_TYPES_CONFIG = "filter-types.properties";
 
     @Inject
     private AAIMicroServiceAuth auth;
@@ -74,6 +75,8 @@ public class TestGenerateArtifactsServiceImpl {
     public static void setup() {
         System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
                 new ArtifactTestUtils().getResourcePath(ARTIFACT_GENERATOR_CONFIG));
+        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE,
+                new ArtifactTestUtils().getResourcePath(FILTER_TYPES_CONFIG));
     }
 
     @Test
@@ -148,8 +151,10 @@ public class TestGenerateArtifactsServiceImpl {
      *
      * @param csar
      * @return the Response from the HTTP API
-     * @throws URISyntaxException if the URI cannot be created
-     * @throws IOException if the resource cannot be loaded
+     * @throws URISyntaxException
+     *             if the URI cannot be created
+     * @throws IOException
+     *             if the resource cannot be loaded
      */
     private Response processJsonRequest(CsarTest csar) throws IOException, URISyntaxException {
         String jsonString = csar.getJsonRequest();
@@ -159,9 +164,11 @@ public class TestGenerateArtifactsServiceImpl {
     /**
      * Create a (mocked) HTTPS request and invoke the Babel generate artifacts API.
      *
-     * @param jsonString the JSON request
+     * @param jsonString
+     *            the JSON request
      * @return the Response from the HTTP API
-     * @throws URISyntaxException if the URI cannot be created
+     * @throws URISyntaxException
+     *             if the URI cannot be created
      */
     private Response invokeService(String jsonString) throws URISyntaxException {
         UriInfo mockUriInfo = Mockito.mock(UriInfo.class);
@@ -192,7 +199,7 @@ public class TestGenerateArtifactsServiceImpl {
         Mockito.when(mockCertificate.getSubjectX500Principal())
                 .thenReturn(new X500Principal("CN=test, OU=qa, O=Test Ltd, L=London, ST=London, C=GB"));
 
-        servletRequest.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] {mockCertificate});
+        servletRequest.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] { mockCertificate });
         servletRequest.setAttribute("javax.servlet.request.cipher_suite", "");
 
         GenerateArtifactsServiceImpl service = new GenerateArtifactsServiceImpl(auth);

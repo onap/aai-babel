@@ -64,6 +64,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
         try {
             ArtifactGeneratorToscaParser.initWidgetConfiguration();
+            ArtifactGeneratorToscaParser.initGroupFilterConfiguration();
             String serviceVersion = validateServiceVersion(additionalParams);
             GenerationData generationData = new GenerationData();
 
@@ -100,10 +101,10 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
                 // Generate AAI XML resource model
                 for (Resource res : resources) {
+                    log.info(ApplicationMsgs.DISTRIBUTION_EVENT, "Generating resource model");
                     MDC.put(MDC_PARAM_MODEL_INFO, res.getModelName() + "," + getArtifactLabel(res));
                     String aaiResourceModel = modelGenerator.generateModelFor(res);
                     generationData.add(getResourceArtifact(res, aaiResourceModel));
-
                 }
             }
             return generationData;
@@ -237,8 +238,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         } else {
             String versionRegex = "^[1-9]\\d*(\\.0)$";
             if (!(serviceVersion.matches(versionRegex))) {
-                throw new IllegalArgumentException(
-                        String.format(GENERATOR_AAI_INVALID_SERVICE_VERSION));
+                throw new IllegalArgumentException(String.format(GENERATOR_AAI_INVALID_SERVICE_VERSION));
             }
         }
         return serviceVersion;

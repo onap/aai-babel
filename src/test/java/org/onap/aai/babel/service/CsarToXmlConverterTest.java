@@ -52,6 +52,8 @@ import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 public class CsarToXmlConverterTest {
 
     private static final String ARTIFACT_GENERATOR_CONFIG = "artifact-generator.properties";
+    private static final String FILTER_TYPES_CONFIG = "filter-types.properties";
+
     private static final String INCORRECT_CSAR_NAME = "the_name_of_the_csar_file.csar";
     private static final String SERVICE_VERSION = "1.0";
 
@@ -71,6 +73,10 @@ public class CsarToXmlConverterTest {
     public void setup() {
         System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
                 new ArtifactTestUtils().getResourcePath(ARTIFACT_GENERATOR_CONFIG));
+
+        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE,
+                new ArtifactTestUtils().getResourcePath(FILTER_TYPES_CONFIG));
+
         converter = new CsarToXmlConverter();
     }
 
@@ -110,18 +116,36 @@ public class CsarToXmlConverterTest {
      *
      * @throws CsarConverterException if there is an error either extracting the YAML files or generating XML artifacts
      * @throws IOException if an I/O exception occurs loading the test CSAR file
+     * @throws IOException
+     * @throws XmlArtifactGenerationException
+     * @throws CsarConverterException
      */
     @Test
     public void testArtifactGeneratorConfigMissing() throws CsarConverterException, IOException {
         exception.expect(CsarConverterException.class);
-        exception.expectMessage(
-                "An error occurred trying to generate XML files from a collection of YAML files :"
-                        + " org.onap.aai.babel.xml.generator.XmlArtifactGenerationException: "
-                        + "Error occurred during artifact generation: "
-                        + "{AAI=[Cannot generate artifacts. artifactgenerator.config system property not configured]}");
+        exception.expectMessage("Cannot generate artifacts. System property artifactgenerator.config not configured");
 
         // Unset the required system property
         System.clearProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE);
+        converter.generateXmlFromCsar(CsarTest.SD_WAN_CSAR_FILE.getContent(), CsarTest.SD_WAN_CSAR_FILE.getName(),
+                SERVICE_VERSION);
+    }
+
+    /**
+     * Test that an Exception is thrown when the Artifact Generator's Group Filter properties are not present.
+     *
+     * @throws IOException
+     * @throws XmlArtifactGenerationException
+     * @throws CsarConverterException
+     */
+    @Test
+    public void generateXmlFromCsarFilterTypesSystemPropertyNotSet()
+            throws IOException, XmlArtifactGenerationException, CsarConverterException {
+        exception.expect(CsarConverterException.class);
+        exception.expectMessage("Cannot generate artifacts. System property groupfilter.config not configured");
+
+        // Unset the required system property
+        System.clearProperty(ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE);
         converter.generateXmlFromCsar(CsarTest.SD_WAN_CSAR_FILE.getContent(), CsarTest.SD_WAN_CSAR_FILE.getName(),
                 SERVICE_VERSION);
     }

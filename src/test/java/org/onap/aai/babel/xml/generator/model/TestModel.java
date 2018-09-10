@@ -45,7 +45,7 @@ import org.onap.aai.babel.xml.generator.types.ModelType;
 public class TestModel {
 
     private Service serviceModel = new Service();
-    private List<Resource> resourceModels = Arrays.asList(new VirtualFunction());
+    private List<Resource> resourceModels = Arrays.asList(new VirtualFunction(), new InstanceGroup());
     private Widget widgetModel = new OamNetwork();
     private Model anonymousModel;
 
@@ -109,6 +109,13 @@ public class TestModel {
         assertThat(Model.getModelFor("org.openecomp.resource.vfc.nodes.heat.cinder"), instanceOf(VolumeWidget.class));
         assertThat(Model.getModelFor("org.openecomp.nodes.PortMirroringConfiguration"),
                 instanceOf(Configuration.class));
+        assertThat(Model.getModelFor("org.openecomp.nodes.PortMirroringConfiguration", "Configuration"),
+                instanceOf(Configuration.class));
+        assertThat(Model.getModelFor("any.string", "Configuration"), instanceOf(Configuration.class));
+        assertThat(Model.getModelFor("org.openecomp.resource.cr.Kk1806Cr1", "CR"), instanceOf(CR.class));
+        assertThat(Model.getModelFor("any.string", "CR"), instanceOf(CR.class));
+
+        assertThat(Model.getModelFor("org.openecomp.resource.vfc", "an.unknown.type"), instanceOf(VServerWidget.class));
     }
 
     @Test

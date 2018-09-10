@@ -20,11 +20,15 @@
  */
 package org.onap.aai.babel.xml.generator.data;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 public class WidgetConfigurationUtil {
 
     private static Properties config;
+    private static List<String> instanceGroups = Collections.emptyList();
 
     /*
      * Private constructor to prevent instantiation
@@ -39,5 +43,16 @@ public class WidgetConfigurationUtil {
 
     public static void setConfig(Properties config) {
         WidgetConfigurationUtil.config = config;
+    }
+
+    public static void setFilterConfig(Properties properties) {
+        String instanceGroupsList = (String) properties.get("AAI.instance-group-types");
+        if (instanceGroupsList != null) {
+            instanceGroups = Arrays.asList(instanceGroupsList.split(","));
+        }
+    }
+
+    public static boolean isSupportedInstanceGroup(String groupType) {
+        return instanceGroups.contains(groupType);
     }
 }

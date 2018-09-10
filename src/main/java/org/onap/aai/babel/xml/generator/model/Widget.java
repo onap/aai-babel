@@ -38,10 +38,28 @@ import org.onap.aai.cl.api.Logger;
 
 public abstract class Widget extends Model {
 
-    public static final String GENERATOR_AAI_CONFIGLPROP_NOT_FOUND = "Cannot generate artifacts. Widget configuration not found for %s";
+    public static final String GENERATOR_AAI_CONFIGLPROP_NOT_FOUND =
+            "Cannot generate artifacts. Widget configuration not found for %s";
 
     public enum Type {
-        SERVICE, VF, VFC, VSERVER, VOLUME, FLAVOR, TENANT, VOLUME_GROUP, LINT, L3_NET, VFMODULE, IMAGE, OAM_NETWORK, ALLOTTED_RESOURCE, TUNNEL_XCONNECT, CONFIGURATION, CR;
+        SERVICE,
+        VF,
+        VFC,
+        VSERVER,
+        VOLUME,
+        FLAVOR,
+        TENANT,
+        VOLUME_GROUP,
+        LINT,
+        L3_NET,
+        VFMODULE,
+        IMAGE,
+        OAM_NETWORK,
+        ALLOTTED_RESOURCE,
+        TUNNEL_XCONNECT,
+        CONFIGURATION,
+        CR,
+        INSTANCE_GROUP;
     }
 
     private static Logger log = LogHelper.INSTANCE;
@@ -67,13 +85,13 @@ public abstract class Widget extends Model {
         typeToWidget.put(Type.TUNNEL_XCONNECT, TunnelXconnectWidget.class);
         typeToWidget.put(Type.CONFIGURATION, ConfigurationWidget.class);
         typeToWidget.put(Type.CR, CRWidget.class);
+        typeToWidget.put(Type.INSTANCE_GROUP, InstanceGroupWidget.class);
     }
 
     /**
      * Gets widget.
      *
-     * @param type
-     *            the type
+     * @param type the type
      * @return the widget
      */
     public static Widget getWidget(Type type) {
@@ -139,8 +157,7 @@ public abstract class Widget extends Model {
     /**
      * Equals method that compares Widget IDs.
      *
-     * @param obj
-     *            the Widget object to compare
+     * @param obj the Widget object to compare
      * @return whether or not obj is equal to this Widget
      */
     @Override
@@ -163,8 +180,7 @@ public abstract class Widget extends Model {
     /**
      * Determine whether one or more keys belonging to this Widget appear in the specified Collection.
      *
-     * @param keys
-     *            the keys
+     * @param keys the keys
      * @return the boolean
      */
     public boolean memberOf(Collection<String> keys) {
@@ -183,5 +199,4 @@ public abstract class Widget extends Model {
     public boolean addWidget(Widget widget) {
         return true;
     }
-
 }

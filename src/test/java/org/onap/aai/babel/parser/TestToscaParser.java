@@ -54,11 +54,15 @@ public class TestToscaParser {
     }
 
     private static final String ARTIFACT_GENERATOR_CONFIG = "artifact-generator.properties";
+    private static final String FILTER_TYPES_CONFIG = "filter-types.properties";
 
     @Before
     public void setup() throws FileNotFoundException, IOException {
         System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
                 new ArtifactTestUtils().getResourcePath(ARTIFACT_GENERATOR_CONFIG));
+
+        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE,
+                new ArtifactTestUtils().getResourcePath(FILTER_TYPES_CONFIG));
 
         InputStream in = TestToscaParser.class.getClassLoader().getResourceAsStream("artifact-generator.properties");
         Properties properties = new Properties();

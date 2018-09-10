@@ -20,7 +20,6 @@
  */
 package org.onap.aai.babel.xml.generator.model;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -159,12 +158,31 @@ public abstract class Model {
         if (clazz != null) {
             try {
                 modelToBeReturned = Optional.ofNullable(clazz.getConstructor().newInstance());
-            } catch (InstantiationException | java.lang.IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+            } catch (Exception e) {
                 log.error(ApplicationMsgs.INVALID_CSAR_FILE, e);
             }
         }
         return modelToBeReturned;
+    }
+
+    /**
+     * Gets the object (model) corresponding to the supplied TOSCA type information, prioritising the metadata
+     * information.
+     *
+     * @param toscaType
+     *            the TOSCA type
+     * @param metaDataType
+     *            the type from the TOSCA metadata
+     * @return the model for the type, or null
+     */
+    public static Model getModelFor(String toscaType, String metaDataType) {
+        if ("Configuration".equals(metaDataType)) {
+            return new Configuration();
+        } else if ("CR".equals(metaDataType)) {
+            return new CR();
+        } else {
+            return getModelFor(toscaType);
+        }
     }
 
     public abstract boolean addResource(Resource resource);
@@ -291,4 +309,5 @@ public abstract class Model {
             throw new IllegalAccessException(GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION);
         }
     }
+
 }

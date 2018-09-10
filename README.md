@@ -1,40 +1,36 @@
 # ONAP aai/babel
 
 ## Introduction
-Babel is a microservice in the AAI project that can be used by clients that work with TOSCA CSAR files.
+Babel is a microservice in the AAI project which can be used by clients that work with TOSCA CSAR files.
 
-It parses the TOSCA CSAR to generate xml files from a set of YAML files found in the TOSCA CSAR file.
+It parses TOSCA YAML files extracted from a CSAR payload and generates XML files containing AAI Model data.
 
-## Compiling Babel
-Babel service can be compiled easily using maven command `mvn clean install`  
+## Building Babel
+The Babel service can be built with Maven, e.g. by issuing the command `mvn clean install`  
 
-The compiled results will be the following artifacts in the "target" folder:
+Maven will produce the following artifacts in the "target" folder:
 
-* babel_v{major-version}.zip
-* babel_v{major-version}_props.zip
-* babel-{version}.jar
-* babel-{version}-client.jar
-* babel-{version}-runtimeEnvironment.zip
+* babel.jar
+* babel-client.jar
 * Dockerfile
 * start.sh
 
 Maven will install the following artifacts in the local repository:
 * babel-{version}.jar
 * babel-{version}-client.jar
-* babel-{version}-runtimeEnvironment.zip 
 
-Create the docker image:
+To create the docker image run:
 docker build -t aai/babel target
 
 ## Babel Client
-The project will build a client jar that can be used by clients when using the Babel service.   
+The project will build a client jar which can be used by clients invoking the Babel service.   
 
 The client jar contains two objects that are used in the Babel service API.
 
 BabelRequest is used to supply the inputs into the Babel service.
 BabelArtifact is the response artifact in the list of artifacts returned from the Babel service.
 
-### Deploying The Micro Service 
+### Deploying The Microservice 
 
 Push the Docker image that you have built to your Docker repository and pull it down to the location that you will be running Babel from.
 

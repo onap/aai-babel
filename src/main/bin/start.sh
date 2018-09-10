@@ -19,8 +19,7 @@
 # limitations under the License.
 # ============LICENSE_END=========================================================
 
-BASEDIR="/opt/app/babel"
-APP_HOME="${BASEDIR}"
+APP_HOME="${APP_HOME:-/opt/app/babel}"
 
 if [ -z "${CONFIG_HOME}" ]; then
 	echo "CONFIG_HOME must be set in order to start up process"
@@ -35,6 +34,7 @@ fi
 PROPS="-DAPP_HOME=${APP_HOME}"
 PROPS="${PROPS} -DCONFIG_HOME=${CONFIG_HOME}"
 PROPS="${PROPS} -Dartifactgenerator.config=${CONFIG_HOME}/artifact-generator.properties"
+PROPS="${PROPS} -Dgroupfilter.config=${CONFIG_HOME}/filter-types.properties"
 PROPS="${PROPS} -DKEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}"
 JVM_MAX_HEAP=${MAX_HEAP:-1024}
 
