@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.csar.vnfcatalog;
 
 import java.io.IOException;
@@ -50,38 +51,42 @@ import org.onap.sdc.toscaparser.api.SubstitutionMappings;
  * <p>
  * CSAR is a compressed format that stores multiple TOSCA files. Each TOSCA file may define Topology Templates and/or
  * Node Templates along with other model data.
+ * </p>
  *
  * <p>
  * A VNF is a virtualized functional capability (e.g. a Router) that may be defined by an external Vendor. Within the
  * model defined by the TOSCA files the VNF is considered to be a Resource (part of a Service).
+ * </p>
  *
  * <p>
  * A VNF is specified by a Topology Template. Because this TOSCA construct does not allow properties to be defined
  * directly, Node Templates are defined (identified by a VNF type value) storing the VNF metadata and properties.
+ * </p>
  *
  * <p>
  * A VNF may be composed of multiple images, each running on its own Virtual Machine. The function of a deployed image
  * is designated the Virtual Function Component (VFC). A VFC is a sub-component of the VNF. A VFC may have different
  * "Flavors" (see the Deployment Flavors description below).
+ * </p>
  *
  * <p>
  * An individual VNF (template) may be deployed with varying configuration values, according to
  * environment/customer/business needs. For example, a VNF deployed in a testing environment would typically use fewer
  * computational resources than in a production setting.
+ * </p>
  *
  * <p>
  * A Vendor may define one or more "Deployment Flavors". A Deployment Flavor describes a set of pre-determined
  * parameterised values for a specific aspect of the model. Within the TOSCA model there is a DeploymentFlavor
  * definition, which has its own data types, and also an ImageInfo definition.
+ * </p>
  */
 public class VnfVendorImageExtractor {
+
     private static LogHelper applicationLogger = LogHelper.INSTANCE;
 
-    private static final String AN_ERROR_OCCURRED = "An error occurred trying to get the vnf catalog from a csar file.";
-
     // The following constants describe the expected naming conventions for TOSCA Node Templates which
-    // store the VNF
-    // configuration and the VFC data items.
+    // store the VNF configuration and the VFC data items.
 
     // The name of the property (for a VNF Configuration type) storing the Images Information
     private static final String IMAGES = "images";
@@ -92,7 +97,7 @@ public class VnfVendorImageExtractor {
     // The name of the property (for a VNF Configuration type) storing the Vendor Information
     private static final String VNF_CONF_TYPE_PROPERTY_VENDOR_INFO_CONTAINER = "allowed_flavors";
 
-    // Name of property key that contains the value of model of the vendor application
+    // Name of property key that contains the value of model of the Vendor application
     private static final String VENDOR_MODEL = "vendor_model";
 
     /**
@@ -100,10 +105,12 @@ public class VnfVendorImageExtractor {
      * assumption that there's only one per file, awaiting verification).
      *
      * <p>
-     * It is possible that csar file does not contain a vnfConfiguration and this is valid.
+     * It is possible that CSAR file does not contain a vnfConfiguration and this is valid.
+     * </p>
      *
      * <p>
      * Where multiple vnfConfigurations are found an exception will be thrown.
+     * </p>
      *
      * <p>
      * The ASDC model anticipates the following permutations of vnfConfiguration and multiflavorVFC:
@@ -116,20 +123,20 @@ public class VnfVendorImageExtractor {
      * </pre>
      *
      * All ImageInfo sections found apply to all "Deployment Flavors", therefore we can apply a cross product of
-     * "Deployment Flavors" x "ImageInfo" - concretely
+     * "Deployment Flavors" x "ImageInfo"
+     * </p>
      *
      * @param csar compressed format that stores multiple TOSCA files and in particular a vnfConfiguration
      * @return BabelArtifact VendorImageConfiguration objects created during processing represented as the Babel service
      *         public data structure
+     * @throws ToscaToCatalogException if the CSAR content is not valid
      */
     public BabelArtifact extract(byte[] csar) throws ToscaToCatalogException {
         StopWatch stopwatch = new StopWatch();
         stopwatch.start();
 
         Objects.requireNonNull(csar, "A CSAR file must be supplied");
-
-        applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT,
-                "Starting to find and extract any vnf configuration data");
+        applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT, "Extracting VNF Configuration data");
 
         List<VendorImageConfiguration> vendorImageConfigurations;
         Path path = null;
@@ -138,41 +145,56 @@ public class VnfVendorImageExtractor {
             path = createTempFile(csar);
             vendorImageConfigurations = createVendorImageConfigurations(path.toAbsolutePath().toString());
         } catch (InvalidNumberOfNodesException | IOException | SdcToscaParserException e) {
-            throw new ToscaToCatalogException(AN_ERROR_OCCURRED + " " + e.getLocalizedMessage(), e);
+            throw new ToscaToCatalogException(
+                    "An error occurred trying to get the VNF Catalog from a CSAR file. " + e.getLocalizedMessage(), e);
         } finally {
             if (path != null) {
                 FileUtils.deleteQuietly(path.toFile());
             }
         }
 
-        String msg = vendorImageConfigurations.isEmpty() ? "No Vnf Configuration has been found in the csar"
-                : "Vnf Configuration has been found in the csar";
-        applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT, msg);
+        applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT, vendorImageConfigurations.toString());
         applicationLogger.logMetrics(stopwatch, LogHelper.getCallerMethodName(0));
 
         return ConfigurationsToBabelArtifactConverter.convert(vendorImageConfigurations);
     }
 
+    /**
+     * Creates a temporary file to store the CSAR content.
+     *
+     * @param bytes the CSAR content
+     * @return Path to a temporary file containing the CSAR bytes
+     * @throws IOException if an I/O error occurs or the temporary-file directory does not exist
+     */
     private Path createTempFile(byte[] bytes) throws IOException {
-        applicationLogger.debug("Creating temp file on file system for the csar");
         Path path = Files.createTempFile("temp", ".csar");
+        applicationLogger.debug("Created temp file " + path);
         Files.write(path, bytes);
         return path;
     }
 
+    /**
+     * Build VNF Vendor Image Configurations for the VNF Configuration node (if present) in the CSAR file referenced by
+     * the supplied Path.
+     *
+     * @param csarFilepath the path to the CSAR file
+     * @return a List of Vendor Image Configurations
+     * @throws SdcToscaParserException
+     * @throws ToscaToCatalogException
+     * @throws InvalidNumberOfNodesException
+     */
     private List<VendorImageConfiguration> createVendorImageConfigurations(String csarFilepath)
             throws SdcToscaParserException, ToscaToCatalogException, InvalidNumberOfNodesException {
-        applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT,
-                "Getting instance of ISdcCsarHelper to use in finding vnf configuration data");
-        ISdcCsarHelper csarHelper = SdcToscaParserFactory.getInstance().getSdcCsarHelper(csarFilepath);
-
         List<VendorImageConfiguration> vendorImageConfigurations = new ArrayList<>();
+
+        ISdcCsarHelper csarHelper = SdcToscaParserFactory.getInstance().getSdcCsarHelper(csarFilepath);
         NodeTemplate vnfConfigurationNode = findVnfConfigurationNode(csarHelper);
 
-        if (vnfConfigurationNode != null) {
-            List<NodeTemplate> serviceVfNodes = csarHelper.getServiceVfList();
+        applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT,
+                String.format("Found VNF Configuration node \"%s\"", vnfConfigurationNode));
 
-            for (NodeTemplate node : serviceVfNodes) {
+        if (vnfConfigurationNode != null) {
+            for (NodeTemplate node : csarHelper.getServiceVfList()) {
                 vendorImageConfigurations.addAll(buildVendorImageConfigurations(vnfConfigurationNode, node));
             }
         }
@@ -180,15 +202,25 @@ public class VnfVendorImageExtractor {
         return vendorImageConfigurations;
     }
 
+    /**
+     * Find VNF configuration node.
+     *
+     * @param csarHelper the csar helper
+     * @return the node template
+     * @throws InvalidNumberOfNodesException
+     */
     private NodeTemplate findVnfConfigurationNode(ISdcCsarHelper csarHelper) throws InvalidNumberOfNodesException {
-        applicationLogger.debug("Tryng to find the vnf configuration node");
+        List<NodeTemplate> nodeTemplates = csarHelper.getServiceNodeTemplateBySdcType(SdcTypes.VF);
+        applicationLogger.debug(nodeTemplates.toString());
 
-        List<NodeTemplate> configNodes =
-                csarHelper.getServiceNodeTemplateBySdcType(SdcTypes.VF).stream().map(serviceNodeTemplate -> {
+        List<NodeTemplate> configNodes = nodeTemplates.stream() //
+                .map(serviceNodeTemplate -> {
                     String uuid = csarHelper.getNodeTemplateCustomizationUuid(serviceNodeTemplate);
-                    applicationLogger.debug("Node Template Customization Uuid is " + uuid);
+                    applicationLogger.debug(serviceNodeTemplate + " Customization UUID is " + uuid);
                     return csarHelper.getVnfConfig(uuid);
-                }).filter(Objects::nonNull).collect(Collectors.toList());
+                }) //
+                .filter(Objects::nonNull) //
+                .collect(Collectors.toList());
 
         if (configNodes.size() > 1) {
             throw new InvalidNumberOfNodesException("Only one vnf configuration node is allowed however "
@@ -198,22 +230,44 @@ public class VnfVendorImageExtractor {
         return configNodes.size() == 1 ? configNodes.get(0) : null;
     }
 
+    /**
+     * Builds the Vendor image configurations.
+     *
+     * @param vendorInfoNode the vendor info node
+     * @param node the node
+     * @return the list
+     * @throws ToscaToCatalogException if there are no software versions
+     */
     private List<VendorImageConfiguration> buildVendorImageConfigurations(NodeTemplate vendorInfoNode,
             NodeTemplate node) throws ToscaToCatalogException {
         List<VendorImageConfiguration> vendorImageConfigurations = new ArrayList<>();
 
         List<String> softwareVersions = extractSoftwareVersions(node.getSubMappingToscaTemplate());
 
-        Consumer<? super Pair<String, String>> buildConfigurations = vi -> vendorImageConfigurations.addAll(
-                softwareVersions.stream().map(sv -> (new VendorImageConfiguration(vi.getRight(), vi.getLeft(), sv)))
+        Consumer<? super Pair<String, String>> buildConfigurations =
+                vi -> vendorImageConfigurations.addAll(softwareVersions.stream() //
+                        .map(sv -> (new VendorImageConfiguration(vi.getRight(), vi.getLeft(), sv)))
                         .collect(Collectors.toList()));
 
         String resourceVendor = node.getMetaData().getValue("resourceVendor");
+
+        applicationLogger.debug("Resource Vendor " + resourceVendor);
+
         buildVendorInfo(resourceVendor, vendorInfoNode).forEach(buildConfigurations);
+
+        applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT,
+                "Built " + vendorImageConfigurations.size() + " Vendor Image Configurations");
 
         return vendorImageConfigurations;
     }
 
+    /**
+     * Builds the Vendor info.
+     *
+     * @param resourceVendor the resource vendor
+     * @param vendorInfoNode the vendor info node
+     * @return the list
+     */
     @SuppressWarnings("unchecked")
     private List<Pair<String, String>> buildVendorInfo(String resourceVendor, NodeTemplate vendorInfoNode) {
         Map<String, Object> otherFlavorProperties =
@@ -224,6 +278,13 @@ public class VnfVendorImageExtractor {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Creates the Vendor info pair.
+     *
+     * @param otherFlavor the other flavor
+     * @param resourceVendor the resource Vendor
+     * @return the pair
+     */
     private Pair<String, String> createVendorInfoPair(Map<String, Object> otherFlavor, String resourceVendor) {
         @SuppressWarnings("unchecked")
         String vendorModel = otherFlavor.entrySet().stream() //
@@ -231,35 +292,49 @@ public class VnfVendorImageExtractor {
                 .map(e -> ((Map<String, String>) e.getValue()).get(VENDOR_MODEL)) //
                 .findFirst().orElse(null);
 
-        applicationLogger.debug("Creating vendor info pair object for vendorModel = " + vendorModel
+        applicationLogger.debug("Creating Vendor info pair object for vendorModel = " + vendorModel
                 + " and resourceVendor = " + resourceVendor);
 
         return new ImmutablePair<>(resourceVendor, vendorModel);
     }
 
+    /**
+     * Extract software versions.
+     *
+     * @param sm the substitution mappings
+     * @return a List of Software Version Strings
+     * @throws ToscaToCatalogException the tosca to catalog exception
+     */
     @SuppressWarnings("unchecked")
     List<String> extractSoftwareVersions(SubstitutionMappings sm) throws ToscaToCatalogException {
-        applicationLogger.debug("Trying to extract the software versions for the vnf configuration");
+        applicationLogger.debug("Extracting software versions from " + sm);
 
         List<NodeTemplate> imagesNodes = sm.getNodeTemplates().stream()
-                .filter(nodeTemplate -> nodeTemplate.getPropertyValue(IMAGES) != null).collect(Collectors.toList());
+                .filter(nodeTemplate -> nodeTemplate.getPropertyValue(IMAGES) != null)
+                .collect(Collectors.toList());
 
         if (imagesNodes != null && !imagesNodes.isEmpty()) {
-            applicationLogger.debug("Found NodeTemplates containing properties with a key called 'images'");
             return imagesNodes.stream()
                     .flatMap(imagesNode -> ((Map<String, Object>) imagesNode.getPropertyValue(IMAGES)) //
                             .entrySet().stream())
                     .map(property -> findSoftwareVersion((Map<String, Object>) property.getValue()))
                     .collect(Collectors.toList());
         } else {
-            throw new ToscaToCatalogException("No software versions could be found for this csar file");
+            throw new ToscaToCatalogException("No software versions could be found for this CSAR file");
         }
     }
 
+    /**
+     * Get the first software version value from the properties Map.
+     *
+     * @param image the properties Map
+     * @return the software version value as a String
+     */
     private String findSoftwareVersion(Map<String, Object> image) {
-        applicationLogger.debug("Getting the software version value from the map of image properties");
+        applicationLogger.debug("Finding " + SOFTWARE_VERSION + " from " + image);
 
-        return (String) image.entrySet().stream().filter(entry -> SOFTWARE_VERSION.equals(entry.getKey()))
+        return (String) image.entrySet().stream()//
+                .filter(entry -> SOFTWARE_VERSION.equals(entry.getKey())) //
                 .map(Entry::getValue).findFirst().orElse(null);
     }
 }

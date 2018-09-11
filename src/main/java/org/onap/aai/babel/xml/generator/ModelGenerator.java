@@ -38,7 +38,7 @@ import org.onap.aai.babel.xml.generator.data.GroupType;
 import org.onap.aai.cl.api.Logger;
 
 /**
- * This class is responsible for generating xml model artifacts from a collection of csar file artifacts
+ * This class is responsible for generating XML model artifacts from a collection of CSAR artifacts.
  */
 public class ModelGenerator implements ArtifactGenerator {
 
@@ -54,7 +54,7 @@ public class ModelGenerator implements ArtifactGenerator {
      * @param csarArchive
      * @param csarArtifacts the input artifacts
      * @return {@link List} of output artifacts
-     * @throws XmlArtifactGenerationException if there is an error trying to generate xml artifacts
+     * @throws XmlArtifactGenerationException if there is an error trying to generate XML artifacts
      */
     @Override
     public List<BabelArtifact> generateArtifacts(byte[] csarArchive, List<Artifact> csarArtifacts)
@@ -64,8 +64,6 @@ public class ModelGenerator implements ArtifactGenerator {
 
         // Get the service version to pass into the generator
         String toscaVersion = csarArtifacts.get(0).getVersion();
-        logger.debug(
-                "Getting the service version for Tosca Version of the yml file.  The Tosca Version is " + toscaVersion);
         String serviceVersion = getServiceVersion(toscaVersion);
         logger.debug("The service version is " + serviceVersion);
         Map<String, String> additionalParams = new HashMap<>();
@@ -111,12 +109,10 @@ public class ModelGenerator implements ArtifactGenerator {
     }
 
     private static String getServiceVersion(String artifactVersion) {
+        logger.debug("Artifact version=" + artifactVersion);
         String serviceVersion;
-
         try {
-            String[] versionParts = artifactVersion.split(VERSION_DELIMITER_REGEXP);
-            Integer majorVersion = Integer.parseInt(versionParts[0]);
-
+            int majorVersion = Integer.parseInt(artifactVersion.split(VERSION_DELIMITER_REGEXP)[0]);
             serviceVersion = majorVersion + VERSION_DELIMITER + "0";
         } catch (Exception e) {
             logger.warn(ApplicationMsgs.DISTRIBUTION_EVENT,

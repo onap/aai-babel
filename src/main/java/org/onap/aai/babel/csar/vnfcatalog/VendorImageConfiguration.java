@@ -64,6 +64,7 @@ import com.google.gson.annotations.SerializedName;
  * </pre>
  */
 class VendorImageConfiguration {
+
     private String application;
 
     @SerializedName("application-vendor")
@@ -101,4 +102,10 @@ class VendorImageConfiguration {
     public void setApplicationVersion(String applicationVersion) {
         this.applicationVersion = applicationVersion;
     }
+
+    @Override
+    public String toString() {
+        return "VendorImage [" + application + ", " + applicationVendor + ", " + applicationVersion + "]";
+    }
+
 }

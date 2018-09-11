@@ -43,11 +43,12 @@ public class AAIMicroServiceAuthCore {
 
     private static LogHelper applicationLogger = LogHelper.INSTANCE;
 
-    public static final String CONFIG_HOME = "CONFIG_HOME";
+    private static final String CONFIG_HOME = System.getProperty("CONFIG_HOME");
+
     public static final String FILESEP =
             (System.getProperty("file.separator") == null) ? "/" : System.getProperty("file.separator");
-    public static final String APPCONFIG_DIR = (System.getProperty(CONFIG_HOME) == null)
-            ? System.getProperty("APP_HOME") + FILESEP + "appconfig" : System.getProperty(CONFIG_HOME);
+    public static final String APPCONFIG_DIR =
+            (CONFIG_HOME == null) ? System.getProperty("APP_HOME") + FILESEP + "appconfig" : CONFIG_HOME;
 
     private static String appConfigAuthDir = APPCONFIG_DIR + FILESEP + "auth";
     private static String defaultAuthFileName = appConfigAuthDir + FILESEP + "auth_policy.json";
@@ -86,7 +87,7 @@ public class AAIMicroServiceAuthCore {
             throw new AAIAuthException(e.getMessage());
         }
         if (policyAuthFileName == null) {
-            throw new AAIAuthException("Auth policy file could not be found" + System.getProperty(CONFIG_HOME) + APPCONFIG_DIR);
+            throw new AAIAuthException("Auth policy file could not be found" + CONFIG_HOME + APPCONFIG_DIR);
         }
         AAIMicroServiceAuthCore.reloadUsers();
 
@@ -252,7 +253,7 @@ public class AAIMicroServiceAuthCore {
         }
 
         public boolean hasAllowedFunction(String afunc) {
-            return this.allowedFunctions.contains(afunc) ? true : false;
+            return this.allowedFunctions.contains(afunc);
         }
     }
 

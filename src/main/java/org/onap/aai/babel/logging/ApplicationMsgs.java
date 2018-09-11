@@ -24,28 +24,21 @@ import com.att.eelf.i18n.EELFResourceManager;
 import org.onap.aai.cl.eelf.LogMessageEnum;
 
 public enum ApplicationMsgs implements LogMessageEnum {
-    /** Arguments: {0} = message. */
-    // @formatter:off
-  DISTRIBUTION_EVENT,
-  MESSAGE_AUDIT,
-  MESSAGE_METRIC,
-  MISSING_REQUEST_ID,
-  PROCESS_REQUEST_ERROR,
-  INVALID_CSAR_FILE,
-  INVALID_REQUEST_JSON,
-  BABEL_REQUEST_PAYLOAD,
-  BABEL_RESPONSE_PAYLOAD,
-  LOAD_PROPERTIES,
-  PROCESSING_VNF_CATALOG_ERROR,
-  TEMP_FILE_ERROR,
-  MISSING_SERVICE_METADATA;
-    
-  // @formatter:on
 
-    /**
-     * Static initializer to ensure the resource bundles for this class are loaded... Here this application loads
-     * messages from three bundles
-     */
+    DISTRIBUTION_EVENT,
+    MESSAGE_AUDIT,
+    MESSAGE_METRIC,
+    MISSING_REQUEST_ID,
+    PROCESS_REQUEST_ERROR,
+    INVALID_CSAR_FILE,
+    INVALID_REQUEST_JSON,
+    BABEL_REQUEST_PAYLOAD,
+    BABEL_RESPONSE_PAYLOAD,
+    LOAD_PROPERTIES,
+    PROCESSING_VNF_CATALOG_ERROR,
+    TEMP_FILE_ERROR,
+    MISSING_SERVICE_METADATA;
+
     static {
         EELFResourceManager.loadMessageBundle("babel-logging-resources");
     }
