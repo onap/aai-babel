@@ -26,7 +26,9 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
@@ -37,6 +39,7 @@ import org.onap.aai.babel.xml.generator.data.GenerationData;
 import org.onap.aai.babel.xml.generator.data.GeneratorUtil;
 import org.onap.aai.babel.xml.generator.data.GroupType;
 import org.onap.aai.babel.xml.generator.model.Model;
+import org.onap.aai.babel.xml.generator.model.ProvidingService;
 import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.aai.babel.xml.generator.model.Service;
 import org.onap.aai.cl.api.Logger;
@@ -51,95 +54,120 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
     private static final String MDC_PARAM_MODEL_INFO = "ARTIFACT_MODEL_INFO";
     private static final String GENERATOR_AAI_GENERATED_ARTIFACT_EXTENSION = "xml";
-    private static final String GENERATOR_AAI_ERROR_MISSING_SERVICE_TOSCA = "Service tosca missing from list of input artifacts";
-    private static final String GENERATOR_AAI_ERROR_MISSING_SERVICE_VERSION = "Cannot generate artifacts. Service version is not specified";
-    private static final String GENERATOR_AAI_INVALID_SERVICE_VERSION = "Cannot generate artifacts. Service version is incorrect";
+    private static final String GENERATOR_AAI_ERROR_MISSING_SERVICE_TOSCA =
+            "Service tosca missing from list of input artifacts";
+    private static final String GENERATOR_AAI_ERROR_MISSING_SERVICE_VERSION =
+            "Cannot generate artifacts. Service version is not specified";
+    private static final String GENERATOR_AAI_INVALID_SERVICE_VERSION =
+            "Cannot generate artifacts. Service version is incorrect";
 
     private AaiModelGenerator modelGenerator = new AaiModelGeneratorImpl();
 
     @Override
     public GenerationData generateArtifact(byte[] csarArchive, List<Artifact> input,
             Map<String, String> additionalParams) {
-        Path path = null;
+        Path csarPath;
+
+        try {
+            csarPath = createTempFile(csarArchive);
+        } catch (IOException e) {
+            log.error(ApplicationMsgs.TEMP_FILE_ERROR, e);
+            return createErrorData(e);
+        }
 
         try {
             ArtifactGeneratorToscaParser.initWidgetConfiguration();
             ArtifactGeneratorToscaParser.initGroupFilterConfiguration();
-            String serviceVersion = validateServiceVersion(additionalParams);
-            GenerationData generationData = new GenerationData();
-
-            path = createTempFile(csarArchive);
-            if (path != null) {
-                ISdcCsarHelper csarHelper = SdcToscaParserFactory.getInstance()
-                        .getSdcCsarHelper(path.toAbsolutePath().toString());
-
-                List<NodeTemplate> serviceNodes = csarHelper.getServiceNodeTemplates();
-                Map<String, String> serviceMetaData = csarHelper.getServiceMetadataAllProperties();
-
-                if (serviceNodes == null) {
-                    throw new IllegalArgumentException(GENERATOR_AAI_ERROR_MISSING_SERVICE_TOSCA);
-                }
-
-                // Populate basic service model metadata
-                Service serviceModel = new Service();
-                serviceModel.populateModelIdentificationInformation(serviceMetaData);
-                serviceModel.setModelVersion(serviceVersion);
-
-                Map<String, String> idTypeStore = new HashMap<>();
-
-                ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(csarHelper);
-                if (!serviceNodes.isEmpty()) {
-                    parser.processServiceTosca(serviceModel, idTypeStore, serviceNodes);
-                }
-
-                // Process the resource TOSCA files
-                List<Resource> resources = parser.processResourceToscas(serviceNodes, idTypeStore);
-
-                MDC.put(MDC_PARAM_MODEL_INFO, serviceModel.getModelName() + "," + getArtifactLabel(serviceModel));
-                String aaiServiceModel = modelGenerator.generateModelFor(serviceModel);
-                generationData.add(getServiceArtifact(serviceModel, aaiServiceModel));
-
-                // Generate AAI XML resource model
-                for (Resource res : resources) {
-                    log.info(ApplicationMsgs.DISTRIBUTION_EVENT, "Generating resource model");
-                    MDC.put(MDC_PARAM_MODEL_INFO, res.getModelName() + "," + getArtifactLabel(res));
-                    String aaiResourceModel = modelGenerator.generateModelFor(res);
-                    generationData.add(getResourceArtifact(res, aaiResourceModel));
-                }
-            }
-            return generationData;
+            ISdcCsarHelper csarHelper =
+                    SdcToscaParserFactory.getInstance().getSdcCsarHelper(csarPath.toAbsolutePath().toString());
+            return generateService(validateServiceVersion(additionalParams), csarHelper);
         } catch (Exception e) {
             log.error(ApplicationMsgs.INVALID_CSAR_FILE, e);
-            GenerationData generationData = new GenerationData();
-            generationData.add(ArtifactType.AAI.name(), e.getMessage());
-            return generationData;
-
+            return createErrorData(e);
         } finally {
-            if (path != null) {
-                FileUtils.deleteQuietly(path.toFile());
-            }
+            FileUtils.deleteQuietly(csarPath.toFile());
         }
     }
 
-    private Path createTempFile(byte[] bytes) {
-        Path path = null;
-        try {
-            log.debug("Creating temp file on file system for the csar");
-            path = Files.createTempFile("temp", ".csar");
-            Files.write(path, bytes);
-        } catch (IOException e) {
-            log.error(ApplicationMsgs.TEMP_FILE_ERROR, e);
+    private GenerationData createErrorData(Exception e) {
+        GenerationData generationData = new GenerationData();
+        generationData.add(ArtifactType.AAI.name(), e.getMessage());
+        return generationData;
+    }
+
+    /**
+     * Generate model artifacts for the Service and its associated Resources.
+     *
+     * @param serviceVersion
+     * @param csarHelper TOSCA parser
+     * @return the generated Artifacts
+     */
+    private GenerationData generateService(final String serviceVersion, ISdcCsarHelper csarHelper) {
+        List<NodeTemplate> serviceNodes = csarHelper.getServiceNodeTemplates();
+        if (serviceNodes == null) {
+            throw new IllegalArgumentException(GENERATOR_AAI_ERROR_MISSING_SERVICE_TOSCA);
         }
+
+        // Populate basic service model metadata
+        Service serviceModel = new Service();
+        serviceModel.setModelVersion(serviceVersion);
+        serviceModel.populateModelIdentificationInformation(csarHelper.getServiceMetadataAllProperties());
+
+        Map<String, String> idTypeStore = new HashMap<>();
+
+        ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(csarHelper);
+        if (!serviceNodes.isEmpty()) {
+            parser.processServiceTosca(serviceModel, idTypeStore, serviceNodes);
+        }
+
+        // Process the resource TOSCA files
+        List<Resource> resources = parser.processResourceToscas(serviceNodes, idTypeStore);
+
+        MDC.put(MDC_PARAM_MODEL_INFO, serviceModel.getModelName() + "," + getArtifactLabel(serviceModel));
+        String aaiServiceModel = modelGenerator.generateModelFor(serviceModel);
+
+        GenerationData generationData = new GenerationData();
+        generationData.add(getServiceArtifact(serviceModel, aaiServiceModel));
+
+        // Generate AAI XML resource model
+        for (Resource resource : resources) {
+            generateResourceArtifact(generationData, resource);
+            for (Resource childResource : resource.getResources()) {
+                if (!(childResource instanceof ProvidingService)) {
+                    generateResourceArtifact(generationData, childResource);
+                }
+            }
+        }
+
+        return generationData;
+    }
+
+    /**
+     * @param generationData
+     * @param resource
+     */
+    private void generateResourceArtifact(GenerationData generationData, Resource resource) {
+        if (!isContained(generationData, getArtifactName(resource))) {
+            log.info(ApplicationMsgs.DISTRIBUTION_EVENT, "Generating resource model");
+            Artifact resourceArtifact = getResourceArtifact(resource, modelGenerator.generateModelFor(resource));
+            generationData.add(resourceArtifact);
+        }
+    }
+
+    private Path createTempFile(byte[] bytes) throws IOException {
+        log.debug("Creating temp file on file system for the csar");
+        Path path = Files.createTempFile("temp", ".csar");
+        Files.write(path, bytes);
         return path;
     }
 
     /**
-     * Method to generate the artifact label for AAI model
+     * Create the artifact label for an AAI model.
      *
      * @param model
      * @return the artifact label as String
      */
-    public String getArtifactLabel(Model model) {
+    private String getArtifactLabel(Model model) {
         StringBuilder artifactName = new StringBuilder(ArtifactType.AAI.name());
         artifactName.append("-");
         artifactName.append(model.getModelType().name().toLowerCase());
@@ -151,8 +179,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     /**
      * Method to generate the artifact name for an AAI model.
      *
-     * @param model
-     *            AAI artifact model
+     * @param model AAI artifact model
      * @return Model artifact name
      */
     private String getArtifactName(Model model) {
@@ -175,31 +202,38 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     /**
      * Create Resource artifact model from the AAI xml model string.
      *
-     * @param resourceModel
-     *            Model of the resource artifact
-     * @param aaiResourceModel
-     *            AAI model as string
+     * @param resourceModel Model of the resource artifact
+     * @param aaiResourceModel AAI model as string
      * @return Generated {@link Artifact} model for the resource
      */
     private Artifact getResourceArtifact(Model resourceModel, String aaiResourceModel) {
+        final String resourceArtifactLabel = getArtifactLabel(resourceModel);
+        MDC.put(MDC_PARAM_MODEL_INFO, resourceModel.getModelName() + "," + resourceArtifactLabel);
+        final byte[] bytes = aaiResourceModel.getBytes();
+
         Artifact artifact = new Artifact(ArtifactType.MODEL_INVENTORY_PROFILE.name(), GroupType.DEPLOYMENT.name(),
-                GeneratorUtil.checkSum(aaiResourceModel.getBytes()), GeneratorUtil.encode(aaiResourceModel.getBytes()));
-        String resourceArtifactName = getArtifactName(resourceModel);
-        String resourceArtifactLabel = getArtifactLabel(resourceModel);
-        artifact.setName(resourceArtifactName);
+                GeneratorUtil.checkSum(bytes), GeneratorUtil.encode(bytes));
+        artifact.setName(getArtifactName(resourceModel));
         artifact.setLabel(resourceArtifactLabel);
-        String description = ArtifactGeneratorToscaParser.getArtifactDescription(resourceModel);
-        artifact.setDescription(description);
+        artifact.setDescription(ArtifactGeneratorToscaParser.getArtifactDescription(resourceModel));
         return artifact;
+    }
+
+    /**
+     * @param generationData
+     * @param artifactName
+     * @return
+     */
+    private boolean isContained(GenerationData generationData, final String artifactName) {
+        return generationData.getResultData().stream()
+                .anyMatch(artifact -> StringUtils.equals(artifact.getName(), artifactName));
     }
 
     /**
      * Create Service artifact model from the AAI xml model string.
      *
-     * @param serviceModel
-     *            Model of the service artifact
-     * @param aaiServiceModel
-     *            AAI model as string
+     * @param serviceModel Model of the service artifact
+     * @param aaiServiceModel AAI model as string
      * @return Generated {@link Artifact} model for the service
      */
     private Artifact getServiceArtifact(Service serviceModel, String aaiServiceModel) {
@@ -231,8 +265,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     }
 
     private String validateServiceVersion(Map<String, String> additionalParams) {
-        String serviceVersion;
-        serviceVersion = additionalParams.get(AdditionalParams.SERVICE_VERSION.getName());
+        String serviceVersion = additionalParams.get(AdditionalParams.SERVICE_VERSION.getName());
         if (serviceVersion == null) {
             throw new IllegalArgumentException(GENERATOR_AAI_ERROR_MISSING_SERVICE_VERSION);
         } else {

@@ -28,8 +28,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
+
 import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
@@ -209,7 +211,7 @@ public class ArtifactGeneratorToscaParser {
             resourceModel.populateModelIdentificationInformation(serviceMetadata);
 
             idTypeStore.remove(resourceModel.getModelNameVersionId());
-            processVfTosca(idTypeStore, resourceModel, resourceNodes);
+            processResourceModels(idTypeStore, resourceModel, resourceNodes);
 
             if (csarHelper.getServiceVfList() != null) {
                 processVfModules(resources, resourceModel, serviceNode);
@@ -407,35 +409,52 @@ public class ArtifactGeneratorToscaParser {
                 e -> e.getValue().getValue() == null ? "" : e.getValue().getValue().toString()));
     }
 
-    private void processVfTosca(Map<String, String> idTypeStore, Model resourceModel,
+    private void processResourceModels(Map<String, String> idTypeStore, Model resourceModel,
             List<NodeTemplate> resourceNodes) {
         boolean foundProvidingService = false;
 
         for (NodeTemplate resourceNodeTemplate : resourceNodes) {
             String nodeTypeName = normaliseNodeTypeName(resourceNodeTemplate);
-            Model resourceNode = Model.getModelFor(nodeTypeName);
-            if (resourceNode instanceof ProvidingService) {
-                foundProvidingService = true;
-                Map<String, Property> nodeProperties = resourceNodeTemplate.getProperties();
-                if (nodeProperties.get("providing_service_uuid") == null
-                        || nodeProperties.get("providing_service_invariant_uuid") == null) {
-                    throw new IllegalArgumentException(String.format(GENERATOR_AAI_PROVIDING_SERVICE_METADATA_MISSING,
-                            resourceModel.getModelId()));
-                }
-                Map<String, String> properties = populateStringProperties(nodeProperties);
-                properties.put(VERSION, "1.0");
-                resourceNode.populateModelIdentificationInformation(properties);
-                resourceModel.addResource((Resource) resourceNode);
-            } else if (resourceNode instanceof Resource && !(resourceNode.getWidgetType().equals(Widget.Type.L3_NET))) {
-                idTypeStore.put(resourceNode.getModelNameVersionId(), nodeTypeName);
-                resourceModel.addResource((Resource) resourceNode);
-            }
+            Metadata metaData = resourceNodeTemplate.getMetaData();
+            String metaDataType = Optional.ofNullable(metaData).map(m -> m.getValue("type")).orElse(nodeTypeName);
+            Model resourceNode = Model.getModelFor(nodeTypeName, metaDataType);
+            foundProvidingService |= processModel(idTypeStore, resourceModel, resourceNodeTemplate, nodeTypeName,
+                    metaData, resourceNode);
         }
 
         if (resourceModel instanceof AllotedResource && !foundProvidingService) {
             throw new IllegalArgumentException(
                     String.format(GENERATOR_AAI_PROVIDING_SERVICE_MISSING, resourceModel.getModelId()));
         }
+    }
+
+    private boolean processModel(Map<String, String> idTypeStore, Model resourceModel,
+            NodeTemplate resourceNodeTemplate, String nodeTypeName, Metadata metaData, Model resourceNode) {
+        boolean foundProvidingService = false;
+        if (resourceNode instanceof ProvidingService) {
+            foundProvidingService = true;
+            processProvidingService(resourceModel, resourceNodeTemplate, resourceNode);
+        } else if (resourceNode instanceof Resource && !(resourceNode.getWidgetType().equals(Widget.Type.L3_NET))) {
+            if (metaData != null) {
+                resourceNode.populateModelIdentificationInformation(metaData.getAllProperties());
+            }
+            idTypeStore.put(resourceNode.getModelNameVersionId(), nodeTypeName);
+            resourceModel.addResource((Resource) resourceNode);
+        }
+        return foundProvidingService;
+    }
+
+    private void processProvidingService(Model resourceModel, NodeTemplate resourceNodeTemplate, Model resourceNode) {
+        Map<String, Property> nodeProperties = resourceNodeTemplate.getProperties();
+        if (nodeProperties.get("providing_service_uuid") == null
+                || nodeProperties.get("providing_service_invariant_uuid") == null) {
+            throw new IllegalArgumentException(
+                    String.format(GENERATOR_AAI_PROVIDING_SERVICE_METADATA_MISSING, resourceModel.getModelId()));
+        }
+        Map<String, String> properties = populateStringProperties(nodeProperties);
+        properties.put(VERSION, "1.0");
+        resourceNode.populateModelIdentificationInformation(properties);
+        resourceModel.addResource((Resource) resourceNode);
     }
 
 }
