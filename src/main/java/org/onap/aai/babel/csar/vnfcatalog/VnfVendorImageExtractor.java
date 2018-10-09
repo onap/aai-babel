@@ -39,9 +39,9 @@ import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.service.data.BabelArtifact;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
+import org.onap.sdc.tosca.parser.impl.SdcTypes;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.SubstitutionMappings;
 
