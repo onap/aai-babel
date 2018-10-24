@@ -26,7 +26,7 @@ import static org.junit.Assert.assertThat;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import org.junit.Test;
 
 public class TestInfoService {
@@ -42,28 +42,28 @@ public class TestInfoService {
     @Test
     public void testStatusReport() {
         InfoService infoService = new InfoService();
-        LocalDateTime now = LocalDateTime.now();
-        Clock clock = buildClock(now);
+        LocalDateTime startTime = LocalDateTime.now();
+        Clock clock = buildClock(startTime);
 
         String info = infoService.statusReport(clock);
         assertThat(info, containsString("Started at"));
         assertThat(info, containsString("total=1"));
 
         // Skip ahead 1 day
-        clock = buildClock(now.plusDays(1));
+        clock = buildClock(startTime.plusDays(1));
         info = infoService.statusReport(clock);
         assertThat(info, containsString("Up time 1 day "));
         assertThat(info, containsString("total=2"));
 
         // Skip ahead 5 days
-        clock = buildClock(now.plusDays(5));
+        clock = buildClock(startTime.plusDays(5));
         info = infoService.statusReport(clock);
         assertThat(info, containsString("Up time 5 days "));
         assertThat(info, containsString("total=3"));
     }
 
-    private Clock buildClock(LocalDateTime now) {
-        return Clock.fixed(now.toInstant(OffsetDateTime.now().getOffset()), Clock.systemDefaultZone().getZone());
+    private Clock buildClock(LocalDateTime dateTime) {
+        return Clock.fixed(dateTime.toInstant(ZoneOffset.UTC), Clock.systemDefaultZone().getZone());
     }
 
 }
