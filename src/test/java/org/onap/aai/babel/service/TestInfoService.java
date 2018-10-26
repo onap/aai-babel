@@ -63,7 +63,7 @@ public class TestInfoService {
     }
 
     private Clock buildClock(LocalDateTime dateTime) {
-        return Clock.fixed(dateTime.toInstant(ZoneOffset.UTC), Clock.systemDefaultZone().getZone());
+        return Clock.fixed(dateTime.toInstant(ZoneOffset.UTC), Clock.systemUTC().getZone());
     }
 
 }
