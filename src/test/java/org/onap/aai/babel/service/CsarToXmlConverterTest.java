@@ -23,6 +23,8 @@ package org.onap.aai.babel.service;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -168,6 +170,16 @@ public class CsarToXmlConverterTest {
     }
 
     @Test
+    public void generateXmlFromNetworkCollectionCsar() throws IOException, CsarConverterException {
+        List<String> filesToLoad = new ArrayList<>();
+        filesToLoad.add("AAI-TEST SVC_1-service-1.0.xml");
+        filesToLoad.add("AAI-TEST CR_1-resource-7.0.xml");
+        filesToLoad.add("AAI-testcr_1..NetworkCollection..0-resource-1.xml");
+        filesToLoad.add("AAI-ExtVL-resource-40.0.xml");
+        assertThatGeneratedFilesMatchExpected(createExpectedXmlFiles(filesToLoad), CsarTest.NETWORK_COLLECTION_CSAR_FILE);
+    }
+
+    @Test
     public void generatePortMirrorConfigurationModel()
             throws CsarConverterException, IOException, XmlArtifactGenerationException {
         List<String> filesToLoad = new ArrayList<>();
@@ -202,12 +214,16 @@ public class CsarToXmlConverterTest {
 
     private void assertThatGeneratedFilesMatchExpected(Map<String, String> expectedXmlFiles, CsarTest csarFile)
             throws CsarConverterException, IOException {
-        List<BabelArtifact> generatedArtifacts = converter.generateXmlFromCsar(csarFile.getContent(),
-                csarFile.getName(), SERVICE_VERSION);
+        List<BabelArtifact> generatedArtifacts =
+                converter.generateXmlFromCsar(csarFile.getContent(), csarFile.getName(), SERVICE_VERSION);
         assertThat("Incorrect number of files generated", //
                 generatedArtifacts.size(), is(equalTo(expectedXmlFiles.size())));
-        generatedArtifacts
-                .forEach(ga -> assertThat("The content of " + ga.getName() + " must match the expected content",
-                        ga.getPayload(), matches(expectedXmlFiles.get(ga.getName()))));
+        for (BabelArtifact generated : generatedArtifacts) {
+            String fileName = generated.getName();
+            String expectedXml = expectedXmlFiles.get(fileName);
+            assertThat("Missing expected content for " + generated.getName(), expectedXml, is(not(nullValue())));
+            assertThat("The content of " + generated.getName() + " must match the expected content",
+                    generated.getPayload(), matches(expectedXml));
+        }
     }
 }
