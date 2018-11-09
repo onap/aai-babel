@@ -21,11 +21,25 @@
 
 package org.onap.aai.babel.parser;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Properties;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
+import org.onap.aai.babel.xml.generator.model.InstanceGroup;
+import org.onap.aai.babel.xml.generator.model.Model;
+import org.onap.aai.babel.xml.generator.model.Resource;
+import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.toscaparser.api.SubstitutionMappings;
 
 /**
  * Direct tests of the TOSCA parser-based Artifact Generator, to cover exceptional cases.
@@ -33,7 +47,7 @@ import org.onap.sdc.toscaparser.api.NodeTemplate;
 
 public class TestArtifactGeneratorToscaParser {
 
-    ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(null);
+    private static final String TEST_UUID = "1234";
 
     /**
      * Process a dummy Node Template object for a Service. A WARNING should be logged for the missing metadata.
@@ -41,16 +55,89 @@ public class TestArtifactGeneratorToscaParser {
     @Test
     public void testMissingServiceData() {
         List<NodeTemplate> nodeTemplateList = Collections.singletonList(buildNodeTemplate("name", "BlockStorage"));
+        ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(null);
         parser.processServiceTosca(null, Collections.emptyMap(), nodeTemplateList);
         parser.processResourceToscas(nodeTemplateList, null);
     }
 
-    private NodeTemplate buildNodeTemplate(String name, String type) {
-        LinkedHashMap<String, Object> nodeTemplateMap = new LinkedHashMap<>();
-        LinkedHashMap<String, Object> template = new LinkedHashMap<>();
-        template.put("type", type);
-        nodeTemplateMap.put(name, template);
-        return new NodeTemplate(name, nodeTemplateMap, null, null, null);
+    /**
+     * Process a dummy Group object for a Service Resource.
+     */
+    @Test
+    public void testInstanceGroups() {
+        final String instanceGroupType = "org.openecomp.groups.ResourceInstanceGroup";
+        Properties props = new Properties();
+        props.put("AAI.instance-group-types", instanceGroupType);
+        WidgetConfigurationUtil.setFilterConfig(props);
+
+        ISdcCsarHelper helper = Mockito.mock(ISdcCsarHelper.class);
+        NodeTemplate serviceNodeTemplate = Mockito.mock(NodeTemplate.class);
+        SubstitutionMappings sm = Mockito.mock(SubstitutionMappings.class);
+
+        Mockito.when(serviceNodeTemplate.getSubMappingToscaTemplate()).thenReturn(sm);
+
+        NodeTemplate serviceNode = buildNodeTemplate("service", "org.openecomp.resource.cr.a-collection-resource");
+        Mockito.when(helper.getNodeTemplateByName(serviceNode.getName())).thenReturn(serviceNodeTemplate);
+
+        ArrayList<Group> groups = new ArrayList<>();
+        groups.add(buildGroup("group", instanceGroupType));
+        Mockito.when(helper.getGroupsOfOriginOfNodeTemplate(serviceNode)).thenReturn(groups);
+
+        ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(helper);
+        Model resourceModel = new InstanceGroup();
+        List<Resource> resources = parser.processInstanceGroups(resourceModel, serviceNode);
+
+        assertThat(resources.size(), is(1));
+        Resource resource = resources.get(0);
+        assertThat(resource.getModelNameVersionId(), is(equalTo(TEST_UUID)));
     }
 
+    private NodeTemplate buildNodeTemplate(String name, String type) {
+        LinkedHashMap<String, Object> nodeTemplateMap = new LinkedHashMap<>();
+        nodeTemplateMap.put(name, buildMap("type", type));
+        nodeTemplateMap.put(type, buildNodeTemplateCustomDefs());
+        return new NodeTemplate(name, nodeTemplateMap, nodeTemplateMap, null, null);
+    }
+
+    private LinkedHashMap<String, Object> buildNodeTemplateCustomDefs() {
+        LinkedHashMap<String, Object> customDefs = buildCustomDefs();
+        customDefs.put("attributes", null);
+        customDefs.put("requirements", null);
+        customDefs.put("capabilities", null);
+        customDefs.put("artifacts", null);
+        return customDefs;
+    }
+
+    private Group buildGroup(String name, String type) {
+        LinkedHashMap<String, Object> template = new LinkedHashMap<>();
+        template.put("type", type);
+        template.put("metadata", new LinkedHashMap<>());
+        template.put("properties", buildMap("UUID", TEST_UUID));
+        LinkedHashMap<String, Object> customDefMap = buildMap(name, template);
+        customDefMap.put(type, buildGroupCustomDefs());
+        return new Group(name, template, null, customDefMap);
+    }
+
+    private LinkedHashMap<String, Object> buildGroupCustomDefs() {
+        LinkedHashMap<String, Object> customDefs = buildCustomDefs();
+        customDefs.put("members", null);
+        return customDefs;
+    }
+
+    private LinkedHashMap<String, Object> buildCustomDefs() {
+        LinkedHashMap<String, Object> customDefs = new LinkedHashMap<>();
+        customDefs.put("derived_from", null);
+        customDefs.put("metadata", null);
+        customDefs.put("version", null);
+        customDefs.put("description", null);
+        customDefs.put("interfaces", null);
+        customDefs.put("properties", buildMap("UUID", buildMap("type", "java.lang.String")));
+        return customDefs;
+    }
+
+    private LinkedHashMap<String, Object> buildMap(String key, Object value) {
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+        map.put(key, value);
+        return map;
+    }
 }

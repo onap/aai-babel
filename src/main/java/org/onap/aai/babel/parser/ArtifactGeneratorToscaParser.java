@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
-
 import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
@@ -234,13 +233,14 @@ public class ArtifactGeneratorToscaParser {
      * @param serviceNode
      * @return resources for which XML Models should be generated
      */
-    private List<Resource> processInstanceGroups(Model resourceModel, NodeTemplate serviceNode) {
+    List<Resource> processInstanceGroups(Model resourceModel, NodeTemplate serviceNode) {
         List<Resource> resources = new ArrayList<>();
         if (csarHelper.getNodeTemplateByName(serviceNode.getName()).getSubMappingToscaTemplate() != null) {
             List<Group> serviceGroups = csarHelper.getGroupsOfOriginOfNodeTemplate(serviceNode);
             for (Group group : serviceGroups) {
                 if (WidgetConfigurationUtil.isSupportedInstanceGroup(group.getType())) {
-                    resources.addAll(processInstanceGroup(resourceModel, group));
+                    resources.addAll(processInstanceGroup(resourceModel, group.getMemberNodes(),
+                            group.getMetadata().getAllProperties(), group.getProperties()));
                 }
             }
         }
@@ -248,39 +248,53 @@ public class ArtifactGeneratorToscaParser {
     }
 
     /**
-     * Create an Instance Group Model for the supplied Service Group and relate this to the supplied resource Model.
+     * Create an Instance Group Model and populate it with the supplied data.
      *
      * @param resourceModel the Resource node template Model
-     * @param group the Service Group
+     * @param memberNodes the Resources and Widgets belonging to the Group
+     * @param metaProperties the metadata of the Group
+     * @param properties the properties of the Group
      * @return the Instance Group and Member resource models
      */
-    private List<Resource> processInstanceGroup(Model resourceModel, Group group) {
+    private List<Resource> processInstanceGroup(Model resourceModel, ArrayList<NodeTemplate> memberNodes,
+            Map<String, String> metaProperties, Map<String, Property> properties) {
         List<Resource> resources = new ArrayList<>();
 
         Resource groupModel = new InstanceGroup();
-        groupModel.populateModelIdentificationInformation(group.getMetadata().getAllProperties());
-        groupModel.populateModelIdentificationInformation(populateStringProperties(group.getProperties()));
+        groupModel.populateModelIdentificationInformation(metaProperties);
+        groupModel.populateModelIdentificationInformation(populateStringProperties(properties));
 
         resourceModel.addResource(groupModel);
         resources.add(groupModel);
 
-        List<NodeTemplate> members = group.getMemberNodes();
-        if (members != null && !members.isEmpty()) {
-            for (NodeTemplate nodeTemplate : members) {
-                String nodeTypeName = normaliseNodeTypeName(nodeTemplate);
-                Model memberModel = Model.getModelFor(nodeTypeName, nodeTemplate.getMetaData().getValue("type"));
-                memberModel.populateModelIdentificationInformation(nodeTemplate.getMetaData().getAllProperties());
-                if (memberModel instanceof Resource) {
-                    log.debug("Generating grouped Resource " + nodeTypeName);
-                    groupModel.addResource((Resource) memberModel);
-                    resources.add((Resource) memberModel);
-                } else {
-                    log.debug("Generating grouped Widget " + nodeTypeName);
-                    groupModel.addWidget((Widget) memberModel);
-                }
-            }
+        if (memberNodes != null && !memberNodes.isEmpty()) {
+            resources.addAll(generateResourcesAndWidgets(memberNodes, groupModel));
         }
 
+        return resources;
+    }
+
+    /**
+     * @param memberNodes
+     * @param groupModel
+     * @return
+     */
+    private List<Resource> generateResourcesAndWidgets(final ArrayList<NodeTemplate> memberNodes,
+            final Resource groupModel) {
+        List<Resource> resources = new ArrayList<>();
+        for (NodeTemplate nodeTemplate : memberNodes) {
+            String nodeTypeName = normaliseNodeTypeName(nodeTemplate);
+            Model memberModel = Model.getModelFor(nodeTypeName, nodeTemplate.getMetaData().getValue("type"));
+            memberModel.populateModelIdentificationInformation(nodeTemplate.getMetaData().getAllProperties());
+
+            log.debug(String.format("Generating grouped %s (%s) from TOSCA type %s",
+                    memberModel.getClass().getSuperclass().getSimpleName(), memberModel.getClass(), nodeTypeName));
+
+            addRelatedModel(groupModel, memberModel);
+            if (memberModel instanceof Resource) {
+                resources.add((Resource) memberModel);
+            }
+        }
         return resources;
     }
 
@@ -300,12 +314,22 @@ public class ArtifactGeneratorToscaParser {
                 model.populateModelIdentificationInformation(nodeTemplate.getMetaData().getAllProperties());
             }
 
+            addRelatedModel(service, model);
             if (model instanceof Resource) {
                 nodesById.put(model.getModelNameVersionId(), nodeTypeName);
-                service.addResource((Resource) model);
-            } else {
-                service.addWidget((Widget) model);
             }
+        }
+    }
+
+    /**
+     * @param model
+     * @param relation
+     */
+    private void addRelatedModel(final Model model, final Model relation) {
+        if (relation instanceof Resource) {
+            model.addResource((Resource) relation);
+        } else {
+            model.addWidget((Widget) relation);
         }
     }
 
