@@ -33,7 +33,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
