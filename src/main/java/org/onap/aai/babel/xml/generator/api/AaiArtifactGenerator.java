@@ -102,8 +102,8 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      * @return the generated Artifacts
      */
     private GenerationData generateService(final String serviceVersion, ISdcCsarHelper csarHelper) {
-        List<NodeTemplate> serviceNodes = csarHelper.getServiceNodeTemplates();
-        if (serviceNodes == null) {
+        List<NodeTemplate> serviceNodeTemplates = csarHelper.getServiceNodeTemplates();
+        if (serviceNodeTemplates == null) {
             throw new IllegalArgumentException(GENERATOR_AAI_ERROR_MISSING_SERVICE_TOSCA);
         }
 
@@ -115,12 +115,12 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         Map<String, String> idTypeStore = new HashMap<>();
 
         ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(csarHelper);
-        if (!serviceNodes.isEmpty()) {
-            parser.processServiceTosca(serviceModel, idTypeStore, serviceNodes);
+        if (!serviceNodeTemplates.isEmpty()) {
+            parser.processServiceTosca(serviceModel, idTypeStore, serviceNodeTemplates);
         }
 
         // Process the resource TOSCA files
-        List<Resource> resources = parser.processResourceToscas(serviceNodes, idTypeStore);
+        List<Resource> resources = parser.processResourceToscas(serviceNodeTemplates, idTypeStore);
 
         MDC.put(MDC_PARAM_MODEL_INFO, serviceModel.getModelName() + "," + getArtifactLabel(serviceModel));
         String aaiServiceModel = modelGenerator.generateModelFor(serviceModel);
