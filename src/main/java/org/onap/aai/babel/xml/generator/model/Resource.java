@@ -22,34 +22,34 @@ package org.onap.aai.babel.xml.generator.model;
 
 public class Resource extends Model {
 
-	@Override
-	public int hashCode() {
-		final String uuid = getModelNameVersionId();
-		return uuid == null ? 0 : uuid.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        final String uuid = getModelNameVersionId();
+        return uuid == null ? 0 : uuid.hashCode();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Resource) {
-			return getModelNameVersionId().equals(((Resource) obj).getModelNameVersionId());
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Resource) {
+            return getModelNameVersionId().equals(((Resource) obj).getModelNameVersionId());
+        }
+        return false;
+    }
 
-	@Override
-	public boolean addResource(Resource resource) {
-		return resources.add(resource);
-	}
+    @Override
+    public boolean addResource(Resource resource) {
+        return resources.add(resource);
+    }
 
-	@Override
-	public boolean addWidget(Widget widget) {
-		return widgets.add(widget);
-	}
+    @Override
+    public boolean addWidget(Widget widget) {
+        return widgets.add(widget);
+    }
 
-	@Override
-	public Widget.Type getWidgetType() {
-		org.onap.aai.babel.xml.generator.types.Model model = this.getClass()
-				.getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
-		return model.widget();
-	}
+    @Override
+    public Widget.Type getWidgetType() {
+        org.onap.aai.babel.xml.generator.types.Model model =
+                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
+        return model.widget();
+    }
 }
