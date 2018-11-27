@@ -26,14 +26,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.onap.aai.babel.logging.ApplicationMsgs;
+
 import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.model.AllotedResource;
@@ -42,8 +41,6 @@ import org.onap.aai.babel.xml.generator.model.L3NetworkWidget;
 import org.onap.aai.babel.xml.generator.model.Model;
 import org.onap.aai.babel.xml.generator.model.ProvidingService;
 import org.onap.aai.babel.xml.generator.model.Resource;
-import org.onap.aai.babel.xml.generator.model.Service;
-import org.onap.aai.babel.xml.generator.model.TunnelXconnectWidget;
 import org.onap.aai.babel.xml.generator.model.VfModule;
 import org.onap.aai.babel.xml.generator.model.Widget;
 import org.onap.aai.babel.xml.generator.types.ModelType;
@@ -150,101 +147,16 @@ public class ArtifactGeneratorToscaParser {
 	}
 
 	/**
-	 * Process the service TOSCA.
-	 *
-	 * @param service
-	 *            model of the service artifact
-	 * @param idTypeStore
-	 *            ID->Type mapping
-	 * @param nodeTemplates
-	 *            a list of service nodes
-	 */
-	public void processServiceTosca(Service service, Map<String, String> idTypeStore,
-			List<NodeTemplate> nodeTemplates) {
-		log.debug("Processing (TOSCA) Service object");
-
-		for (NodeTemplate nodeTemplate : nodeTemplates) {
-			if (nodeTemplate.getMetaData() != null) {
-				addNodeToService(idTypeStore, service, nodeTemplate);
-			} else {
-				log.warn(ApplicationMsgs.MISSING_SERVICE_METADATA, nodeTemplate.getName());
-			}
-		}
-	}
-
-	/**
-	 * Generates a Resource List using input Service Node Templates.
-	 *
-	 * @param serviceNodeTemplates
-	 *            input Service Node Templates
-	 * @param idTypeStore
-	 *            ID->Type mapping
-	 *
-	 * @return the processed resource models
-	 */
-	public List<Resource> processResourceToscas(List<NodeTemplate> serviceNodeTemplates,
-			Map<String, String> idTypeStore) {
-		List<Resource> resources = new LinkedList<>();
-		for (NodeTemplate serviceNodeTemplate : serviceNodeTemplates) {
-			if (serviceNodeTemplate.getMetaData() != null) {
-				resources.addAll(processResourceTosca(idTypeStore, serviceNodeTemplate,
-						csarHelper.getNodeTemplateChildren(serviceNodeTemplate)));
-			} else {
-				log.warn(ApplicationMsgs.MISSING_SERVICE_METADATA, serviceNodeTemplate.getName());
-			}
-		}
-		return resources;
-	}
-
-	/**
-	 * @param idTypeStore
-	 *            ID->Type mapping
-	 * @param serviceNodeTemplate
-	 * @param resourceNodeTemplates
-	 *            the (non-VNF) substituted node templates
-	 * @return the processed resource models
-	 */
-	private List<Resource> processResourceTosca(Map<String, String> idTypeStore, NodeTemplate serviceNodeTemplate,
-			List<NodeTemplate> resourceNodeTemplates) {
-		List<Resource> resources = new LinkedList<>();
-		String resourceUuId = serviceNodeTemplate.getMetaData().getValue("UUID");
-		String nodeTypeName = idTypeStore.get(resourceUuId);
-		if (nodeTypeName != null) {
-			Model resourceModel = Model.getModelFor(nodeTypeName, serviceNodeTemplate.getMetaData().getValue("type"));
-
-			log.debug("Processing resource " + nodeTypeName + ": " + resourceUuId);
-			Map<String, String> serviceMetadata = serviceNodeTemplate.getMetaData().getAllProperties();
-			resourceModel.populateModelIdentificationInformation(serviceMetadata);
-
-			idTypeStore.remove(resourceModel.getModelNameVersionId());
-			processResourceModels(idTypeStore, resourceModel, resourceNodeTemplates);
-
-			if (csarHelper.getServiceVfList() != null) {
-				processVfModules(resources, resourceModel, serviceNodeTemplate);
-			}
-
-			if (hasSubCategoryTunnelXConnect(serviceMetadata) && hasAllottedResource(serviceMetadata)) {
-				resourceModel.addWidget(new TunnelXconnectWidget());
-			}
-
-			resources.addAll(processInstanceGroups(resourceModel, serviceNodeTemplate));
-			resources.add((Resource) resourceModel);
-		}
-
-		return resources;
-	}
-
-	/**
 	 * Process groups for this service node, according to the defined filter.
 	 *
 	 * @param resourceModel
-	 * @param serviceNode
+	 * @param serviceNodeTemplate
 	 * @return resources for which XML Models should be generated
 	 */
-	List<Resource> processInstanceGroups(Model resourceModel, NodeTemplate serviceNode) {
+	public List<Resource> processInstanceGroups(Model resourceModel, NodeTemplate serviceNodeTemplate) {
 		List<Resource> resources = new ArrayList<>();
-		if (serviceNode.getSubMappingToscaTemplate() != null) {
-			List<Group> serviceGroups = csarHelper.getGroupsOfOriginOfNodeTemplate(serviceNode);
+		if (serviceNodeTemplate.getSubMappingToscaTemplate() != null) {
+			List<Group> serviceGroups = csarHelper.getGroupsOfOriginOfNodeTemplate(serviceNodeTemplate);
 			for (Group group : serviceGroups) {
 				if (WidgetConfigurationUtil.isSupportedInstanceGroup(group.getType())) {
 					resources.addAll(processInstanceGroup(resourceModel, group.getMemberNodes(),
@@ -265,11 +177,94 @@ public class ArtifactGeneratorToscaParser {
 	 *            Map of TOSCA Property Type Object values to merge in (or overwrite)
 	 * @return a Map of the property values converted to String
 	 */
-	private Map<String, String> mergeProperties(Map<String, String> stringProps, Map<String, Property> toscaProps) {
+	public Map<String, String> mergeProperties(Map<String, String> stringProps, Map<String, Property> toscaProps) {
 		Map<String, String> props = new HashMap<>(stringProps);
 		toscaProps.forEach((key, toscaProp) -> props.put(key,
 				toscaProp.getValue() == null ? "" : toscaProp.getValue().toString()));
 		return props;
+	}
+
+	public Resource createInstanceGroupModel(Map<String, String> properties) {
+		Resource groupModel = new InstanceGroup();
+		groupModel.populateModelIdentificationInformation(properties);
+		return groupModel;
+	}
+
+	/**
+	 * @param model
+	 * @param relation
+	 */
+	public void addRelatedModel(final Model model, final Model relation) {
+		if (relation instanceof Resource) {
+			model.addResource((Resource) relation);
+		} else {
+			model.addWidget((Widget) relation);
+		}
+	}
+
+	public String normaliseNodeTypeName(NodeTemplate nodeType) {
+		String nodeTypeName = nodeType.getType();
+		Metadata metadata = nodeType.getMetaData();
+		if (metadata != null && hasAllottedResource(metadata.getAllProperties())) {
+			if (nodeType.getType().contains("org.openecomp.resource.vf.")) {
+				nodeTypeName = "org.openecomp.resource.vf.allottedResource";
+			}
+			if (nodeType.getType().contains("org.openecomp.resource.vfc.")) {
+				nodeTypeName = "org.openecomp.resource.vfc.AllottedResource";
+			}
+		}
+		return nodeTypeName;
+	}
+
+	public boolean hasAllottedResource(Map<String, String> metadata) {
+		return ALLOTTED_RESOURCE.equals(metadata.get(CATEGORY));
+	}
+
+	public boolean hasSubCategoryTunnelXConnect(Map<String, String> metadata) {
+		return TUNNEL_XCONNECT.equals(metadata.get(SUBCATEGORY));
+	}
+
+	/**
+	 * Process TOSCA Group information for VF Modules.
+	 *
+	 * @param resources
+	 * @param model
+	 * @param serviceNode
+	 */
+	public void processVfModules(List<Resource> resources, Model resourceModel, NodeTemplate serviceNode) {
+		// Get the customisation UUID for each VF node and use it to get its Groups
+		String uuid = csarHelper.getNodeTemplateCustomizationUuid(serviceNode);
+		List<Group> serviceGroups = csarHelper.getVfModulesByVf(uuid);
+
+		// Process each VF Group
+		for (Group serviceGroup : serviceGroups) {
+			Model groupModel = Model.getModelFor(serviceGroup.getType());
+			if (groupModel instanceof VfModule) {
+				processVfModule(resources, resourceModel, serviceGroup, serviceNode, (VfModule) groupModel);
+			}
+		}
+	}
+
+	/**
+	 * @param resourceModel
+	 * @param resourceNodeTemplates
+	 */
+	public void processResourceModels(Model resourceModel, List<NodeTemplate> resourceNodeTemplates) {
+		boolean foundProvidingService = false;
+
+		for (NodeTemplate resourceNodeTemplate : resourceNodeTemplates) {
+			String nodeTypeName = normaliseNodeTypeName(resourceNodeTemplate);
+			Metadata metaData = resourceNodeTemplate.getMetaData();
+			String metaDataType = Optional.ofNullable(metaData).map(m -> m.getValue("type")).orElse(nodeTypeName);
+			Model resourceNode = Model.getModelFor(nodeTypeName, metaDataType);
+			foundProvidingService |= processModel(resourceModel, resourceNodeTemplate, metaData, resourceNode);
+		}
+
+		if (resourceModel instanceof AllotedResource && !foundProvidingService) {
+			final String modelInvariantId = resourceModel.getModelId();
+			throw new IllegalArgumentException(String.format(GENERATOR_AAI_PROVIDING_SERVICE_MISSING,
+					modelInvariantId == null ? "<null ID>" : modelInvariantId));
+		}
 	}
 
 	/**
@@ -298,12 +293,6 @@ public class ArtifactGeneratorToscaParser {
 		return resources;
 	}
 
-	private Resource createInstanceGroupModel(Map<String, String> properties) {
-		Resource groupModel = new InstanceGroup();
-		groupModel.populateModelIdentificationInformation(properties);
-		return groupModel;
-	}
-
 	/**
 	 * @param memberNodes
 	 * @param groupModel
@@ -328,88 +317,28 @@ public class ArtifactGeneratorToscaParser {
 		return resources;
 	}
 
-	/**
-	 * Add the supplied Node Template to the Service, provided that it is a valid Resource or Widget. If the Node
-	 * Template is a Resource type, this is also recorded in the supplied nodesById Map.
-	 *
-	 * @param nodesById
-	 *            a map of Resource node type names, keyed by UUID
-	 * @param service
-	 *            the Service to which the Node Template should be added
-	 * @param nodeTemplate
-	 *            the Node Template to add (only if this is a Resource or Widget type)
-	 */
-	private void addNodeToService(Map<String, String> nodesById, Service service, NodeTemplate nodeTemplate) {
-		String nodeTypeName = normaliseNodeTypeName(nodeTemplate);
-		Model model = Model.getModelFor(nodeTypeName, nodeTemplate.getMetaData().getValue("type"));
-		if (model != null) {
-			if (nodeTemplate.getMetaData() != null) {
-				model.populateModelIdentificationInformation(nodeTemplate.getMetaData().getAllProperties());
-			}
-
-			addRelatedModel(service, model);
-			if (model instanceof Resource) {
-				nodesById.put(model.getModelNameVersionId(), nodeTypeName);
-			}
-		}
-	}
-
-	/**
-	 * @param model
-	 * @param relation
-	 */
-	private void addRelatedModel(final Model model, final Model relation) {
-		if (relation instanceof Resource) {
-			model.addResource((Resource) relation);
-		} else {
-			model.addWidget((Widget) relation);
-		}
-	}
-
-	/**
-	 * Process TOSCA Group information for VF Modules.
-	 *
-	 * @param resources
-	 * @param model
-	 * @param serviceNode
-	 */
-	private void processVfModules(List<Resource> resources, Model resourceModel, NodeTemplate serviceNode) {
-		// Get the customisation UUID for each VF node and use it to get its Groups
-		String uuid = csarHelper.getNodeTemplateCustomizationUuid(serviceNode);
-		List<Group> serviceGroups = csarHelper.getVfModulesByVf(uuid);
-
-		// Process each VF Group
-		for (Group serviceGroup : serviceGroups) {
-			Model groupModel = Model.getModelFor(serviceGroup.getType());
-			if (groupModel instanceof VfModule) {
-				processVfModule(resources, resourceModel, serviceGroup, serviceNode, (VfModule) groupModel);
-			}
-		}
-	}
-
-	private void processVfModule(List<Resource> resources, Model model, Group groupDefinition, NodeTemplate serviceNode,
-			VfModule groupModel) {
+	private void processVfModule(List<Resource> resources, Model vfModel, Group groupDefinition,
+			NodeTemplate serviceNode, VfModule groupModel) {
 		groupModel.populateModelIdentificationInformation(
 				mergeProperties(groupDefinition.getMetadata().getAllProperties(), groupDefinition.getProperties()));
-		processVfModuleGroup(resources, model, groupDefinition, serviceNode, groupModel);
+
+		processVfModuleGroup(groupModel, csarHelper.getMembersOfVfModule(serviceNode, groupDefinition));
+
+		vfModel.addResource(groupModel); // Add group (VfModule) to the (VF) model
+		// Check if we have already encountered the same VfModule across all the artifacts
+		if (!resources.contains(groupModel)) {
+			resources.add(groupModel);
+		}
 	}
 
-	private void processVfModuleGroup(List<Resource> resources, Model model, Group groupDefinition,
-			NodeTemplate serviceNode, VfModule groupModel) {
-		// Get names of the members of the service group
-		List<NodeTemplate> members = csarHelper.getMembersOfVfModule(serviceNode, groupDefinition);
+	private void processVfModuleGroup(VfModule groupModel, List<NodeTemplate> members) {
 		if (members != null && !members.isEmpty()) {
+			// Get names of the members of the service group
 			List<String> memberNames = members.stream().map(NodeTemplate::getName).collect(Collectors.toList());
 			groupModel.setMembers(memberNames);
 			for (NodeTemplate member : members) {
 				processGroupMembers(groupModel, member);
 			}
-		}
-
-		model.addResource(groupModel); // Added group (VfModule) to the (VF) model
-		// Check if we have already encountered the same VfModule across all the artifacts
-		if (!resources.contains(groupModel)) {
-			resources.add(groupModel);
 		}
 	}
 
@@ -429,28 +358,6 @@ public class ArtifactGeneratorToscaParser {
 		}
 	}
 
-	private String normaliseNodeTypeName(NodeTemplate nodeType) {
-		String nodeTypeName = nodeType.getType();
-		Metadata metadata = nodeType.getMetaData();
-		if (metadata != null && hasAllottedResource(metadata.getAllProperties())) {
-			if (nodeType.getType().contains("org.openecomp.resource.vf.")) {
-				nodeTypeName = "org.openecomp.resource.vf.allottedResource";
-			}
-			if (nodeType.getType().contains("org.openecomp.resource.vfc.")) {
-				nodeTypeName = "org.openecomp.resource.vfc.AllottedResource";
-			}
-		}
-		return nodeTypeName;
-	}
-
-	private boolean hasAllottedResource(Map<String, String> metadata) {
-		return ALLOTTED_RESOURCE.equals(metadata.get(CATEGORY));
-	}
-
-	private boolean hasSubCategoryTunnelXConnect(Map<String, String> metadata) {
-		return TUNNEL_XCONNECT.equals(metadata.get(SUBCATEGORY));
-	}
-
 	/**
 	 * Create a Map of property name against String property value from the input Map
 	 *
@@ -464,31 +371,14 @@ public class ArtifactGeneratorToscaParser {
 	}
 
 	/**
-	 * @param idTypeStore
 	 * @param resourceModel
-	 * @param resourceNodeTemplates
+	 * @param resourceNodeTemplate
+	 * @param metaData
+	 * @param resourceNode
+	 * @return
 	 */
-	private void processResourceModels(Map<String, String> idTypeStore, Model resourceModel,
-			List<NodeTemplate> resourceNodeTemplates) {
-		boolean foundProvidingService = false;
-
-		for (NodeTemplate resourceNodeTemplate : resourceNodeTemplates) {
-			String nodeTypeName = normaliseNodeTypeName(resourceNodeTemplate);
-			Metadata metaData = resourceNodeTemplate.getMetaData();
-			String metaDataType = Optional.ofNullable(metaData).map(m -> m.getValue("type")).orElse(nodeTypeName);
-			Model resourceNode = Model.getModelFor(nodeTypeName, metaDataType);
-			foundProvidingService |= processModel(idTypeStore, resourceModel, resourceNodeTemplate, nodeTypeName,
-					metaData, resourceNode);
-		}
-
-		if (resourceModel instanceof AllotedResource && !foundProvidingService) {
-			throw new IllegalArgumentException(
-					String.format(GENERATOR_AAI_PROVIDING_SERVICE_MISSING, resourceModel.getModelId()));
-		}
-	}
-
-	private boolean processModel(Map<String, String> idTypeStore, Model resourceModel,
-			NodeTemplate resourceNodeTemplate, String nodeTypeName, Metadata metaData, Model resourceNode) {
+	private boolean processModel(Model resourceModel, NodeTemplate resourceNodeTemplate, Metadata metaData,
+			Model resourceNode) {
 		boolean foundProvidingService = false;
 		if (resourceNode instanceof ProvidingService) {
 			foundProvidingService = true;
@@ -497,7 +387,6 @@ public class ArtifactGeneratorToscaParser {
 			if (metaData != null) {
 				resourceNode.populateModelIdentificationInformation(metaData.getAllProperties());
 			}
-			idTypeStore.put(resourceNode.getModelNameVersionId(), nodeTypeName);
 			resourceModel.addResource((Resource) resourceNode);
 		}
 		return foundProvidingService;

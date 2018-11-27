@@ -30,9 +30,11 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
+import org.onap.aai.babel.xml.generator.model.AllotedResource;
 import org.onap.aai.babel.xml.generator.model.InstanceGroup;
 import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
@@ -41,7 +43,8 @@ import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.SubstitutionMappings;
 
 /**
- * Direct tests of the TOSCA parser-based Artifact Generator, to cover exceptional cases.
+ * Direct tests of the TOSCA parser-based Artifact Generator {@link ArtifactGeneratorToscaParser}., to cover exceptional
+ * cases.
  */
 
 public class TestArtifactGeneratorToscaParser {
@@ -49,14 +52,23 @@ public class TestArtifactGeneratorToscaParser {
 	private static final String TEST_UUID = "1234";
 
 	/**
-	 * Process a dummy Node Template object for a Service. A WARNING should be logged for the missing metadata.
+	 * Process an Allotted Resource that does not have a Providing Service.
 	 */
-	@Test
-	public void testMissingServiceData() {
+	@Test(expected = IllegalArgumentException.class)
+	public void testMissingProvidingService() {
 		List<NodeTemplate> nodeTemplateList = Collections.singletonList(buildNodeTemplate("name", "BlockStorage"));
-		ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(null);
-		parser.processServiceTosca(null, Collections.emptyMap(), nodeTemplateList);
-		parser.processResourceToscas(nodeTemplateList, null);
+		new ArtifactGeneratorToscaParser(null).processResourceModels(new AllotedResource(), nodeTemplateList);
+	}
+
+	/**
+	 *
+	 * Add a CR (a type of Resource which is not a Providing Service) to a Resource Model.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddResourceNotProvidingService() {
+		List<NodeTemplate> nodeTemplateList = Collections.singletonList(buildNodeTemplate("testCR", "CR"));
+		final Resource dummyResource = new AllotedResource(); // Any Resource to which the CR can be added
+		new ArtifactGeneratorToscaParser(null).processResourceModels(dummyResource, nodeTemplateList);
 	}
 
 	/**
@@ -72,22 +84,33 @@ public class TestArtifactGeneratorToscaParser {
 		ISdcCsarHelper helper = Mockito.mock(ISdcCsarHelper.class);
 		SubstitutionMappings sm = Mockito.mock(SubstitutionMappings.class);
 
-		NodeTemplate serviceNode = buildNodeTemplate("service", "org.openecomp.resource.cr.a-collection-resource");
-		serviceNode.setSubMappingToscaTemplate(sm);
-		Mockito.when(helper.getNodeTemplateByName(serviceNode.getName())).thenReturn(serviceNode);
+		NodeTemplate serviceNodeTemplate = buildNodeTemplate("service",
+				"org.openecomp.resource.cr.a-collection-resource");
+		serviceNodeTemplate.setSubMappingToscaTemplate(sm);
+		Mockito.when(helper.getNodeTemplateByName(serviceNodeTemplate.getName())).thenReturn(serviceNodeTemplate);
 
 		ArrayList<Group> groups = new ArrayList<>();
 		groups.add(buildGroup("group", instanceGroupType));
-		Mockito.when(helper.getGroupsOfOriginOfNodeTemplate(serviceNode)).thenReturn(groups);
+		Mockito.when(helper.getGroupsOfOriginOfNodeTemplate(serviceNodeTemplate)).thenReturn(groups);
 
 		ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(helper);
-		List<Resource> resources = parser.processInstanceGroups(new InstanceGroup(), serviceNode);
+		List<Resource> resources = parser.processInstanceGroups(new InstanceGroup(), serviceNodeTemplate);
 
 		assertThat(resources.size(), is(1));
 		Resource resource = resources.get(0);
 		assertThat(resource.getModelNameVersionId(), is(equalTo(TEST_UUID)));
 	}
 
+	/**
+	 * Create a NodeTemplate for unit testing purposes. In production code this object would only be created by the
+	 * sdc-tosca parser.
+	 *
+	 * @param name
+	 *            name of the NodeTemplate
+	 * @param type
+	 *            type of the NodeTemplate
+	 * @return a new NodeTemplate object
+	 */
 	private NodeTemplate buildNodeTemplate(String name, String type) {
 		LinkedHashMap<String, Object> nodeTemplateMap = new LinkedHashMap<>();
 		nodeTemplateMap.put(name, buildMap("type", type));
