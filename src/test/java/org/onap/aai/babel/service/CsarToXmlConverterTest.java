@@ -191,6 +191,16 @@ public class CsarToXmlConverterTest {
 		assertThatGeneratedFilesMatchExpected(createExpectedXmlFiles(filesToLoad), CsarTest.PORT_MIRROR_CSAR);
 	}
 
+	@Test
+	public void generateXmlFromServiceProxyCsar()
+			throws CsarConverterException, IOException, XmlArtifactGenerationException {
+		List<String> filesToLoad = new ArrayList<>();
+		filesToLoad.add("AAI-Grouping Service for Test-service-1.0.xml");
+		filesToLoad.add("AAI-groupingservicefortest..ResourceInstanceGroup..0-resource-1.xml");
+		filesToLoad.add("AAI-groupingservicefortest..ResourceInstanceGroup..1-resource-1.xml");
+		assertThatGeneratedFilesMatchExpected(createExpectedXmlFiles(filesToLoad), CsarTest.SERVICE_PROXY_CSAR_FILE);
+	}
+
 	public Matcher<String> matches(final String expected) {
 		return new BaseMatcher<String>() {
 			protected String theExpected = expected;

@@ -43,8 +43,8 @@ public enum CsarTest {
     NO_YAML_FILES("noYmlFilesArchive.zip"),
     PORT_MIRROR_CSAR("service_PortMirror.csar"),
     MULTIPLE_VNF_CSAR("catalog_csar_too_many_vnfConfigurations.csar"),
-    NETWORK_COLLECTION_CSAR_FILE("service_NetworkCollection.csar");
-
+    NETWORK_COLLECTION_CSAR_FILE("service_NetworkCollection.csar"),
+    SERVICE_PROXY_CSAR_FILE("service-S1-csar.csar");
     // @formatter:on
 
     private String filename;
