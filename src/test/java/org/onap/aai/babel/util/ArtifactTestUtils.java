@@ -20,7 +20,10 @@
  */
 package org.onap.aai.babel.util;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -30,9 +33,9 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
@@ -48,19 +51,22 @@ public class ArtifactTestUtils {
     private static final String JSON_RESPONSES_FOLDER = "response/";
     private static final String CSAR_INPUTS_FOLDER = "compressedArtifacts/";
 
-    public void performYmlAsserts(List<Artifact> toscaFiles, List<String> ymlPayloadsToLoad) {
-        assertThat("An unexpected number of YAML files have been extracted", toscaFiles.size(),
-                is(ymlPayloadsToLoad.size()));
+    public void performYmlAsserts(List<Artifact> toscaFiles, List<String> ymlPayloadsToLoad) throws IOException {
+        assertThat("An incorrect number of YAML files have been extracted", toscaFiles.size(),
+                is(equalTo(ymlPayloadsToLoad.size())));
 
-        Function<? super String, ? extends String> loadResource = s -> {
-            try {
-                return loadResourceAsString(s);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        };
-        Set<String> ymlPayloads = ymlPayloadsToLoad.stream().map(loadResource).collect(Collectors.toSet());
-        compareXmlPayloads(toscaFiles, ymlPayloads);
+        Map<String, String> ymlMap = new HashMap<>();
+        for (String filename : ymlPayloadsToLoad) {
+            ymlMap.put(filename, loadResourceAsString(filename));
+        }
+
+        for (Artifact artifact : toscaFiles) {
+            String fileName = artifact.getName().replaceFirst("Definitions/", "ymlFiles/");
+            String expectedYaml = ymlMap.get(fileName);
+            assertThat("Missing expected content for " + fileName, expectedYaml, is(not(nullValue())));
+            assertThat("The content of " + fileName + " must match the expected content",
+                    convertToString(artifact.getPayload()).replaceAll("\\r\\n?", "\n"), is(equalTo(expectedYaml)));
+        }
     }
 
     /**
@@ -112,21 +118,6 @@ public class ArtifactTestUtils {
 
     private URL getResource(String resourceName) {
         return ArtifactTestUtils.class.getClassLoader().getResource(resourceName);
-    }
-
-    private void compareXmlPayloads(List<Artifact> toscaFiles, Set<String> ymlPayloads) {
-        for (Artifact artifact : toscaFiles) {
-            boolean payloadFound = false;
-            for (String ymlPayload : ymlPayloads) {
-
-                if (compareXmlStrings(convertToString(artifact.getPayload()), ymlPayload)) {
-                    payloadFound = true;
-                    break;
-                }
-            }
-            assertThat("The content of each YAML file must match the actual content of the file extracted ("
-                    + artifact.getName() + ")", payloadFound, is(true));
-        }
     }
 
     private String convertToString(byte[] byteArray) {
