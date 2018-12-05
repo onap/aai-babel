@@ -307,18 +307,28 @@ public class ArtifactGeneratorToscaParser {
      */
     private List<Resource> generateResourcesAndWidgets(final ArrayList<NodeTemplate> memberNodes,
             final Resource groupModel) {
+        log.debug(String.format("Processing member nodes for Group %s (invariant UUID %s)", //
+                groupModel.getModelName(), groupModel.getModelId()));
+
         List<Resource> resources = new ArrayList<>();
+
         for (NodeTemplate nodeTemplate : memberNodes) {
             String nodeTypeName = normaliseNodeTypeName(nodeTemplate);
-            Model memberModel = Model.getModelFor(nodeTypeName, nodeTemplate.getMetaData().getValue("type"));
-            memberModel.populateModelIdentificationInformation(nodeTemplate.getMetaData().getAllProperties());
+            final String metadataType = nodeTemplate.getMetaData().getValue("type");
 
-            log.debug(String.format("Generating grouped %s (%s) from TOSCA type %s",
-                    memberModel.getClass().getSuperclass().getSimpleName(), memberModel.getClass(), nodeTypeName));
+            log.debug(String.format("Get model for %s (metadata type %s)", nodeTypeName, metadataType));
+            Model memberModel = Model.getModelFor(nodeTypeName, metadataType);
 
-            addRelatedModel(groupModel, memberModel);
-            if (memberModel instanceof Resource) {
-                resources.add((Resource) memberModel);
+            if (memberModel != null) {
+                memberModel.populateModelIdentificationInformation(nodeTemplate.getMetaData().getAllProperties());
+
+                log.debug(String.format("Generating grouped %s (%s) from TOSCA type %s",
+                        memberModel.getClass().getSuperclass().getSimpleName(), memberModel.getClass(), nodeTypeName));
+
+                addRelatedModel(groupModel, memberModel);
+                if (memberModel instanceof Resource) {
+                    resources.add((Resource) memberModel);
+                }
             }
         }
         return resources;
@@ -384,7 +394,7 @@ public class ArtifactGeneratorToscaParser {
      * @param resourceModel
      *        parent Resource
      * @param metaData
-     *        metadata for populating the Resource IDs
+     *        for populating the Resource IDs
      * @param resourceNode
      *        any Model (will be ignored if not a Resource)
      * @param nodeProperties
