@@ -51,6 +51,16 @@ public class ArtifactTestUtils {
     private static final String JSON_RESPONSES_FOLDER = "response/";
     private static final String CSAR_INPUTS_FOLDER = "compressedArtifacts/";
 
+    /**
+     * Specific test method for the YAML Extractor test.
+     *
+     * @param toscaFiles
+     *        files extracted by the YamlExtractor
+     * @param ymlPayloadsToLoad
+     *        the expected YAML files
+     * @throws IOException
+     *         if an I/O exception occurs
+     */
     public void performYmlAsserts(List<Artifact> toscaFiles, List<String> ymlPayloadsToLoad) throws IOException {
         assertThat("An incorrect number of YAML files have been extracted", toscaFiles.size(),
                 is(equalTo(ymlPayloadsToLoad.size())));
@@ -70,22 +80,20 @@ public class ArtifactTestUtils {
     }
 
     /**
-     * Compare 2 XML strings to see if they have the same content
+     * Compare two XML strings to see if they have the same content.
      *
      * @param string1
+     *        XML content
      * @param string2
-     * @return true if similar
+     *        XML content
+     * @return true if XML content is similar
+     * @throws IOException
+     *         if an I/O exception occurs
+     * @throws SAXException
+     *         if the XML parsing fails
      */
-    public boolean compareXmlStrings(String string1, String string2) {
-        boolean similar = false;
-
-        try {
-            similar = new Diff(string1, string2).similar();
-        } catch (SAXException | IOException e) { // NOSONAR
-            similar = true;
-        }
-
-        return similar;
+    public boolean compareXmlStrings(String string1, String string2) throws SAXException, IOException {
+        return new Diff(string1, string2).similar();
     }
 
     public byte[] getCompressedArtifact(String resourceName) throws IOException {
