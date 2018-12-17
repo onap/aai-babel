@@ -34,7 +34,7 @@
 
 	<groupId>org.onap.aai</groupId>
 	<artifactId>babel</artifactId>
-	<version>1.3.2-SNAPSHOT</version>
+	<version>1.3.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>aai-babel</name>
@@ -42,7 +42,7 @@
 
 	<properties>
 		<!-- Spring boot version -->
-		<spring.boot.version>1.5.17.RELEASE</spring.boot.version>
+		<spring.boot.version>1.5.18.RELEASE</spring.boot.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
