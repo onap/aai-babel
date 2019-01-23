@@ -31,6 +31,8 @@ import org.springframework.context.annotation.ImportResource;
 @ImportResource("classpath:babel-beans.xml")
 public class BabelApplication extends SpringBootServletInitializer {
 
+    private static final String OBFS_PATTERN = "OBF:";
+
     /**
      * Spring Boot Initialization.
      * 
@@ -42,7 +44,8 @@ public class BabelApplication extends SpringBootServletInitializer {
             throw new IllegalArgumentException("Env property KEY_STORE_PASSWORD not set");
         }
         HashMap<String, Object> props = new HashMap<>();
-        props.put("server.ssl.key-store-password", Password.deobfuscate(keyStorePassword));
+        String decryptedValue = keyStorePassword.startsWith(OBFS_PATTERN)? Password.deobfuscate(keyStorePassword) : keyStorePassword;
+        props.put("server.ssl.key-store-password", decryptedValue);
         new BabelApplication().configure(new SpringApplicationBuilder(BabelApplication.class).properties(props))
                 .run(args);
     }
