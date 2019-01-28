@@ -55,6 +55,7 @@
 		<common.logging.version>1.2.2</common.logging.version>
 		<sdc.tosca.version>1.4.7</sdc.tosca.version>
 		<commons.compress.version>1.18</commons.compress.version>
+		<commons.configuration.version>2.4</commons.configuration.version>
 		<javax.ws.rs.version>2.1</javax.ws.rs.version>
 		<mvn.jaxb2.version>0.13.2</mvn.jaxb2.version>
 		<aai-schema.group.id>org.onap.aai.aai-common</aai-schema.group.id>
@@ -143,7 +144,16 @@
 			<artifactId>rest-client</artifactId>
 			<version>${aai.rest.client.version}</version>
 		</dependency>
-
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-configuration2</artifactId>
+		    <version>${commons.configuration.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>commons-beanutils</groupId>
+		    <artifactId>commons-beanutils</artifactId>
+		    </dependency>
+		
 		<!-- Testing -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -27,6 +27,8 @@ import java.util.Properties;
 
 public class WidgetConfigurationUtil {
 
+    public static final String INSTANCE_GROUP_FILTER_PROPERTY = "AAI.instance-group-types";
+    
     private static Properties config;
     private static List<String> instanceGroups = Collections.emptyList();
 
@@ -46,7 +48,7 @@ public class WidgetConfigurationUtil {
     }
 
     public static void setFilterConfig(Properties properties) {
-        String instanceGroupsList = (String) properties.get("AAI.instance-group-types");
+        String instanceGroupsList = (String) properties.get(INSTANCE_GROUP_FILTER_PROPERTY);
         if (instanceGroupsList != null) {
             instanceGroups = Arrays.asList(instanceGroupsList.split(","));
         }
