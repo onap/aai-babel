@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.aai.babel.csar.extractor.InvalidArchiveException;
@@ -40,10 +38,9 @@ import org.onap.aai.babel.xml.generator.api.AaiArtifactGenerator;
 import org.onap.aai.babel.xml.generator.data.AdditionalParams;
 import org.onap.aai.babel.xml.generator.data.Artifact;
 import org.onap.aai.babel.xml.generator.data.GenerationData;
-import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 
 /**
- * Direct tests of the Model to improve code coverage.
+ * Direct tests of the {@link AaiArtifactGenerator} to improve code coverage.
  */
 public class TestToscaParser {
 
@@ -53,22 +50,9 @@ public class TestToscaParser {
         }
     }
 
-    private static final String ARTIFACT_GENERATOR_CONFIG = "artifact-generator.properties";
-    private static final String FILTER_TYPES_CONFIG = "filter-types.properties";
-
     @Before
-    public void setup() throws FileNotFoundException, IOException {
-        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
-                new ArtifactTestUtils().getResourcePath(ARTIFACT_GENERATOR_CONFIG));
-
-        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE,
-                new ArtifactTestUtils().getResourcePath(FILTER_TYPES_CONFIG));
-
-        InputStream in = TestToscaParser.class.getClassLoader().getResourceAsStream("artifact-generator.properties");
-        Properties properties = new Properties();
-        properties.load(in);
-        in.close();
-        WidgetConfigurationUtil.setConfig(properties);
+    public void setup() throws ConfigurationException {
+        new ArtifactTestUtils().setGeneratorSystemProperties();
     }
 
     @Test
@@ -78,8 +62,8 @@ public class TestToscaParser {
         additionalParams.put(AdditionalParams.SERVICE_VERSION.getName(), "1.0");
 
         AaiArtifactGenerator generator = new AaiArtifactGenerator();
-        GenerationData data = generator.generateArtifact(CsarTest.VNF_VENDOR_CSAR.getContent(), ymlFiles,
-                additionalParams);
+        GenerationData data =
+                generator.generateArtifact(CsarTest.VNF_VENDOR_CSAR.getContent(), ymlFiles, additionalParams);
 
         assertThat(data.getErrorData().size(), is(equalTo(0)));
         assertThat(data.getResultData().size(), is(equalTo(2)));

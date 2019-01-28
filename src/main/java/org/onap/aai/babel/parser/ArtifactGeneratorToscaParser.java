@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright � 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright � 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,7 +152,11 @@ public class ArtifactGeneratorToscaParser {
             throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGFILE_NOT_FOUND, configLocation));
         }
 
-        WidgetConfigurationUtil.setFilterConfig(loadGroupConfig(configLocation));
+        Properties toscaTypesConfig = loadGroupConfig(configLocation);
+        WidgetConfigurationUtil.setFilterConfig(toscaTypesConfig);
+
+        toscaTypesConfig.remove(WidgetConfigurationUtil.INSTANCE_GROUP_FILTER_PROPERTY);
+        WidgetConfigurationUtil.setTypeMappings(toscaTypesConfig);
     }
 
     /**

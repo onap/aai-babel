@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,14 +26,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
-import java.util.Properties;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
+import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 
@@ -49,18 +46,12 @@ public class TestWidget {
     /**
      * Load the Widget to UUID mappings from the Artifact Generator properties.
      *
-     * @throws FileNotFoundException
-     *             if the properties file is missing
      * @throws IOException
      *             if the properties file is not loaded
      */
     @BeforeClass
-    public static void setup() throws FileNotFoundException, IOException {
-        final Properties properties = new Properties();
-        try (InputStream in = TestWidget.class.getClassLoader().getResourceAsStream("artifact-generator.properties")) {
-            properties.load(in);
-        }
-        WidgetConfigurationUtil.setConfig(properties);
+    public static void setup() throws IOException {
+        new ArtifactTestUtils().loadWidgetToUuidMappings();
     }
 
     @Test

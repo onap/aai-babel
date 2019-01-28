@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
+import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.error.IllegalAccessException;
 import org.onap.aai.babel.xml.generator.types.Cardinality;
 import org.onap.aai.babel.xml.generator.types.ModelType;
@@ -39,22 +40,6 @@ public abstract class Model {
     public static final String GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION = "Operation Not Supported for Widgets";
 
     private static Logger log = LogHelper.INSTANCE;
-
-    private static Map<String, Class<? extends Model>> typeToModel = new HashMap<>();
-    static {
-        typeToModel.put("org.openecomp.resource.vf.allottedResource", AllotedResource.class);
-        typeToModel.put("org.openecomp.resource.vfc.AllottedResource", ProvidingService.class);
-        typeToModel.put("org.openecomp.resource.vfc", VServerWidget.class);
-        typeToModel.put("org.openecomp.resource.cp", LIntfWidget.class);
-        typeToModel.put("org.openecomp.cp", LIntfWidget.class);
-        typeToModel.put("org.openecomp.resource.vl", L3Network.class);
-        typeToModel.put("org.openecomp.resource.vf", VirtualFunction.class);
-        typeToModel.put("org.openecomp.groups.vfmodule", VfModule.class);
-        typeToModel.put("org.openecomp.groups.VfModule", VfModule.class);
-        typeToModel.put("org.openecomp.resource.vfc.nodes.heat.cinder", VolumeWidget.class);
-        typeToModel.put("org.openecomp.nodes.PortMirroringConfiguration", Configuration.class);
-        typeToModel.put("org.openecomp.resource.cr.Kk1806Cr1", CR.class);
-    }
 
     private enum ModelIdentification {
         ID("vfModuleModelInvariantUUID", "serviceInvariantUUID", "resourceInvariantUUID", "invariantUUID",
@@ -154,7 +139,7 @@ public abstract class Model {
 
     private static Optional<Model> getModelFromType(String typePrefix) {
         Optional<Model> modelToBeReturned = Optional.empty();
-        Class<? extends Model> clazz = typeToModel.get(typePrefix);
+        Class<? extends Model> clazz = WidgetConfigurationUtil.getModelFromType(typePrefix);
         if (clazz != null) {
             try {
                 modelToBeReturned = Optional.ofNullable(clazz.getConstructor().newInstance());
@@ -197,8 +182,8 @@ public abstract class Model {
      * @return the cardinality
      */
     public Cardinality getCardinality() {
-        org.onap.aai.babel.xml.generator.types.Model model = this.getClass()
-                .getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
+        org.onap.aai.babel.xml.generator.types.Model model =
+                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
         return model.cardinality();
     }
 
@@ -208,8 +193,8 @@ public abstract class Model {
      * @return the delete flag
      */
     public boolean getDeleteFlag() {
-        org.onap.aai.babel.xml.generator.types.Model model = this.getClass()
-                .getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
+        org.onap.aai.babel.xml.generator.types.Model model =
+                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
         return model.dataDeleteFlag();
     }
 
@@ -258,8 +243,8 @@ public abstract class Model {
      * @return the widget version id
      */
     public String getWidgetId() {
-        org.onap.aai.babel.xml.generator.types.Model model = this.getClass()
-                .getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
+        org.onap.aai.babel.xml.generator.types.Model model =
+                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
         return Widget.getWidget(model.widget()).getId();
     }
 
@@ -269,8 +254,8 @@ public abstract class Model {
      * @return the invariant id
      */
     public String getWidgetInvariantId() {
-        org.onap.aai.babel.xml.generator.types.Model model = this.getClass()
-                .getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
+        org.onap.aai.babel.xml.generator.types.Model model =
+                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
         return Widget.getWidget(model.widget()).getWidgetId();
     }
 
