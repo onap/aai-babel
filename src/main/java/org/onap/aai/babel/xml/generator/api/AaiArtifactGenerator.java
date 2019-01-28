@@ -102,7 +102,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      *
      * @param serviceVersion
      * @param csarHelper
-     *        interface to the TOSCA parser
+     *            interface to the TOSCA parser
      * @return the generated Artifacts (containing XML models)
      */
     private GenerationData generateAllArtifacts(final String serviceVersion, ISdcCsarHelper csarHelper) {
@@ -265,7 +265,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      * Method to generate the artifact name for an AAI model.
      *
      * @param model
-     *        AAI artifact model
+     *            AAI artifact model
      * @return Model artifact name
      */
     private String getArtifactName(Model model) {
@@ -289,9 +289,9 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      * Create Resource artifact model from the AAI xml model string.
      *
      * @param resourceModel
-     *        Model of the resource artifact
+     *            Model of the resource artifact
      * @param aaiResourceModel
-     *        AAI model as string
+     *            AAI model as string
      * @return Generated {@link Artifact} model for the resource
      */
     private Artifact getResourceArtifact(Model resourceModel, String aaiResourceModel) {
@@ -321,9 +321,9 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      * Create Service artifact model from the AAI XML model.
      *
      * @param serviceModel
-     *        Model of the service artifact
+     *            Model of the service artifact
      * @param aaiServiceModel
-     *        AAI model as string
+     *            AAI model as string
      * @return Generated {@link Artifact} model for the service
      */
     private Artifact getServiceArtifact(Service serviceModel, String aaiServiceModel) {

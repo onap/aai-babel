@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.util;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -27,6 +28,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -36,14 +38,17 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
+import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
 import org.onap.aai.babel.xml.generator.data.Artifact;
+import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.xml.sax.SAXException;
 
 /**
- * This class provides some utilities to assist with running tests.
+ * This class provides some utilities to assist with running local unit tests.
  */
 public class ArtifactTestUtils {
 
@@ -51,15 +56,33 @@ public class ArtifactTestUtils {
     private static final String JSON_RESPONSES_FOLDER = "response/";
     private static final String CSAR_INPUTS_FOLDER = "compressedArtifacts/";
 
+    public void setGeneratorSystemProperties() {
+        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
+                getResourcePath(Resources.ARTIFACT_GENERATOR_CONFIG));
+
+        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE,
+                getResourcePath(Resources.FILTER_TYPES_CONFIG));
+    }
+
+    /**
+     * Load the Widget to UUID mappings from the Artifact Generator Properties (resource).
+     * 
+     * @throws IOException
+     *             if the properties file is not loaded
+     */
+    public void loadWidgetToUuidMappings() throws IOException {
+        WidgetConfigurationUtil.setConfig(getResourceAsProperties(Resources.ARTIFACT_GENERATOR_CONFIG));
+    }
+
     /**
      * Specific test method for the YAML Extractor test.
      *
      * @param toscaFiles
-     *        files extracted by the YamlExtractor
+     *            files extracted by the YamlExtractor
      * @param ymlPayloadsToLoad
-     *        the expected YAML files
+     *            the expected YAML files
      * @throws IOException
-     *         if an I/O exception occurs
+     *             if an I/O exception occurs
      */
     public void performYmlAsserts(List<Artifact> toscaFiles, List<String> ymlPayloadsToLoad) throws IOException {
         assertThat("An incorrect number of YAML files have been extracted", toscaFiles.size(),
@@ -83,14 +106,14 @@ public class ArtifactTestUtils {
      * Compare two XML strings to see if they have the same content.
      *
      * @param string1
-     *        XML content
+     *            XML content
      * @param string2
-     *        XML content
+     *            XML content
      * @return true if XML content is similar
      * @throws IOException
-     *         if an I/O exception occurs
+     *             if an I/O exception occurs
      * @throws SAXException
-     *         if the XML parsing fails
+     *             if the XML parsing fails
      */
     public boolean compareXmlStrings(String string1, String string2) throws SAXException, IOException {
         return new Diff(string1, string2).similar();
@@ -118,6 +141,14 @@ public class ArtifactTestUtils {
 
     public String readstringFromFile(String resourceFile) throws IOException, URISyntaxException {
         return Files.lines(Paths.get(getResource(resourceFile).toURI())).collect(Collectors.joining());
+    }
+
+    public Properties getResourceAsProperties(String resourceName) throws IOException {
+        final Properties properties = new Properties();
+        InputStream in = ArtifactTestUtils.class.getClassLoader().getResourceAsStream(resourceName);
+        properties.load(in);
+        in.close();
+        return properties;
     }
 
     public String getResourcePath(String resourceName) {

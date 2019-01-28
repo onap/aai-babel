@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,8 +109,7 @@ public abstract class Widget extends Model {
     }
 
     public String getId() {
-        Properties properties = WidgetConfigurationUtil.getConfig();
-        String id = properties.getProperty(ArtifactType.AAI.name() + ".model-version-id." + getName());
+        String id = WidgetConfigurationUtil.getConfig().getProperty(ArtifactType.AAI.name() + ".model-version-id." + getName());
         if (id == null) {
             throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGLPROP_NOT_FOUND,
                     ArtifactType.AAI.name() + ".model-version-id." + getName()));

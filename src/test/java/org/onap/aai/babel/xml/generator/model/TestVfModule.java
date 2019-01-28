@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,16 +26,13 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
+import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
 
 /**
@@ -47,33 +44,39 @@ public class TestVfModule {
         System.setProperty("APP_HOME", ".");
     }
 
-    /**
-     * Load the Widget to UUID mappings from the Artifact Generator properties.
-     * 
-     * @throws FileNotFoundException if the properties file is missing
-     * @throws IOException if the properties file is not loaded
-     */
     @BeforeClass
-    public static void setup() throws FileNotFoundException, IOException {
-        InputStream in = TestVfModule.class.getClassLoader().getResourceAsStream("artifact-generator.properties");
-        Properties properties = new Properties();
-        properties.load(in);
-        in.close();
-        WidgetConfigurationUtil.setConfig(properties);
+    public static void setup() throws IOException {
+        new ArtifactTestUtils().loadWidgetToUuidMappings();
     }
 
     /**
-     * Call equals() and hashCode() methods for code coverage.
+     * Call hashCode() method for code coverage.
      */
     @Test
-    public void testEqualsHashCode() {
+    public void testHashCode() {
         VfModule vfModule = createNewVfModule();
         populateIdentInfo(vfModule);
         assertThat(vfModule.hashCode(), is(notNullValue()));
-        assertThat(vfModule.equals(vfModule), is(true));
-        // Tests that the overridden equals() method correctly returns false for a different type of Object
-        // This is necessary to achieve complete code coverage
-        assertThat(vfModule.equals("string"), is(false)); // NOSONAR
+    }
+    
+    /**
+     * Call equals() method for code coverage.
+     */
+    @Test
+    public void testEquals() {
+        VfModule vfModuleA = createNewVfModule();
+        populateIdentInfo(vfModuleA);        
+
+       // equals() is reflexive
+        assertThat(vfModuleA.equals(vfModuleA), is(true));
+        
+        // equals() is symmetric
+        VfModule vfModuleB = createNewVfModule();
+        populateIdentInfo(vfModuleB);        
+        assertThat(vfModuleA.equals(vfModuleB), is(true));
+        assertThat(vfModuleB.equals(vfModuleA), is(true));
+
+        assertThat(vfModuleA.equals(null), is(false));
     }
 
     @Test
@@ -216,7 +219,8 @@ public class TestVfModule {
     /**
      * Use the static Factory method to create a new Widget.
      *
-     * @param widgetType type of Widget to create
+     * @param widgetType
+     *            type of Widget to create
      * @return a new Widget
      */
     private Widget createNewWidget(Type widgetType) {
@@ -237,7 +241,8 @@ public class TestVfModule {
     /**
      * Set up some dummy Model Identification properties.
      *
-     * @param vfModule to be populated
+     * @param vfModule
+     *            to be populated
      */
     private void populateIdentInfo(VfModule vfModule) {
         Map<String, String> modelIdentInfo = new HashMap<>();
@@ -248,8 +253,10 @@ public class TestVfModule {
     /**
      * Create a new Widget and assert that it is successfully added to the VF Module.
      *
-     * @param vfModule the VF Module to update
-     * @param widgetType the type of Widget to create and add
+     * @param vfModule
+     *            the VF Module to update
+     * @param widgetType
+     *            the type of Widget to create and add
      */
     private void assertAddWidget(VfModule vfModule, Type widgetType) {
         assertThat(createNewWidgetForModule(vfModule, widgetType), is(true));
@@ -258,8 +265,10 @@ public class TestVfModule {
     /**
      * Create a new Widget and assert that it cannot be added to the VF Module.
      *
-     * @param vfModule the VF Module
-     * @param widgetType the type of Widget to create and attempt to add
+     * @param vfModule
+     *            the VF Module
+     * @param widgetType
+     *            the type of Widget to create and attempt to add
      */
     private void assertFailToAddWidget(VfModule vfModule, Type widgetType) {
         assertThat(createNewWidgetForModule(vfModule, widgetType), is(false));
@@ -268,8 +277,10 @@ public class TestVfModule {
     /**
      * Create a new widget, make it a member of the VF Module, then try to add it.
      *
-     * @param vfModule the VF Module to update
-     * @param widgetType the type of Widget to create and attempt to add
+     * @param vfModule
+     *            the VF Module to update
+     * @param widgetType
+     *            the type of Widget to create and attempt to add
      * @return whether or not the Widget was added to the module
      */
     private boolean createNewWidgetForModule(VfModule vfModule, Type widgetType) {
@@ -283,8 +294,10 @@ public class TestVfModule {
      * to its set of keys, and by then setting the VF Module's members to a Singleton List comprised of this ID. These
      * updates allow the Widget to be successfully added to the VF Module. (Non-member Widgets cannot be added.)
      *
-     * @param vfModule the module for which members are overwritten
-     * @param widget the widget to be set as the member
+     * @param vfModule
+     *            the module for which members are overwritten
+     * @param widget
+     *            the widget to be set as the member
      */
     private void setWidgetAsMember(VfModule vfModule, Widget widget) {
         String id = widget.getId();
@@ -295,7 +308,8 @@ public class TestVfModule {
     /**
      * Create a vserver widget and add it to the specified VF Module.
      *
-     * @param vfModule the VF Module to update
+     * @param vfModule
+     *            the VF Module to update
      * @return the number of Widgets present in the vserver on creation
      */
     private int createVserverForVf(VfModule vfModule) {
@@ -309,8 +323,10 @@ public class TestVfModule {
     /**
      * Add the specified vserver to the specified VF Module.
      * 
-     * @param vfModule the VF Module to update
-     * @param vserverWidget the Widget to add
+     * @param vfModule
+     *            the VF Module to update
+     * @param vserverWidget
+     *            the Widget to add
      * @return initial widget count for the vserver Widget
      */
     private int addVserverToVf(VfModule vfModule, VServerWidget vserverWidget) {

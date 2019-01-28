@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Properties;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
@@ -76,9 +75,7 @@ public class TestArtifactGeneratorToscaParser {
     @Test
     public void testInstanceGroups() {
         final String instanceGroupType = "org.openecomp.groups.ResourceInstanceGroup";
-        Properties props = new Properties();
-        props.put("AAI.instance-group-types", instanceGroupType);
-        WidgetConfigurationUtil.setFilterConfig(props);
+        WidgetConfigurationUtil.setSupportedInstanceGroups(Collections.singletonList(instanceGroupType));
 
         ISdcCsarHelper helper = Mockito.mock(ISdcCsarHelper.class);
         SubstitutionMappings sm = Mockito.mock(SubstitutionMappings.class);
@@ -105,9 +102,9 @@ public class TestArtifactGeneratorToscaParser {
      * sdc-tosca parser.
      *
      * @param name
-     *        name of the NodeTemplate
+     *            name of the NodeTemplate
      * @param type
-     *        type of the NodeTemplate
+     *            type of the NodeTemplate
      * @return a new NodeTemplate object
      */
     private NodeTemplate buildNodeTemplate(String name, String type) {

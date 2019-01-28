@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,9 +54,6 @@ import org.xml.sax.SAXException;
  */
 public class CsarToXmlConverterTest {
 
-    private static final String ARTIFACT_GENERATOR_CONFIG = "artifact-generator.properties";
-    private static final String FILTER_TYPES_CONFIG = "filter-types.properties";
-
     private static final String INCORRECT_CSAR_NAME = "the_name_of_the_csar_file.csar";
     private static final String SERVICE_VERSION = "1.0";
 
@@ -74,12 +71,7 @@ public class CsarToXmlConverterTest {
 
     @Before
     public void setup() {
-        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
-                new ArtifactTestUtils().getResourcePath(ARTIFACT_GENERATOR_CONFIG));
-
-        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE,
-                new ArtifactTestUtils().getResourcePath(FILTER_TYPES_CONFIG));
-
+        new ArtifactTestUtils().setGeneratorSystemProperties();
         converter = new CsarToXmlConverter();
     }
 
@@ -118,9 +110,9 @@ public class CsarToXmlConverterTest {
      * Test that an Exception is thrown when the Artifact Generator properties are not present.
      *
      * @throws CsarConverterException
-     *         if there is an error either extracting the YAML files or generating XML artifacts
+     *             if there is an error either extracting the YAML files or generating XML artifacts
      * @throws IOException
-     *         if an I/O exception occurs loading the test CSAR file
+     *             if an I/O exception occurs loading the test CSAR file
      * @throws IOException
      * @throws XmlArtifactGenerationException
      * @throws CsarConverterException
@@ -147,7 +139,8 @@ public class CsarToXmlConverterTest {
     public void generateXmlFromCsarFilterTypesSystemPropertyNotSet()
             throws IOException, XmlArtifactGenerationException, CsarConverterException {
         exception.expect(CsarConverterException.class);
-        exception.expectMessage("Cannot generate artifacts. System property groupfilter.config not configured");
+        exception.expectMessage("Cannot generate artifacts. System property "
+                + ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE + " not configured");
 
         // Unset the required system property
         System.clearProperty(ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE);

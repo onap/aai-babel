@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright � 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright � 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,12 @@
  */
 package org.onap.aai.babel.parser;
 
+import com.google.gson.Gson;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +36,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.onap.aai.babel.logging.LogHelper;
+import org.onap.aai.babel.xml.generator.data.GroupConfiguration;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.model.AllotedResource;
 import org.onap.aai.babel.xml.generator.model.InstanceGroup;
@@ -82,7 +87,7 @@ public class ArtifactGeneratorToscaParser {
      * Constructs using csarHelper
      *
      * @param csarHelper
-     *        The csar helper
+     *            The csar helper
      */
     public ArtifactGeneratorToscaParser(ISdcCsarHelper csarHelper) {
         this.csarHelper = csarHelper;
@@ -92,7 +97,7 @@ public class ArtifactGeneratorToscaParser {
      * Get or create the artifact description.
      *
      * @param model
-     *        the artifact model
+     *            the artifact model
      * @return the artifact model's description
      */
     public static String getArtifactDescription(Model model) {
@@ -130,26 +135,28 @@ public class ArtifactGeneratorToscaParser {
     }
 
     /**
-     * Initialises the group filter configuration.
+     * Initialises the group filtering and mapping configuration.
+     * 
+     * @throws FileNotFoundException
      *
-     * @throws IOException
      */
-    public static void initGroupFilterConfiguration() throws IOException {
-        log.debug("Getting Filter Tyoes Configuration");
+    public static void initGroupFilterConfiguration() throws FileNotFoundException {
+        log.debug("Getting Filter Types Configuration");
         String configLocation = System.getProperty(PROPERTY_GROUP_FILTERS_CONFIG_FILE);
-        if (configLocation != null) {
-            File file = new File(configLocation);
-            if (file.exists()) {
-                Properties properties = new Properties();
-                properties.load(new FileInputStream(file));
-                WidgetConfigurationUtil.setFilterConfig(properties);
-            } else {
-                throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGFILE_NOT_FOUND, configLocation));
-            }
-        } else {
+        if (configLocation == null) {
             throw new IllegalArgumentException(
                     String.format(GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND, PROPERTY_GROUP_FILTERS_CONFIG_FILE));
         }
+
+        File file = new File(configLocation);
+        if (!file.exists()) {
+            throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGFILE_NOT_FOUND, configLocation));
+        }
+        
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(configLocation));
+        GroupConfiguration config = new Gson().fromJson(bufferedReader, GroupConfiguration.class);
+        WidgetConfigurationUtil.setSupportedInstanceGroups(config.getInstanceGroupTypes());
+        WidgetConfigurationUtil.setTypeMappings(config.getToscaToWidgetMappings());
     }
 
     /**
@@ -178,9 +185,9 @@ public class ArtifactGeneratorToscaParser {
      * duplicate keys then the TOSCA Property value takes precedence.
      *
      * @param stringProps
-     *        initial Map of String property values (e.g. from the TOSCA YAML metadata section)
+     *            initial Map of String property values (e.g. from the TOSCA YAML metadata section)
      * @param toscaProps
-     *        Map of TOSCA Property Type Object values to merge in (or overwrite)
+     *            Map of TOSCA Property Type Object values to merge in (or overwrite)
      * @return a Map of the property values converted to String
      */
     public Map<String, String> mergeProperties(Map<String, String> stringProps, Map<String, Property> toscaProps) {
@@ -278,13 +285,13 @@ public class ArtifactGeneratorToscaParser {
      * Create an Instance Group Model and populate it with the supplied data.
      *
      * @param resourceModel
-     *        the Resource node template Model
+     *            the Resource node template Model
      * @param memberNodes
-     *        the Resources and Widgets belonging to the Group
+     *            the Resources and Widgets belonging to the Group
      * @param metaProperties
-     *        the metadata of the Group
+     *            the metadata of the Group
      * @param properties
-     *        the properties of the Group
+     *            the properties of the Group
      * @return the Instance Group and Member resource models
      */
     private List<Resource> processInstanceGroup(Model resourceModel, ArrayList<NodeTemplate> memberNodes,
@@ -379,7 +386,7 @@ public class ArtifactGeneratorToscaParser {
      * Create a Map of property name against String property value from the input Map
      *
      * @param inputMap
-     *        The input Map
+     *            The input Map
      * @return Map of property name against String property value
      */
     private Map<String, String> populateStringProperties(Map<String, Property> inputMap) {
@@ -392,13 +399,13 @@ public class ArtifactGeneratorToscaParser {
      * is ProvidingService return true, otherwise return false.
      *
      * @param resourceModel
-     *        parent Resource
+     *            parent Resource
      * @param metaData
-     *        for populating the Resource IDs
+     *            for populating the Resource IDs
      * @param resourceNode
-     *        any Model (will be ignored if not a Resource)
+     *            any Model (will be ignored if not a Resource)
      * @param nodeProperties
-     *        the node properties
+     *            the node properties
      * @return whether or not a ProvidingService was prcoessed
      */
     private boolean processModel(Model resourceModel, Metadata metaData, Model resourceNode,

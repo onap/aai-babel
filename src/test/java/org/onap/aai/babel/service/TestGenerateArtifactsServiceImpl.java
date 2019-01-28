@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.service;
 
 import static org.hamcrest.Matchers.is;
@@ -42,7 +43,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.onap.aai.auth.AAIMicroServiceAuth;
-import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
 import org.onap.aai.babel.service.data.BabelRequest;
 import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
@@ -55,7 +55,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/babel-beans.xml" })
+@ContextConfiguration(locations = {"classpath:/babel-beans.xml"})
 public class TestGenerateArtifactsServiceImpl {
 
     static {
@@ -65,18 +65,14 @@ public class TestGenerateArtifactsServiceImpl {
         System.setProperty("CONFIG_HOME", "src/test/resources");
     }
 
-    private static final String ARTIFACT_GENERATOR_CONFIG = "artifact-generator.properties";
-    private static final String FILTER_TYPES_CONFIG = "filter-types.properties";
 
     @Inject
     private AAIMicroServiceAuth auth;
 
     @BeforeClass
     public static void setup() {
-        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
-                new ArtifactTestUtils().getResourcePath(ARTIFACT_GENERATOR_CONFIG));
-        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE,
-                new ArtifactTestUtils().getResourcePath(FILTER_TYPES_CONFIG));
+        new ArtifactTestUtils().setGeneratorSystemProperties();
+
     }
 
     @Test
@@ -199,7 +195,7 @@ public class TestGenerateArtifactsServiceImpl {
         Mockito.when(mockCertificate.getSubjectX500Principal())
                 .thenReturn(new X500Principal("CN=test, OU=qa, O=Test Ltd, L=London, ST=London, C=GB"));
 
-        servletRequest.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] { mockCertificate });
+        servletRequest.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] {mockCertificate});
         servletRequest.setAttribute("javax.servlet.request.cipher_suite", "");
 
         GenerateArtifactsServiceImpl service = new GenerateArtifactsServiceImpl(auth);
