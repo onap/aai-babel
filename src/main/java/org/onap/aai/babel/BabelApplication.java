@@ -46,6 +46,14 @@ public class BabelApplication extends SpringBootServletInitializer {
         HashMap<String, Object> props = new HashMap<>();
         String decryptedValue = keyStorePassword.startsWith(OBFS_PATTERN)? Password.deobfuscate(keyStorePassword) : keyStorePassword;
         props.put("server.ssl.key-store-password", decryptedValue);
+
+        String requireClientAuth = System.getenv("REQUIRE_CLIENT_AUTH");
+        if (requireClientAuth == null || requireClientAuth.isEmpty()) {
+            props.put("server.ssl.client-auth", "need");
+        } else {
+            props.put("server.ssl.client-auth", Boolean.valueOf(requireClientAuth)? "need" : "want");
+        }
+
         new BabelApplication().configure(new SpringApplicationBuilder(BabelApplication.class).properties(props))
                 .run(args);
     }
