@@ -20,6 +20,8 @@
  */
 package org.onap.aai.babel.xml.generator.model;
 
+import java.util.Collections;
+import java.util.Map;
 import org.onap.aai.babel.xml.generator.types.Cardinality;
 
 @org.onap.aai.babel.xml.generator.types.Model(widget = Widget.Type.SERVICE, cardinality = Cardinality.UNBOUNDED,
@@ -39,5 +41,15 @@ public class Service extends Model {
     @Override
     public Widget.Type getWidgetType() {
         return null;
+    }
+    
+    @Override
+    public Map<String, Object> getProperties() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public boolean isResource() {
+        return false;
     }
 }

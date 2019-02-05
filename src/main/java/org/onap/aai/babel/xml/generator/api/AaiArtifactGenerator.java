@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.api;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.aai.babel.logging.ApplicationMsgs;
@@ -39,15 +41,16 @@ import org.onap.aai.babel.xml.generator.data.GeneratorUtil;
 import org.onap.aai.babel.xml.generator.data.GroupType;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.model.Model;
-import org.onap.aai.babel.xml.generator.model.ProvidingService;
 import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.aai.babel.xml.generator.model.Service;
 import org.onap.aai.babel.xml.generator.model.TunnelXconnectWidget;
+import org.onap.aai.babel.xml.generator.model.Widget.Type;
 import org.onap.aai.cl.api.Logger;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.slf4j.MDC;
 
 public class AaiArtifactGenerator implements ArtifactGenerator {
@@ -128,7 +131,10 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         for (Resource resource : resources) {
             generateResourceArtifact(generationData, resource);
             for (Resource childResource : resource.getResources()) {
-                if (!(childResource instanceof ProvidingService)) {
+                boolean isProvidingService =
+                        (boolean) Optional.ofNullable(childResource.getProperties().get("providingService")) //
+                                .orElse(false);
+                if (!isProvidingService) {
                     generateResourceArtifact(generationData, childResource);
                 }
             }
@@ -179,16 +185,16 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     private void generateModelFromNodeTemplate(ISdcCsarHelper csarHelper, Service serviceModel,
             List<Resource> resources, final List<Group> serviceGroups, ArtifactGeneratorToscaParser parser,
             NodeTemplate nodeTemplate) {
-        String nodeTypeName = parser.normaliseNodeTypeName(nodeTemplate);
-        Model model = Model.getModelFor(nodeTypeName, nodeTemplate.getMetaData().getValue("type"));
+        Resource model = getModelFor(parser, nodeTemplate);
+
         if (model != null) {
             if (nodeTemplate.getMetaData() != null) {
                 model.populateModelIdentificationInformation(nodeTemplate.getMetaData().getAllProperties());
             }
 
             parser.addRelatedModel(serviceModel, model);
-            if (model instanceof Resource) {
-                generateResourceModel(csarHelper, resources, parser, nodeTemplate, nodeTypeName);
+            if (model.isResource()) {
+                generateResourceModel(csarHelper, resources, parser, nodeTemplate);
             }
         } else {
             for (Group group : serviceGroups) {
@@ -206,11 +212,26 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         }
     }
 
-    private void generateResourceModel(ISdcCsarHelper csarHelper, List<Resource> resources,
-            ArtifactGeneratorToscaParser parser, NodeTemplate nodeTemplate, String nodeTypeName) {
-        log.debug("Processing resource " + nodeTypeName + ": " + nodeTemplate.getMetaData().getValue("UUID"));
-        Model resourceModel = Model.getModelFor(nodeTypeName, nodeTemplate.getMetaData().getValue("type"));
+    private Resource getModelFor(ArtifactGeneratorToscaParser parser, NodeTemplate nodeTemplate) {
+        String nodeTypeName = nodeTemplate.getType();
 
+        log.debug("Processing resource " + nodeTypeName + ": " + nodeTemplate.getMetaData().getValue("UUID"));
+
+        Resource model = Model.getModelFor(nodeTypeName, nodeTemplate.getMetaData().getValue("type"));
+
+        Metadata metadata = nodeTemplate.getMetaData();
+        if (metadata != null && parser.hasAllottedResource(metadata.getAllProperties())) {
+            if (model.getWidgetType() == Type.VF) {
+                model = new Resource(Type.ALLOTTED_RESOURCE, true);
+            }
+        }
+
+        return model;
+    }
+
+    private void generateResourceModel(ISdcCsarHelper csarHelper, List<Resource> resources,
+            ArtifactGeneratorToscaParser parser, NodeTemplate nodeTemplate) {
+        Resource resourceModel = getModelFor(parser, nodeTemplate);
         Map<String, String> serviceMetadata = nodeTemplate.getMetaData().getAllProperties();
         resourceModel.populateModelIdentificationInformation(serviceMetadata);
 

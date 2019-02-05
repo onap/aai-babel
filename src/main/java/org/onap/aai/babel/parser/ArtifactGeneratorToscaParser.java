@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.parser;
 
 import com.google.gson.Gson;
@@ -38,14 +39,10 @@ import java.util.stream.Stream;
 import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.xml.generator.data.GroupConfiguration;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
-import org.onap.aai.babel.xml.generator.model.AllotedResource;
-import org.onap.aai.babel.xml.generator.model.InstanceGroup;
-import org.onap.aai.babel.xml.generator.model.L3NetworkWidget;
 import org.onap.aai.babel.xml.generator.model.Model;
-import org.onap.aai.babel.xml.generator.model.ProvidingService;
 import org.onap.aai.babel.xml.generator.model.Resource;
-import org.onap.aai.babel.xml.generator.model.VfModule;
 import org.onap.aai.babel.xml.generator.model.Widget;
+import org.onap.aai.babel.xml.generator.model.Widget.Type;
 import org.onap.aai.cl.api.Logger;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.toscaparser.api.Group;
@@ -87,7 +84,7 @@ public class ArtifactGeneratorToscaParser {
      * Constructs using csarHelper
      *
      * @param csarHelper
-     *            The csar helper
+     *     The csar helper
      */
     public ArtifactGeneratorToscaParser(ISdcCsarHelper csarHelper) {
         this.csarHelper = csarHelper;
@@ -97,7 +94,7 @@ public class ArtifactGeneratorToscaParser {
      * Get or create the artifact description.
      *
      * @param model
-     *            the artifact model
+     *     the artifact model
      * @return the artifact model's description
      */
     public static String getArtifactDescription(Model model) {
@@ -152,11 +149,11 @@ public class ArtifactGeneratorToscaParser {
         if (!file.exists()) {
             throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGFILE_NOT_FOUND, configLocation));
         }
-        
+
         BufferedReader bufferedReader = new BufferedReader(new FileReader(configLocation));
         GroupConfiguration config = new Gson().fromJson(bufferedReader, GroupConfiguration.class);
         WidgetConfigurationUtil.setSupportedInstanceGroups(config.getInstanceGroupTypes());
-        WidgetConfigurationUtil.setTypeMappings(config.getToscaToWidgetMappings());
+        WidgetConfigurationUtil.setWidgetMappings(config.getWidgetMappings());
     }
 
     /**
@@ -185,9 +182,9 @@ public class ArtifactGeneratorToscaParser {
      * duplicate keys then the TOSCA Property value takes precedence.
      *
      * @param stringProps
-     *            initial Map of String property values (e.g. from the TOSCA YAML metadata section)
+     *     initial Map of String property values (e.g. from the TOSCA YAML metadata section)
      * @param toscaProps
-     *            Map of TOSCA Property Type Object values to merge in (or overwrite)
+     *     Map of TOSCA Property Type Object values to merge in (or overwrite)
      * @return a Map of the property values converted to String
      */
     public Map<String, String> mergeProperties(Map<String, String> stringProps, Map<String, Property> toscaProps) {
@@ -198,7 +195,7 @@ public class ArtifactGeneratorToscaParser {
     }
 
     public Resource createInstanceGroupModel(Map<String, String> properties) {
-        Resource groupModel = new InstanceGroup();
+        Resource groupModel = new Resource(Type.INSTANCE_GROUP, true);
         groupModel.populateModelIdentificationInformation(properties);
         return groupModel;
     }
@@ -207,26 +204,12 @@ public class ArtifactGeneratorToscaParser {
      * @param model
      * @param relation
      */
-    public void addRelatedModel(final Model model, final Model relation) {
-        if (relation instanceof Resource) {
-            model.addResource((Resource) relation);
+    public void addRelatedModel(final Model model, final Resource relation) {
+        if (relation.isResource()) {
+            model.addResource(relation);
         } else {
-            model.addWidget((Widget) relation);
+            model.addWidget(Widget.getWidget(relation.getWidgetType()));
         }
-    }
-
-    public String normaliseNodeTypeName(NodeTemplate nodeType) {
-        String nodeTypeName = nodeType.getType();
-        Metadata metadata = nodeType.getMetaData();
-        if (metadata != null && hasAllottedResource(metadata.getAllProperties())) {
-            if (nodeType.getType().contains("org.openecomp.resource.vf.")) {
-                nodeTypeName = "org.openecomp.resource.vf.allottedResource";
-            }
-            if (nodeType.getType().contains("org.openecomp.resource.vfc.")) {
-                nodeTypeName = "org.openecomp.resource.vfc.AllottedResource";
-            }
-        }
-        return nodeTypeName;
     }
 
     public boolean hasAllottedResource(Map<String, String> metadata) {
@@ -252,8 +235,8 @@ public class ArtifactGeneratorToscaParser {
         // Process each VF Group
         for (Group serviceGroup : serviceGroups) {
             Model groupModel = Model.getModelFor(serviceGroup.getType());
-            if (groupModel instanceof VfModule) {
-                processVfModule(resources, resourceModel, serviceGroup, serviceNode, (VfModule) groupModel);
+            if (groupModel.getWidgetType() == Type.VFMODULE) {
+                processVfModule(resources, resourceModel, serviceGroup, serviceNode, (Resource) groupModel);
             }
         }
     }
@@ -266,15 +249,24 @@ public class ArtifactGeneratorToscaParser {
         boolean foundProvidingService = false;
 
         for (NodeTemplate resourceNodeTemplate : resourceNodeTemplates) {
-            String nodeTypeName = normaliseNodeTypeName(resourceNodeTemplate);
-            Metadata metaData = resourceNodeTemplate.getMetaData();
-            String metaDataType = Optional.ofNullable(metaData).map(m -> m.getValue("type")).orElse(nodeTypeName);
-            Model resourceNode = Model.getModelFor(nodeTypeName, metaDataType);
-            foundProvidingService |=
-                    processModel(resourceModel, metaData, resourceNode, resourceNodeTemplate.getProperties());
+            String nodeTypeName = resourceNodeTemplate.getType();
+            Metadata metadata = resourceNodeTemplate.getMetaData();
+            String metaDataType = Optional.ofNullable(metadata).map(m -> m.getValue("type")).orElse(nodeTypeName);
+            Resource model = Model.getModelFor(nodeTypeName, metaDataType);
+
+            if (metadata != null && hasAllottedResource(metadata.getAllProperties())) {
+                if (model.getWidgetType() == Type.VSERVER) {
+                    model = new Resource(Type.ALLOTTED_RESOURCE, false);
+                    Map<String, Object> props = new HashMap<>();
+                    props.put("providingService", true);
+                    model.setProperties(props);
+                }
+            }
+
+            foundProvidingService |= processModel(resourceModel, metadata, model, resourceNodeTemplate.getProperties());
         }
 
-        if (resourceModel instanceof AllotedResource && !foundProvidingService) {
+        if (resourceModel.getWidgetType() == Type.ALLOTTED_RESOURCE && !foundProvidingService) {
             final String modelInvariantId = resourceModel.getModelId();
             throw new IllegalArgumentException(String.format(GENERATOR_AAI_PROVIDING_SERVICE_MISSING,
                     modelInvariantId == null ? "<null ID>" : modelInvariantId));
@@ -285,13 +277,13 @@ public class ArtifactGeneratorToscaParser {
      * Create an Instance Group Model and populate it with the supplied data.
      *
      * @param resourceModel
-     *            the Resource node template Model
+     *     the Resource node template Model
      * @param memberNodes
-     *            the Resources and Widgets belonging to the Group
+     *     the Resources and Widgets belonging to the Group
      * @param metaProperties
-     *            the metadata of the Group
+     *     the metadata of the Group
      * @param properties
-     *            the properties of the Group
+     *     the properties of the Group
      * @return the Instance Group and Member resource models
      */
     private List<Resource> processInstanceGroup(Model resourceModel, ArrayList<NodeTemplate> memberNodes,
@@ -320,11 +312,11 @@ public class ArtifactGeneratorToscaParser {
         List<Resource> resources = new ArrayList<>();
 
         for (NodeTemplate nodeTemplate : memberNodes) {
-            String nodeTypeName = normaliseNodeTypeName(nodeTemplate);
+            String nodeTypeName = nodeTemplate.getType();
             final String metadataType = nodeTemplate.getMetaData().getValue("type");
 
             log.debug(String.format("Get model for %s (metadata type %s)", nodeTypeName, metadataType));
-            Model memberModel = Model.getModelFor(nodeTypeName, metadataType);
+            Resource memberModel = Model.getModelFor(nodeTypeName, metadataType);
 
             if (memberModel != null) {
                 memberModel.populateModelIdentificationInformation(nodeTemplate.getMetaData().getAllProperties());
@@ -333,8 +325,8 @@ public class ArtifactGeneratorToscaParser {
                         memberModel.getClass().getSuperclass().getSimpleName(), memberModel.getClass(), nodeTypeName));
 
                 addRelatedModel(groupModel, memberModel);
-                if (memberModel instanceof Resource) {
-                    resources.add((Resource) memberModel);
+                if (memberModel.isResource()) {
+                    resources.add(memberModel);
                 }
             }
         }
@@ -342,7 +334,7 @@ public class ArtifactGeneratorToscaParser {
     }
 
     private void processVfModule(List<Resource> resources, Model vfModel, Group groupDefinition,
-            NodeTemplate serviceNode, VfModule groupModel) {
+            NodeTemplate serviceNode, Resource groupModel) {
         groupModel.populateModelIdentificationInformation(
                 mergeProperties(groupDefinition.getMetadata().getAllProperties(), groupDefinition.getProperties()));
 
@@ -355,7 +347,7 @@ public class ArtifactGeneratorToscaParser {
         }
     }
 
-    private void processVfModuleGroup(VfModule groupModel, List<NodeTemplate> members) {
+    private void processVfModuleGroup(Resource groupModel, List<NodeTemplate> members) {
         if (members != null && !members.isEmpty()) {
             // Get names of the members of the service group
             List<String> memberNames = members.stream().map(NodeTemplate::getName).collect(Collectors.toList());
@@ -366,16 +358,22 @@ public class ArtifactGeneratorToscaParser {
         }
     }
 
-    private void processGroupMembers(Model group, NodeTemplate member) {
-        Model resourceNode;
-        // L3-network inside vf-module to be generated as Widget a special handling.
-        if (member.getType().contains("org.openecomp.resource.vl")) {
-            resourceNode = new L3NetworkWidget();
-        } else {
-            resourceNode = Model.getModelFor(member.getType());
+    /**
+     * Process the Widget members of a VF Module Group
+     * 
+     * @param group
+     * @param member
+     */
+    private void processGroupMembers(Resource group, NodeTemplate member) {
+        Resource resource = Model.getModelFor(member.getType());
+
+        if (resource.getWidgetType() == Type.L3_NET) {
+            // An l3-network inside a vf-module is treated as a Widget
+            resource.setIsResource(false);
         }
-        if (resourceNode != null && !(resourceNode instanceof Resource)) {
-            Widget widget = (Widget) resourceNode;
+
+        if (!resource.isResource()) {
+            Widget widget = Widget.getWidget(resource.getWidgetType());
             widget.addKey(member.getName());
             // Add the widget element encountered to the Group model
             group.addWidget(widget);
@@ -386,7 +384,7 @@ public class ArtifactGeneratorToscaParser {
      * Create a Map of property name against String property value from the input Map
      *
      * @param inputMap
-     *            The input Map
+     *     The input Map
      * @return Map of property name against String property value
      */
     private Map<String, String> populateStringProperties(Map<String, Property> inputMap) {
@@ -396,25 +394,27 @@ public class ArtifactGeneratorToscaParser {
 
     /**
      * If the specified resourceNode is a type of Resource, add it to the specified resourceModel. If the Resource type
-     * is ProvidingService return true, otherwise return false.
+     * is ProvidingService then return true, otherwise return false.
      *
      * @param resourceModel
-     *            parent Resource
+     *     parent Resource
      * @param metaData
-     *            for populating the Resource IDs
+     *     for populating the Resource IDs
      * @param resourceNode
-     *            any Model (will be ignored if not a Resource)
+     *     any Model (will be ignored if not a Resource)
      * @param nodeProperties
-     *            the node properties
-     * @return whether or not a ProvidingService was prcoessed
+     *     the node properties
+     * @return whether or not a ProvidingService was processed
      */
-    private boolean processModel(Model resourceModel, Metadata metaData, Model resourceNode,
+    private boolean processModel(Model resourceModel, Metadata metaData, Resource resourceNode,
             Map<String, Property> nodeProperties) {
-        boolean foundProvidingService = false;
-        if (resourceNode instanceof ProvidingService) {
-            foundProvidingService = true;
+        boolean foundProvidingService = resourceNode != null
+                && (boolean) Optional.ofNullable(resourceNode.getProperties().get("providingService")).orElse(false);
+
+        if (foundProvidingService) {
             processProvidingService(resourceModel, resourceNode, nodeProperties);
-        } else if (resourceNode instanceof Resource && !(resourceNode.getWidgetType().equals(Widget.Type.L3_NET))) {
+        } else if (resourceNode != null && resourceNode.isResource()
+                && resourceNode.getWidgetType() != Widget.Type.L3_NET) {
             if (metaData != null) {
                 resourceNode.populateModelIdentificationInformation(metaData.getAllProperties());
             }
@@ -423,7 +423,7 @@ public class ArtifactGeneratorToscaParser {
         return foundProvidingService;
     }
 
-    private void processProvidingService(Model resourceModel, Model resourceNode,
+    private void processProvidingService(Model resourceModel, Resource resourceNode,
             Map<String, Property> nodeProperties) {
         if (nodeProperties == null || nodeProperties.get("providing_service_uuid") == null
                 || nodeProperties.get("providing_service_invariant_uuid") == null) {
@@ -433,6 +433,6 @@ public class ArtifactGeneratorToscaParser {
         Map<String, String> properties = populateStringProperties(nodeProperties);
         properties.put(VERSION, "1.0");
         resourceNode.populateModelIdentificationInformation(properties);
-        resourceModel.addResource((Resource) resourceNode);
+        resourceModel.addResource(resourceNode);
     }
 }

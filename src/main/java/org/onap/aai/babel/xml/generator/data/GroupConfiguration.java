@@ -18,10 +18,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.data;
 
 import java.util.List;
-import java.util.Map;
 
 public class GroupConfiguration {
 
@@ -29,17 +29,17 @@ public class GroupConfiguration {
      * Names of Instance Groups that will be processed (not filtered out).
      */
     private List<String> instanceGroupTypes;
-    
+
     /**
-     * Mapping from TOSCA type to Widget Model. 
+     * Mapping from TOSCA type to Widget directly.
      */
-    private Map<String, String> toscaToWidgetMappings;
+    private List<WidgetMapping> widgetMappings;
 
     public List<String> getInstanceGroupTypes() {
         return instanceGroupTypes;
     }
 
-    public Map<String, String> getToscaToWidgetMappings() {
-        return toscaToWidgetMappings;
+    public List<WidgetMapping> getWidgetMappings() {
+        return widgetMappings;
     }
 }

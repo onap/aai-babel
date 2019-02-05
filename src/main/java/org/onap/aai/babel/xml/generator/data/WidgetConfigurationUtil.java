@@ -24,15 +24,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Properties;
-import org.onap.aai.babel.xml.generator.model.Model;
+import org.onap.aai.babel.xml.generator.model.Resource;
+import org.onap.aai.babel.xml.generator.model.Widget;
 
 public class WidgetConfigurationUtil {
 
     private static Properties config;
     private static List<String> instanceGroups = Collections.emptyList();
-    private static Map<String, Class<? extends Model>> typeToModel = new HashMap<>();
+    private static Map<String, Resource> typeToWidget = new HashMap<>();
 
     /*
      * Private constructor to prevent instantiation
@@ -51,36 +52,21 @@ public class WidgetConfigurationUtil {
 
     public static void setSupportedInstanceGroups(List<String> supportedInstanceGroups) {
         instanceGroups = supportedInstanceGroups;
-    }    
+    }
 
     public static boolean isSupportedInstanceGroup(String groupType) {
         return instanceGroups.contains(groupType);
     }
 
-    /**
-     * Create the mappings from TOSCA type to Widget type. The Properties store a set of TOSCA type prefix Strings.
-     * These keys take a single class name (String), which is used to map to a Widget Class in the Model.
-     * 
-     * @param map
-     *            the key/value pairs of TOSCA type and Class name
-     */
-    @SuppressWarnings("unchecked")
-    public static void setTypeMappings(Map<String, String> map) {
-        for (Entry<String, String> entry : map.entrySet()) {
-            final String toscaType = entry.getKey();
-            final String javaBean = entry.getValue();
-            final String modelClassName = Model.class.getPackage().getName() + "." + javaBean;
-            try {
-                typeToModel.put(toscaType, (Class<? extends Model>) Class.forName(modelClassName));
-            } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException(
-                        String.format("Unsupported type \"%s\" for TOSCA mapping %s: no class found for %s", //
-                                javaBean, toscaType, modelClassName));
-            }
-        }
+    public static Optional<Resource> createModelFromType(String typePrefix) {
+        return Optional.ofNullable(typeToWidget.get(typePrefix));
     }
 
-    public static Class<? extends Model> getModelFromType(String typePrefix) {
-        return typeToModel.get(typePrefix);
+    public static void setWidgetMappings(List<WidgetMapping> mappings) {
+        for (WidgetMapping mapping : mappings) {
+            Resource resource = new Resource(Widget.Type.valueOf(mapping.widget), mapping.deleteFlag);
+            resource.setIsResource(mapping.type.equalsIgnoreCase("resource"));
+            typeToWidget.put(mapping.prefix, resource);
+        }
     }
 }

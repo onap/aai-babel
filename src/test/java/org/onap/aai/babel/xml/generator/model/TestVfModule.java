@@ -54,25 +54,25 @@ public class TestVfModule {
      */
     @Test
     public void testHashCode() {
-        VfModule vfModule = createNewVfModule();
+        Resource vfModule = createNewVfModule();
         populateIdentInfo(vfModule);
         assertThat(vfModule.hashCode(), is(notNullValue()));
     }
-    
+
     /**
      * Call equals() method for code coverage.
      */
     @Test
     public void testEquals() {
-        VfModule vfModuleA = createNewVfModule();
-        populateIdentInfo(vfModuleA);        
+        Resource vfModuleA = createNewVfModule();
+        populateIdentInfo(vfModuleA);
 
-       // equals() is reflexive
+        // equals() is reflexive
         assertThat(vfModuleA.equals(vfModuleA), is(true));
-        
+
         // equals() is symmetric
-        VfModule vfModuleB = createNewVfModule();
-        populateIdentInfo(vfModuleB);        
+        Resource vfModuleB = createNewVfModule();
+        populateIdentInfo(vfModuleB);
         assertThat(vfModuleA.equals(vfModuleB), is(true));
         assertThat(vfModuleB.equals(vfModuleA), is(true));
 
@@ -95,7 +95,7 @@ public class TestVfModule {
      */
     @Test
     public void testNonMemberWidgetToVf() {
-        VfModule vfModule = createNewVfModule();
+        Resource vfModule = createNewVfModule();
         assertThat(vfModule.addWidget(createNewWidget(Type.SERVICE)), is(false));
         assertNumberOfWidgets(vfModule, 0);
     }
@@ -105,7 +105,7 @@ public class TestVfModule {
      */
     @Test
     public void testAddOamNetworkWidgetToVf() {
-        VfModule vfModule = createNewVfModule();
+        Resource vfModule = createNewVfModule();
         assertThat(createNewWidgetForModule(vfModule, Type.OAM_NETWORK), is(false));
         assertNumberOfWidgets(vfModule, 0);
     }
@@ -120,7 +120,7 @@ public class TestVfModule {
      */
     @Test
     public void testAddVolumeWidgetToVf() {
-        VfModule vfModule = createNewVfModule();
+        Resource vfModule = createNewVfModule();
 
         // Adding a Volume widget has no effect until a vserver widget is added.
         assertAddWidget(vfModule, Type.VOLUME);
@@ -152,7 +152,7 @@ public class TestVfModule {
      */
     @Test
     public void testAddLinterfaceWidgetToVf() {
-        VfModule vfModule = createNewVfModule();
+        Resource vfModule = createNewVfModule();
 
         // Adding an L-Interface widget has no effect until a vserver widget is added.
         assertFailToAddWidget(vfModule, Type.LINT);
@@ -185,7 +185,7 @@ public class TestVfModule {
      */
     @Test
     public void testAddVolumeAndLinterfaceWidgetToVf() {
-        VfModule vfModule = createNewVfModule();
+        Resource vfModule = createNewVfModule();
 
         // Adding a Volume widget has no effect until a vserver widget is added.
         assertAddWidget(vfModule, Type.VOLUME);
@@ -232,8 +232,8 @@ public class TestVfModule {
      *
      * @return new VF Module resource
      */
-    private VfModule createNewVfModule() {
-        VfModule vfModule = new VfModule();
+    private Resource createNewVfModule() {
+        Resource vfModule = new Resource(Type.VFMODULE, true);
         assertNumberOfWidgets(vfModule, 0);
         return vfModule;
     }
@@ -244,7 +244,7 @@ public class TestVfModule {
      * @param vfModule
      *            to be populated
      */
-    private void populateIdentInfo(VfModule vfModule) {
+    private void populateIdentInfo(Resource vfModule) {
         Map<String, String> modelIdentInfo = new HashMap<>();
         modelIdentInfo.put("UUID", "dummy_uuid");
         vfModule.populateModelIdentificationInformation(modelIdentInfo);
@@ -258,7 +258,7 @@ public class TestVfModule {
      * @param widgetType
      *            the type of Widget to create and add
      */
-    private void assertAddWidget(VfModule vfModule, Type widgetType) {
+    private void assertAddWidget(Resource vfModule, Type widgetType) {
         assertThat(createNewWidgetForModule(vfModule, widgetType), is(true));
     }
 
@@ -270,7 +270,7 @@ public class TestVfModule {
      * @param widgetType
      *            the type of Widget to create and attempt to add
      */
-    private void assertFailToAddWidget(VfModule vfModule, Type widgetType) {
+    private void assertFailToAddWidget(Resource vfModule, Type widgetType) {
         assertThat(createNewWidgetForModule(vfModule, widgetType), is(false));
     }
 
@@ -283,7 +283,7 @@ public class TestVfModule {
      *            the type of Widget to create and attempt to add
      * @return whether or not the Widget was added to the module
      */
-    private boolean createNewWidgetForModule(VfModule vfModule, Type widgetType) {
+    private boolean createNewWidgetForModule(Resource vfModule, Type widgetType) {
         Widget widget = createNewWidget(widgetType);
         setWidgetAsMember(vfModule, widget);
         return vfModule.addWidget(widget);
@@ -299,7 +299,7 @@ public class TestVfModule {
      * @param widget
      *            the widget to be set as the member
      */
-    private void setWidgetAsMember(VfModule vfModule, Widget widget) {
+    private void setWidgetAsMember(Resource vfModule, Widget widget) {
         String id = widget.getId();
         widget.addKey(id);
         vfModule.setMembers(Collections.singletonList(id));
@@ -312,7 +312,7 @@ public class TestVfModule {
      *            the VF Module to update
      * @return the number of Widgets present in the vserver on creation
      */
-    private int createVserverForVf(VfModule vfModule) {
+    private int createVserverForVf(Resource vfModule) {
         VServerWidget vserverWidget = (VServerWidget) createNewWidget(Type.VSERVER);
         assertNumberOfWidgets(vfModule, 0);
         final int initialWidgetCount = addVserverToVf(vfModule, vserverWidget);
@@ -329,7 +329,7 @@ public class TestVfModule {
      *            the Widget to add
      * @return initial widget count for the vserver Widget
      */
-    private int addVserverToVf(VfModule vfModule, VServerWidget vserverWidget) {
+    private int addVserverToVf(Resource vfModule, VServerWidget vserverWidget) {
         // A vserver (initially) has Flavor, Image, Tenant and Vfc.
         final int initialWidgetCount = 4;
         assertNumberOfWidgets(vserverWidget, initialWidgetCount);

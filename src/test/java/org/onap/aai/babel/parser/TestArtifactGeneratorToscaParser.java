@@ -32,9 +32,8 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
-import org.onap.aai.babel.xml.generator.model.AllotedResource;
-import org.onap.aai.babel.xml.generator.model.InstanceGroup;
 import org.onap.aai.babel.xml.generator.model.Resource;
+import org.onap.aai.babel.xml.generator.model.Widget.Type;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
@@ -55,7 +54,8 @@ public class TestArtifactGeneratorToscaParser {
     @Test(expected = IllegalArgumentException.class)
     public void testMissingProvidingService() {
         List<NodeTemplate> nodeTemplateList = Collections.singletonList(buildNodeTemplate("name", "BlockStorage"));
-        new ArtifactGeneratorToscaParser(null).processResourceModels(new AllotedResource(), nodeTemplateList);
+        new ArtifactGeneratorToscaParser(null).processResourceModels(new Resource(Type.ALLOTTED_RESOURCE, true),
+                nodeTemplateList);
     }
 
     /**
@@ -65,7 +65,8 @@ public class TestArtifactGeneratorToscaParser {
     @Test(expected = IllegalArgumentException.class)
     public void testAddResourceNotProvidingService() {
         List<NodeTemplate> nodeTemplateList = Collections.singletonList(buildNodeTemplate("testCR", "CR"));
-        final Resource dummyResource = new AllotedResource(); // Any Resource to which the CR can be added
+        // Create any Resource to which the CR can be added
+        final Resource dummyResource = new Resource(Type.ALLOTTED_RESOURCE, true);
         new ArtifactGeneratorToscaParser(null).processResourceModels(dummyResource, nodeTemplateList);
     }
 
@@ -90,7 +91,8 @@ public class TestArtifactGeneratorToscaParser {
         Mockito.when(helper.getGroupsOfOriginOfNodeTemplate(serviceNodeTemplate)).thenReturn(groups);
 
         ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(helper);
-        List<Resource> resources = parser.processInstanceGroups(new InstanceGroup(), serviceNodeTemplate);
+        List<Resource> resources =
+                parser.processInstanceGroups(new Resource(Type.INSTANCE_GROUP, true), serviceNodeTemplate);
 
         assertThat(resources.size(), is(1));
         Resource resource = resources.get(0);
@@ -102,9 +104,9 @@ public class TestArtifactGeneratorToscaParser {
      * sdc-tosca parser.
      *
      * @param name
-     *            name of the NodeTemplate
+     *     name of the NodeTemplate
      * @param type
-     *            type of the NodeTemplate
+     *     type of the NodeTemplate
      * @return a new NodeTemplate object
      */
     private NodeTemplate buildNodeTemplate(String name, String type) {

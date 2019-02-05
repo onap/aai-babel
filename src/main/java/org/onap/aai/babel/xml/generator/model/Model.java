@@ -27,19 +27,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import org.onap.aai.babel.logging.ApplicationMsgs;
-import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.error.IllegalAccessException;
-import org.onap.aai.babel.xml.generator.types.Cardinality;
+import org.onap.aai.babel.xml.generator.model.Widget.Type;
 import org.onap.aai.babel.xml.generator.types.ModelType;
-import org.onap.aai.cl.api.Logger;
 
 public abstract class Model {
 
     public static final String GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION = "Operation Not Supported for Widgets";
-
-    private static Logger log = LogHelper.INSTANCE;
 
     private enum ModelIdentification {
         ID("vfModuleModelInvariantUUID", "serviceInvariantUUID", "resourceInvariantUUID", "invariantUUID",
@@ -117,37 +112,28 @@ public abstract class Model {
      * Gets the object (model) corresponding to the supplied TOSCA type.
      *
      * @param toscaType
-     *            the tosca type
+     *     the tosca type
      * @return the model for the type, or null
      */
-    public static Model getModelFor(String toscaType) {
-        Model model = null;
+    public static Resource getModelFor(String toscaType) {
+        Resource resource = null;
         if (toscaType != null && !toscaType.isEmpty()) {
-            model = getModelFromType(toscaType).orElseGet(() -> Model.getModelFromPrefix(toscaType));
+            resource = getModelFromType(toscaType).orElseGet(() -> Model.getModelFromPrefix(toscaType));
         }
-        return model;
+        return resource;
     }
 
-    private static Model getModelFromPrefix(String toscaType) {
-        Model model = null;
+    private static Resource getModelFromPrefix(String toscaType) {
+        Resource resource = null;
         int lastSeparator = toscaType.lastIndexOf('.');
         if (lastSeparator != -1) {
-            model = getModelFor(toscaType.substring(0, lastSeparator));
+            resource = getModelFor(toscaType.substring(0, lastSeparator));
         }
-        return model;
+        return resource;
     }
 
-    private static Optional<Model> getModelFromType(String typePrefix) {
-        Optional<Model> modelToBeReturned = Optional.empty();
-        Class<? extends Model> clazz = WidgetConfigurationUtil.getModelFromType(typePrefix);
-        if (clazz != null) {
-            try {
-                modelToBeReturned = Optional.ofNullable(clazz.getConstructor().newInstance());
-            } catch (Exception e) {
-                log.error(ApplicationMsgs.INVALID_CSAR_FILE, e);
-            }
-        }
-        return modelToBeReturned;
+    private static Optional<Resource> getModelFromType(String typePrefix) {
+        return WidgetConfigurationUtil.createModelFromType(typePrefix);
     }
 
     /**
@@ -155,16 +141,16 @@ public abstract class Model {
      * information.
      *
      * @param toscaType
-     *            the TOSCA type
+     *     the TOSCA type
      * @param metaDataType
-     *            the type from the TOSCA metadata
+     *     the type from the TOSCA metadata
      * @return the model for the type, or null
      */
-    public static Model getModelFor(String toscaType, String metaDataType) {
+    public static Resource getModelFor(String toscaType, String metaDataType) {
         if ("Configuration".equals(metaDataType)) {
-            return new Configuration();
+            return new Resource(Type.CONFIGURATION, true);
         } else if ("CR".equals(metaDataType)) {
-            return new CR();
+            return new Resource(Type.CR, true);
         } else {
             return getModelFor(toscaType);
         }
@@ -176,16 +162,9 @@ public abstract class Model {
 
     public abstract Widget.Type getWidgetType();
 
-    /**
-     * Gets cardinality.
-     *
-     * @return the cardinality
-     */
-    public Cardinality getCardinality() {
-        org.onap.aai.babel.xml.generator.types.Model model =
-                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
-        return model.cardinality();
-    }
+    public abstract Map<String, Object> getProperties();
+
+    public abstract boolean isResource();
 
     /**
      * Gets delete flag.
@@ -263,7 +242,7 @@ public abstract class Model {
      * Populate model identification information.
      *
      * @param modelIdentInfo
-     *            the model ident info
+     *     the model ident info
      */
     public void populateModelIdentificationInformation(Map<String, String> modelIdentInfo) {
         Iterator<String> iter = modelIdentInfo.keySet().iterator();

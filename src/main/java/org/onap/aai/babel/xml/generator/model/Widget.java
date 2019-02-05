@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import org.onap.aai.babel.logging.ApplicationMsgs;
@@ -42,24 +43,7 @@ public abstract class Widget extends Model {
             "Cannot generate artifacts. Widget configuration not found for %s";
 
     public enum Type {
-        SERVICE,
-        VF,
-        VFC,
-        VSERVER,
-        VOLUME,
-        FLAVOR,
-        TENANT,
-        VOLUME_GROUP,
-        LINT,
-        L3_NET,
-        VFMODULE,
-        IMAGE,
-        OAM_NETWORK,
-        ALLOTTED_RESOURCE,
-        TUNNEL_XCONNECT,
-        CONFIGURATION,
-        CR,
-        INSTANCE_GROUP;
+        SERVICE, VF, VFC, VSERVER, VOLUME, FLAVOR, TENANT, VOLUME_GROUP, LINT, L3_NET, VFMODULE, IMAGE, OAM_NETWORK, ALLOTTED_RESOURCE, TUNNEL_XCONNECT, CONFIGURATION, CR, INSTANCE_GROUP;
     }
 
     private static Logger log = LogHelper.INSTANCE;
@@ -91,7 +75,8 @@ public abstract class Widget extends Model {
     /**
      * Gets widget.
      *
-     * @param type the type
+     * @param type
+     *            the type
      * @return the widget
      */
     public static Widget getWidget(Type type) {
@@ -108,8 +93,14 @@ public abstract class Widget extends Model {
         return widget;
     }
 
+    @Override
+    public boolean isResource() {
+        return false;
+    }
+
     public String getId() {
-        String id = WidgetConfigurationUtil.getConfig().getProperty(ArtifactType.AAI.name() + ".model-version-id." + getName());
+        String id = WidgetConfigurationUtil.getConfig()
+                .getProperty(ArtifactType.AAI.name() + ".model-version-id." + getName());
         if (id == null) {
             throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGLPROP_NOT_FOUND,
                     ArtifactType.AAI.name() + ".model-version-id." + getName()));
@@ -156,7 +147,8 @@ public abstract class Widget extends Model {
     /**
      * Equals method that compares Widget IDs.
      *
-     * @param obj the Widget object to compare
+     * @param obj
+     *            the Widget object to compare
      * @return whether or not obj is equal to this Widget
      */
     @Override
@@ -179,7 +171,8 @@ public abstract class Widget extends Model {
     /**
      * Determine whether one or more keys belonging to this Widget appear in the specified Collection.
      *
-     * @param keys the keys
+     * @param keys
+     *            the keys
      * @return the boolean
      */
     public boolean memberOf(Collection<String> keys) {
@@ -197,5 +190,10 @@ public abstract class Widget extends Model {
     @Override
     public boolean addWidget(Widget widget) {
         return true;
+    }
+
+    @Override
+    public Map<String, Object> getProperties() {
+        return Collections.emptyMap();
     }
 }

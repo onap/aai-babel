@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,27 @@
  */
 package org.onap.aai.babel.xml.generator.model;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import org.onap.aai.babel.xml.generator.model.Widget.Type;
+
 public class Resource extends Model {
+
+    private Type type;
+    private boolean deleteFlag;
+    private boolean isResource = true;     
+    private Map<String, Object> properties = Collections.emptyMap();
+
+    Widget vserver = null;
+    boolean addlintf = false;
+    boolean addvolume = false;
+    List<String> members;
+
+    public Resource(Type type, boolean deleteFlag) {
+        this.type = type;
+        this.deleteFlag = deleteFlag;
+    }
 
     @Override
     public int hashCode() {
@@ -36,20 +56,109 @@ public class Resource extends Model {
         return false;
     }
 
+    public boolean getDeleteFlag() {
+        return deleteFlag;
+    }
+
+    public String getWidgetInvariantId() {
+        return Widget.getWidget(getWidgetType()).getWidgetId();
+    }
+
+    public String getWidgetId() {
+        return Widget.getWidget(getWidgetType()).getId();
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
+
+    @Override
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    public void setIsResource(boolean isResource) {
+        this.isResource = isResource;
+    }
+
+    @Override
+    public boolean isResource() {
+        return isResource;
+    }
+
+    public void setMembers(List<String> members) {
+        this.members = members;
+    }
+
     @Override
     public boolean addResource(Resource resource) {
         return resources.add(resource);
     }
 
+    /**
+     * Adds a Widget.
+     *
+     * @param widget
+     *            the widget
+     * @return the boolean
+     */
     @Override
     public boolean addWidget(Widget widget) {
-        return widgets.add(widget);
+        if (type == Type.VFMODULE) {
+            if (widget.memberOf(members)) {
+                if (vserver == null && widget.getId().equals(new VServerWidget().getId())) {
+                    addVserverWidget(widget);
+                } else if (widget.getId().equals(new LIntfWidget().getId())) {
+                    return addLIntfWidget(widget);
+                } else if (widget.getId().equals(new VolumeWidget().getId())) {
+                    addVolumeWidget(widget);
+                    return true;
+                }
+                if (widget.getId().equals(new OamNetwork().getId())) {
+                    return false;
+                }
+                return widgets.add(widget);
+            }
+            return false;
+        } else {
+            return widgets.add(widget);
+        }
     }
 
-    @Override
-    public Widget.Type getWidgetType() {
-        org.onap.aai.babel.xml.generator.types.Model model =
-                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
-        return model.widget();
+    public Type getWidgetType() {
+        return type;
     }
+
+    private void addVolumeWidget(Widget widget) {
+        if (vserver != null) {
+            vserver.addWidget(widget);
+        } else {
+            addvolume = true;
+        }
+    }
+
+    /**
+     * @param widget
+     * @return
+     */
+    private boolean addLIntfWidget(Widget widget) {
+        if (vserver != null) {
+            vserver.addWidget(widget);
+            return true;
+        } else {
+            addlintf = true;
+            return false;
+        }
+    }
+
+    private void addVserverWidget(Widget widget) {
+        vserver = widget;
+        if (addlintf) {
+            vserver.addWidget(new LIntfWidget());
+        }
+        if (addvolume) {
+            vserver.addWidget(new VolumeWidget());
+        }
+    }
+
 }

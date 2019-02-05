@@ -21,14 +21,15 @@
 
 package org.onap.aai.babel.xml.generator.model;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
@@ -43,7 +44,8 @@ import org.onap.aai.babel.xml.generator.types.ModelType;
 public class TestModel {
 
     private Service serviceModel = new Service();
-    private List<Resource> resourceModels = Arrays.asList(new VirtualFunction(), new InstanceGroup());
+    private List<Resource> resourceModels =
+            Arrays.asList(new Resource(Type.CR, true), new Resource(Type.INSTANCE_GROUP, true));
     private Widget widgetModel = new OamNetwork();
     private Model anonymousModel;
 
@@ -56,7 +58,7 @@ public class TestModel {
      * from the Artifact Generator properties.
      *
      * @throws IOException
-     *             if the Artifact Generator properties file is not loaded
+     *     if the Artifact Generator properties file is not loaded
      */
     @Before
     public void setup() throws IOException {
@@ -81,6 +83,16 @@ public class TestModel {
             public Type getWidgetType() {
                 return null;
             }
+
+            @Override
+            public Map<String, Object> getProperties() {
+                return Collections.emptyMap();
+            }
+
+            @Override
+            public boolean isResource() {
+                return false;
+            }
         };
     }
 
@@ -90,34 +102,47 @@ public class TestModel {
         assertThat(Model.getModelFor(""), is(nullValue()));
         assertThat(Model.getModelFor("any.unknown.type"), is(nullValue()));
 
-        assertThat(Model.getModelFor("org.openecomp.resource.vf.allottedResource"), instanceOf(AllotedResource.class));
-        assertThat(Model.getModelFor("org.openecomp.resource.vf.allottedResource.with.sub.type"),
-                instanceOf(AllotedResource.class));
-        assertThat(Model.getModelFor("org.openecomp.resource.vfc.AllottedResource"),
-                instanceOf(ProvidingService.class));
-        assertThat(Model.getModelFor("org.openecomp.resource.vfc"), instanceOf(VServerWidget.class));
-        assertThat(Model.getModelFor("org.openecomp.resource.cp"), instanceOf(LIntfWidget.class));
-        assertThat(Model.getModelFor("org.openecomp.cp"), instanceOf(LIntfWidget.class));
-        assertThat(Model.getModelFor("org.openecomp.cp.some.suffix"), instanceOf(LIntfWidget.class));
-        assertThat(Model.getModelFor("org.openecomp.resource.vl"), instanceOf(L3Network.class));
-        assertThat(Model.getModelFor("org.openecomp.resource.vf"), instanceOf(VirtualFunction.class));
-        assertThat(Model.getModelFor("org.openecomp.groups.vfmodule"), instanceOf(VfModule.class));
-        assertThat(Model.getModelFor("org.openecomp.groups.VfModule"), instanceOf(VfModule.class));
-        assertThat(Model.getModelFor("org.openecomp.resource.vfc.nodes.heat.cinder"), instanceOf(VolumeWidget.class));
-        assertThat(Model.getModelFor("org.openecomp.nodes.PortMirroringConfiguration"),
-                instanceOf(Configuration.class));
-        assertThat(Model.getModelFor("org.openecomp.nodes.PortMirroringConfiguration", "Configuration"),
-                instanceOf(Configuration.class));
-        assertThat(Model.getModelFor("any.string", "Configuration"), instanceOf(Configuration.class));
-        assertThat(Model.getModelFor("org.openecomp.resource.cr.Kk1806Cr1", "CR"), instanceOf(CR.class));
-        assertThat(Model.getModelFor("any.string", "CR"), instanceOf(CR.class));
+        assertMapping("org.openecomp.resource.vfc", Type.VSERVER);
+        assertMapping("org.openecomp.resource.cp", Type.LINT);
+        assertMapping("org.openecomp.cp", Type.LINT);
+        assertMapping("org.openecomp.cp.some.suffix", Type.LINT);
+        assertMapping("org.openecomp.resource.vl", Type.L3_NET);
+        assertMapping("org.openecomp.resource.vf", Type.VF);
+        assertMapping("org.openecomp.groups.vfmodule", Type.VFMODULE);
+        assertMapping("org.openecomp.groups.VfModule", Type.VFMODULE);
+        assertMapping("org.openecomp.resource.vfc.nodes.heat.cinder", Type.VOLUME);
+        assertMapping("org.openecomp.nodes.PortMirroringConfiguration", "Configuration", Type.CONFIGURATION);
+        assertMapping("any.string", "Configuration", Type.CONFIGURATION);
+        assertMapping("org.openecomp.resource.cr.Kk1806Cr1", "CR", Type.CR);
+        assertMapping("any.string", "CR", Type.CR);
 
-        assertThat(Model.getModelFor("org.openecomp.resource.vfc", "an.unknown.type"), instanceOf(VServerWidget.class));
+        assertMapping("org.openecomp.resource.vfc", "an.unknown.type", Type.VSERVER);
     }
 
-    @Test
-    public void testGetCardinality() {
-        resourceModels.get(0).getCardinality();
+    /**
+     * Assert that the TOSCA type String is mapped to the expected Widget Type.
+     * 
+     * @param toscaType
+     *     the TOSCA type or prefix
+     * @param widgetType
+     *     the type of Widget expected from the mappings
+     */
+    private void assertMapping(String toscaType, Type widgetType) {
+        assertThat(Model.getModelFor(toscaType).getWidgetType(), is(widgetType));
+    }
+
+    /**
+     * Assert that the TOSCA metadata type is mapped to the expected Widget Type.
+     * 
+     * @param toscaType
+     *     the name (or name prefix) of the TOSCA type
+     * @param metadataType
+     *     the type specified in the TOSCA metadata
+     * @param widgetType
+     *     the type of Widget expected from the mappings
+     */
+    private void assertMapping(String toscaType, String metadataType, Type widgetType) {
+        assertThat(Model.getModelFor(toscaType, metadataType).getWidgetType(), is(widgetType));
     }
 
     @Test
