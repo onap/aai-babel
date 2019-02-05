@@ -114,8 +114,7 @@ public abstract class Widget extends Model {
     }
 
     public String getName() {
-        ModelWidget widgetModel = this.getClass().getAnnotation(ModelWidget.class);
-        return widgetModel.name();
+        return this.getClass().getAnnotation(ModelWidget.class).name();
     }
 
     /**

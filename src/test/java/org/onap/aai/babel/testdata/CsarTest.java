@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright Â© 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright Â© 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,8 +66,10 @@ public enum CsarTest {
      * Extract YAML Artifacts.
      *
      * @return the extracted artifacts
-     * @throws InvalidArchiveException if the CSAR is invalid
-     * @throws IOException for I/O errors
+     * @throws InvalidArchiveException
+     *             if the CSAR is invalid
+     * @throws IOException
+     *             for I/O errors
      */
     public List<Artifact> extractArtifacts() throws InvalidArchiveException, IOException {
         return new YamlExtractor().extract(getContent(), getName(), "v1");
@@ -77,14 +79,22 @@ public enum CsarTest {
      * Extract VNF Vendor Image Artifacts.
      *
      * @return the extracted artifacts
-     * @throws IOException
      * @throws ToscaToCatalogException
-     *
+     *             if the CSAR content is not valid
+     * @throws IOException
+     *             if an I/O exception occursSince:
      */
     public BabelArtifact extractVnfVendorImages() throws ToscaToCatalogException, IOException {
         return new VnfVendorImageExtractor().extract(getContent());
     }
 
+    /**
+     * Create a BabelRequest containing the encoded CSAR content.
+     * 
+     * @return a new Babel request for this CSAR
+     * @throws IOException
+     *             if an I/O exception occurs
+     */
     public String getJsonRequest() throws IOException {
         BabelRequest request = new BabelRequest();
         request.setArtifactName(getName());

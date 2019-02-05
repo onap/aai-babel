@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,9 @@ public class SdcToscaHelper {
     private ArrayList<NodeTemplate> smnodetemplates = new ArrayList<>();
 
     /**
-     * @return
+     * Create the test SubstitutionMappings.
+     * 
+     * @return the new Substitution Mappings
      */
     public SubstitutionMappings buildMappings() {
         LinkedHashMap<String, Object> defProps = getImagesDefProps();
@@ -78,7 +80,7 @@ public class SdcToscaHelper {
     }
 
     /**
-     *
+     * Create a new NodeTemplate and add it to the list (for populating the Substitution Mappings).
      */
     public void addNodeTemplate() {
         String name = "node name";
@@ -98,7 +100,11 @@ public class SdcToscaHelper {
     }
 
     /**
+     * Simulate the creation of a NodeTemplate by the SDC TOSCA parser. Populate the properties of the NodeTemplate with
+     * the supplied images.
+     * 
      * @param images
+     *            the value of the images property
      */
     public void addNodeTemplate(Object images) {
         LinkedHashMap<String, Object> properties = new LinkedHashMap<>();

@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.model;
 
 import java.util.Collections;
@@ -29,7 +30,7 @@ public class Resource extends Model {
 
     private Type type;
     private boolean deleteFlag;
-    private boolean isResource = true;     
+    private boolean isResource = true;
     private Map<String, Object> properties = Collections.emptyMap();
 
     Widget vserver = null;
@@ -106,18 +107,17 @@ public class Resource extends Model {
     public boolean addWidget(Widget widget) {
         if (type == Type.VFMODULE) {
             if (widget.memberOf(members)) {
-                if (vserver == null && widget.getId().equals(new VServerWidget().getId())) {
+                if (vserver == null && widget instanceof VServerWidget) {
                     addVserverWidget(widget);
-                } else if (widget.getId().equals(new LIntfWidget().getId())) {
+                } else if (widget instanceof LIntfWidget) {
                     return addLIntfWidget(widget);
-                } else if (widget.getId().equals(new VolumeWidget().getId())) {
+                } else if (widget instanceof VolumeWidget) {
                     addVolumeWidget(widget);
                     return true;
                 }
-                if (widget.getId().equals(new OamNetwork().getId())) {
-                    return false;
+                if (!(widget instanceof OamNetwork)) {
+                    return widgets.add(widget);
                 }
-                return widgets.add(widget);
             }
             return false;
         } else {

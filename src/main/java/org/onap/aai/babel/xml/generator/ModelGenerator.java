@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator;
 
 import java.util.Base64;
@@ -42,6 +43,7 @@ import org.onap.aai.cl.api.Logger;
  */
 public class ModelGenerator implements ArtifactGenerator {
 
+
     private static final Logger logger = LogHelper.INSTANCE;
 
     private static final String VERSION_DELIMITER = ".";
@@ -52,9 +54,11 @@ public class ModelGenerator implements ArtifactGenerator {
      * Invokes the TOSCA artifact generator API with the input artifacts.
      *
      * @param csarArchive
-     * @param csarArtifacts the input artifacts
+     * @param csarArtifacts
+     *     the input artifacts
      * @return {@link List} of output artifacts
-     * @throws XmlArtifactGenerationException if there is an error trying to generate XML artifacts
+     * @throws XmlArtifactGenerationException
+     *     if there is an error trying to generate XML artifacts
      */
     @Override
     public List<BabelArtifact> generateArtifacts(byte[] csarArchive, List<Artifact> csarArtifacts)
@@ -89,9 +93,12 @@ public class ModelGenerator implements ArtifactGenerator {
     /**
      * Creates an instance of an input artifact for the generator.
      *
-     * @param payload the payload downloaded from SDC
-     * @param artifactName name of the artifact to create
-     * @param artifactVersion version of the artifact to create
+     * @param payload
+     *     the payload downloaded from SDC
+     * @param artifactName
+     *     name of the artifact to create
+     * @param artifactVersion
+     *     version of the artifact to create
      * @return an {@link Artifact} object constructed from the payload and artifactInfo
      */
     public static Artifact createArtifact(byte[] payload, String artifactName, String artifactVersion) {
