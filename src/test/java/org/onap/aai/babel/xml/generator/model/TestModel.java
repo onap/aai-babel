@@ -65,7 +65,13 @@ public class TestModel {
         ArtifactTestUtils utils = new ArtifactTestUtils();
         utils.setGeneratorSystemProperties();
 
-        ArtifactGeneratorToscaParser.initGroupFilterConfiguration();
+        String configLocation = System.getProperty(ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE);
+        if (configLocation == null) {
+            throw new IllegalArgumentException(
+                    String.format(ArtifactGeneratorToscaParser.GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND, ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE));
+        }
+        
+        ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(configLocation);
         utils.loadWidgetToUuidMappings();
 
         anonymousModel = new Model() {

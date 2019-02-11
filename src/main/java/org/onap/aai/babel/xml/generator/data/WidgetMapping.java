@@ -25,9 +25,23 @@ import java.util.Map;
 
 public class WidgetMapping {
 
-    String prefix;
+    String prefix = null;
     String type = "resource"; // Default type is Resource (not Widget)
-    String widget;
-    boolean deleteFlag;
+    String widget = null;
+    boolean deleteFlag = true;
     Map<String, Object> properties;
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setWidget(String widgetName) {
+        this.widget = widgetName;
+    }
+
+    @Override
+    public String toString() {
+        return "WidgetMapping [prefix=" + prefix + ", type=" + type + ", widget=" + widget + ", deleteFlag="
+                + deleteFlag + ", properties=" + properties + "]";
+    }
 }

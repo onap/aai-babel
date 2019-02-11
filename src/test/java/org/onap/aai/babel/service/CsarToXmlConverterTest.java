@@ -126,7 +126,7 @@ public class CsarToXmlConverterTest {
     }
 
     /**
-     * Test that an Exception is thrown when the Artifact Generator's Group Filter properties are not present.
+     * Test that an Exception is thrown when the Artifact Generator's TOSCA Mappings configuration file is not present.
      *
      * @throws CsarConverterException
      *             if there is an error either extracting the YAML files or generating XML artifacts
@@ -134,13 +134,13 @@ public class CsarToXmlConverterTest {
      *             if an I/O exception occurs
      */
     @Test
-    public void generateXmlFromCsarFilterTypesSystemPropertyNotSet() throws CsarConverterException, IOException {
-        exception.expect(CsarConverterException.class);
+    public void generateXmlFromCsarMappingSystemPropertyNotSet() throws CsarConverterException, IOException {
+        exception.expect(IllegalArgumentException.class);
         exception.expectMessage("Cannot generate artifacts. System property "
-                + ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE + " not configured");
+                + ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE + " not configured");
 
         // Unset the required system property
-        System.clearProperty(ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE);
+        System.clearProperty(ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE);
         converter.generateXmlFromCsar(CsarTest.SD_WAN_CSAR_FILE.getContent(), CsarTest.SD_WAN_CSAR_FILE.getName(),
                 SERVICE_VERSION);
     }

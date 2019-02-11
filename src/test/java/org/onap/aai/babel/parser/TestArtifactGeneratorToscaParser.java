@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
+import org.onap.aai.babel.xml.generator.data.WidgetMapping;
 import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
@@ -59,7 +60,6 @@ public class TestArtifactGeneratorToscaParser {
     }
 
     /**
-     *
      * Add a CR (a type of Resource which is not a Providing Service) to a Resource Model.
      */
     @Test(expected = IllegalArgumentException.class)
@@ -68,6 +68,26 @@ public class TestArtifactGeneratorToscaParser {
         // Create any Resource to which the CR can be added
         final Resource dummyResource = new Resource(Type.ALLOTTED_RESOURCE, true);
         new ArtifactGeneratorToscaParser(null).processResourceModels(dummyResource, nodeTemplateList);
+    }
+
+    /**
+     * Initialise the Artifact Generator Widget Mapping config with incomplete data.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testToscaMappingWithoutType() {
+        WidgetMapping invalidMapping = new WidgetMapping();
+        invalidMapping.setType(null);
+        WidgetConfigurationUtil.setWidgetMappings(Collections.singletonList(invalidMapping));
+    }
+
+    /**
+     * Initialise the Artifact Generator Widget Mapping config with incomplete data.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testToscaMappingWithoutWidget() {
+        WidgetMapping invalidMapping = new WidgetMapping();
+        invalidMapping.setWidget(null);
+        WidgetConfigurationUtil.setWidgetMappings(Collections.singletonList(invalidMapping));
     }
 
     /**
@@ -104,9 +124,9 @@ public class TestArtifactGeneratorToscaParser {
      * sdc-tosca parser.
      *
      * @param name
-     *     name of the NodeTemplate
+     *            name of the NodeTemplate
      * @param type
-     *     type of the NodeTemplate
+     *            type of the NodeTemplate
      * @return a new NodeTemplate object
      */
     private NodeTemplate buildNodeTemplate(String name, String type) {

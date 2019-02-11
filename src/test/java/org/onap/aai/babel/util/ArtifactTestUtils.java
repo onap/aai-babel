@@ -63,8 +63,8 @@ public class ArtifactTestUtils {
         System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
                 getResourcePath(Resources.ARTIFACT_GENERATOR_CONFIG));
 
-        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE,
-                getResourcePath(Resources.FILTER_TYPES_CONFIG));
+        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE,
+                getResourcePath(Resources.TOSCA_MAPPING_CONFIG));
     }
 
     /**

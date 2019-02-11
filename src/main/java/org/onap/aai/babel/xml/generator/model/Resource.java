@@ -129,6 +129,11 @@ public class Resource extends Model {
         return type;
     }
 
+    @Override
+    public String toString() {
+        return "Widget type " + getWidgetType() + ", isResource=" + isResource() + ", deleteFlag=" + deleteFlag;
+    }
+
     private void addVolumeWidget(Widget widget) {
         if (vserver != null) {
             vserver.addWidget(widget);

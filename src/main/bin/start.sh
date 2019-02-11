@@ -34,6 +34,7 @@ fi
 PROPS="-DAPP_HOME=${APP_HOME}"
 PROPS="${PROPS} -DCONFIG_HOME=${CONFIG_HOME}"
 PROPS="${PROPS} -Dartifactgenerator.config=${CONFIG_HOME}/artifact-generator.properties"
+PROPS="${PROPS} -Dtosca.mappings.config=${CONFIG_HOME}/tosca-mappings.json"
 PROPS="${PROPS} -DKEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}"
 JVM_MAX_HEAP=${MAX_HEAP:-1024}
 

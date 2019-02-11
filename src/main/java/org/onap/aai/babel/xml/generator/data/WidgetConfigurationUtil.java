@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.data;
 
 import java.util.Collections;
@@ -64,6 +65,9 @@ public class WidgetConfigurationUtil {
 
     public static void setWidgetMappings(List<WidgetMapping> mappings) {
         for (WidgetMapping mapping : mappings) {
+            if (mapping.prefix == null || mapping.widget == null) {
+                throw new IllegalArgumentException("Incomplete widget mapping specified: " + mapping);
+            }
             Resource resource = new Resource(Widget.Type.valueOf(mapping.widget), mapping.deleteFlag);
             resource.setIsResource(mapping.type.equalsIgnoreCase("resource"));
             typeToWidget.put(mapping.prefix, resource);

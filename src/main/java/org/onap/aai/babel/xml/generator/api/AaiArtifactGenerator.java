@@ -80,9 +80,16 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
             return createErrorData(e);
         }
 
+        String configLocation = System.getProperty(ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE);
+        if (configLocation == null) {
+            throw new IllegalArgumentException(
+                    String.format(ArtifactGeneratorToscaParser.GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND,
+                            ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE));
+        }
+
         try {
             ArtifactGeneratorToscaParser.initWidgetConfiguration();
-            ArtifactGeneratorToscaParser.initGroupFilterConfiguration();
+            ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(configLocation);
             ISdcCsarHelper csarHelper =
                     SdcToscaParserFactory.getInstance().getSdcCsarHelper(csarPath.toAbsolutePath().toString());
             return generateAllArtifacts(validateServiceVersion(additionalParams), csarHelper);
@@ -198,10 +205,11 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
             }
         } else {
             for (Group group : serviceGroups) {
-                if (group.getMembers().contains(nodeTemplate.getName())
+                ArrayList<String> members = group.getMembers();
+                if (members != null && members.contains(nodeTemplate.getName())
                         && WidgetConfigurationUtil.isSupportedInstanceGroup(group.getType())) {
                     log.debug(String.format("Adding group %s (type %s) with members %s", group.getName(),
-                            group.getType(), group.getMembers()));
+                            group.getType(), members));
 
                     Resource groupModel = parser.createInstanceGroupModel(
                             parser.mergeProperties(group.getMetadata().getAllProperties(), group.getProperties()));
@@ -219,10 +227,12 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
         Resource model = Model.getModelFor(nodeTypeName, nodeTemplate.getMetaData().getValue("type"));
 
-        Metadata metadata = nodeTemplate.getMetaData();
-        if (metadata != null && parser.hasAllottedResource(metadata.getAllProperties())) {
-            if (model.getWidgetType() == Type.VF) {
-                model = new Resource(Type.ALLOTTED_RESOURCE, true);
+        if (model != null) {
+            Metadata metadata = nodeTemplate.getMetaData();
+            if (metadata != null && parser.hasAllottedResource(metadata.getAllProperties())) {
+                if (model.getWidgetType() == Type.VF) {
+                    model = new Resource(Type.ALLOTTED_RESOURCE, true);
+                }
             }
         }
 
