@@ -56,6 +56,9 @@ public class ArtifactTestUtils {
     private static final String JSON_RESPONSES_FOLDER = "response/";
     private static final String CSAR_INPUTS_FOLDER = "compressedArtifacts/";
 
+    /**
+     * Initialise System Properties for test configuration files.
+     */
     public void setGeneratorSystemProperties() {
         System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
                 getResourcePath(Resources.ARTIFACT_GENERATOR_CONFIG));
@@ -143,6 +146,15 @@ public class ArtifactTestUtils {
         return Files.lines(Paths.get(getResource(resourceFile).toURI())).collect(Collectors.joining());
     }
 
+    /**
+     * Create Properties from the content of the named resource (e.g. a file on the classpath).
+     * 
+     * @param resourceName
+     *            the resource name
+     * @return Properties loaded from the named resource
+     * @throws IOException
+     *             if an error occurred when reading from the named resource
+     */
     public Properties getResourceAsProperties(String resourceName) throws IOException {
         final Properties properties = new Properties();
         InputStream in = ArtifactTestUtils.class.getClassLoader().getResourceAsStream(resourceName);

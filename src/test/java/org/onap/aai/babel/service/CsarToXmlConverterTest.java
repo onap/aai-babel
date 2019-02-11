@@ -113,9 +113,6 @@ public class CsarToXmlConverterTest {
      *             if there is an error either extracting the YAML files or generating XML artifacts
      * @throws IOException
      *             if an I/O exception occurs loading the test CSAR file
-     * @throws IOException
-     * @throws XmlArtifactGenerationException
-     * @throws CsarConverterException
      */
     @Test
     public void testArtifactGeneratorConfigMissing() throws CsarConverterException, IOException {
@@ -131,13 +128,13 @@ public class CsarToXmlConverterTest {
     /**
      * Test that an Exception is thrown when the Artifact Generator's Group Filter properties are not present.
      *
-     * @throws IOException
-     * @throws XmlArtifactGenerationException
      * @throws CsarConverterException
+     *             if there is an error either extracting the YAML files or generating XML artifacts
+     * @throws IOException
+     *             if an I/O exception occurs
      */
     @Test
-    public void generateXmlFromCsarFilterTypesSystemPropertyNotSet()
-            throws IOException, XmlArtifactGenerationException, CsarConverterException {
+    public void generateXmlFromCsarFilterTypesSystemPropertyNotSet() throws CsarConverterException, IOException {
         exception.expect(CsarConverterException.class);
         exception.expectMessage("Cannot generate artifacts. System property "
                 + ArtifactGeneratorToscaParser.PROPERTY_GROUP_FILTERS_CONFIG_FILE + " not configured");
@@ -195,6 +192,13 @@ public class CsarToXmlConverterTest {
         assertThatGeneratedFilesMatchExpected(createExpectedXmlFiles(filesToLoad), CsarTest.SERVICE_PROXY_CSAR_FILE);
     }
 
+    /**
+     * A Matcher for comparing generated XML Strings with expected XML content.
+     * 
+     * @param expected
+     *            the expected XML String
+     * @return a new Matcher for comparing XML Strings
+     */
     public Matcher<String> matches(final String expected) {
         return new BaseMatcher<String>() {
             protected String theExpected = expected;

@@ -84,11 +84,14 @@ public class TestGenerateArtifactsServiceImpl {
 
     /**
      * No VNF Configuration exists.
-     *
-     * @throws Exception
+     * 
+     * @throws URISyntaxException
+     *             if the URI cannot be created
+     * @throws IOException
+     *             if the resource cannot be loaded
      */
     @Test
-    public void testGenerateArtifactsWithoutVnfConfiguration() throws Exception {
+    public void testGenerateArtifactsWithoutVnfConfiguration() throws IOException, URISyntaxException {
         Response response = processJsonRequest(CsarTest.NO_VNF_CONFIG_CSAR);
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("validNoVnfConfigurationResponse.json")));
@@ -146,6 +149,7 @@ public class TestGenerateArtifactsServiceImpl {
      * Create a (mocked) HTTPS request and invoke the Babel generate artifacts API.
      *
      * @param csar
+     *            test CSAR file
      * @return the Response from the HTTP API
      * @throws URISyntaxException
      *             if the URI cannot be created

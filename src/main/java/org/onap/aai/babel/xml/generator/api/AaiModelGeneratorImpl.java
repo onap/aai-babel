@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.api;
 
 import java.io.StringWriter;
@@ -52,7 +53,8 @@ public class AaiModelGeneratorImpl implements AaiModelGenerator {
     /**
      * Method to generate the AAI model for a Service.
      *
-     * @param service Java object model representing an AAI {@link Service} model
+     * @param service
+     *            Java object model representing an AAI {@link Service} model
      * @return XML representation of the service model in String format
      */
     @Override
@@ -111,7 +113,8 @@ public class AaiModelGeneratorImpl implements AaiModelGenerator {
     /**
      * Method to generate the AAI model for a Resource.
      *
-     * @param resource Java object model representing an AAI {@link Resource} model
+     * @param resource
+     *            Java object model representing an AAI {@link Resource} model
      * @return XML representation of the resource model in String format
      */
     @Override
@@ -164,10 +167,11 @@ public class AaiModelGeneratorImpl implements AaiModelGenerator {
     /**
      * Method to create the <model-element></model-element> holding the relationship value for a resource/widget model.
      *
-     * @param newDataDelFlag Value of the <new-data-del-flag></new-data-del-flag> attribute for a widget/resource in the
-     *        model xml
-     * @param relationshipValue Value of the <relationship-value></relationship-value> attribute for the widget/resource
-     *        in the model xml
+     * @param newDataDelFlag
+     *            Value of the <new-data-del-flag></new-data-del-flag> attribute for a widget/resource in the model xml
+     * @param relationshipValue
+     *            Value of the <relationship-value></relationship-value> attribute for the widget/resource in the model
+     *            xml
      * @return Java object representation for the <model-element></model-element> holding the relationship
      */
     private ModelElement createRelationshipModelElement(String newDataDelFlag, String modelVersionId,
@@ -200,8 +204,10 @@ public class AaiModelGeneratorImpl implements AaiModelGenerator {
      * Method to create the child model elements of the widget. Handles the generation of recursive child widget
      * elements (if any)
      *
-     * @param parent Reference to the parent widget model element
-     * @param widgetChildrenSet Set of children obtained from the tosca/widget definition
+     * @param parent
+     *            Reference to the parent widget model element
+     * @param widgetChildrenSet
+     *            Set of children obtained from the tosca/widget definition
      */
     private void generateWidgetChildren(ModelElement parent, Set<Widget> widgetChildrenSet) {
         for (Widget widget : widgetChildrenSet) {
@@ -223,21 +229,19 @@ public class AaiModelGeneratorImpl implements AaiModelGenerator {
     /**
      * Converts the data delete flag value from boolean to String as per AAI model.
      *
-     * @param delFlag Boolean value as true/false from the annotation
+     * @param delFlag
+     *            Boolean value as true/false from the annotation
      * @return Converted value to a flag as per AAI model
      */
     private String getNewDataDelFlagValue(boolean delFlag) {
-        if (delFlag) {
-            return "T";
-        } else {
-            return "F";
-        }
+        return delFlag ? "T" : "F";
     }
 
     /**
      * JAXB marshalling helper method to convert the Java object model to XML String.
      *
-     * @param model Java Object model of a service/widget/resource
+     * @param model
+     *            Java Object model of a service/widget/resource
      * @return XML representation of the Java model in String format
      */
     private String getModelAsString(Model model) {

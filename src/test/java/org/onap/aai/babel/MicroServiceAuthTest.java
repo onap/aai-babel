@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -37,7 +38,7 @@ import org.onap.aai.babel.config.BabelAuthConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- * Tests @{link AAIMicroServiceAuth}
+ * Tests @{link AAIMicroServiceAuth}.
  */
 
 public class MicroServiceAuthTest {
@@ -54,10 +55,10 @@ public class MicroServiceAuthTest {
      * of a policy file that does not exist.
      *
      * @throws AAIAuthException
-     * @throws IOException
+     *             if the Auth policy file cannot be loaded
      */
     @Test(expected = AAIAuthException.class)
-    public void missingPolicyFile() throws AAIAuthException, IOException {
+    public void missingPolicyFile() throws AAIAuthException {
         String defaultFile = AAIMicroServiceAuthCore.getDefaultAuthFileName();
         try {
             AAIMicroServiceAuthCore.setDefaultAuthFileName("invalid.default.file");
@@ -70,14 +71,17 @@ public class MicroServiceAuthTest {
     }
 
     /**
-     * Test loading of a temporary file created with the specified roles
+     * Test loading of a temporary file created with the specified roles.
      *
      * @throws AAIAuthException
+     *             if the test creates invalid Auth Policy roles
      * @throws IOException
+     *             for I/O failures
      * @throws JSONException
+     *             if this test creates an invalid JSON object
      */
     @Test
-    public void createLocalAuthFile() throws AAIAuthException, IOException, JSONException {
+    public void createLocalAuthFile() throws JSONException, AAIAuthException, IOException {
         JSONObject roles = createRoleObject("role", createUserObject("user"), createFunctionObject("func"));
         createAuthService(roles);
         assertThat(AAIMicroServiceAuthCore.authorize("nosuchuser", "method:func"), is(false));
@@ -85,9 +89,10 @@ public class MicroServiceAuthTest {
     }
 
     /**
-     * Test that the default policy file is loaded when a non-existent file is passed to the authorisation clas.
+     * Test that the default policy file is loaded when a non-existent file is passed to the authorisation class.
      *
      * @throws AAIAuthException
+     *             if the Auth Policy cannot be loaded
      */
     @Test
     public void createAuthFromDefaultFile() throws AAIAuthException {
@@ -99,9 +104,10 @@ public class MicroServiceAuthTest {
     }
 
     /**
-     * Test loading of the policy file relative to CONFIG_HOME
+     * Test loading of the policy file relative to CONFIG_HOME.
      *
      * @throws AAIAuthException
+     *             if the Auth Policy cannot be loaded
      */
     @Test
     public void createAuth() throws AAIAuthException {
@@ -129,12 +135,17 @@ public class MicroServiceAuthTest {
     }
 
     /**
-     * @param rolesJson
-     * @return
+     * Create a test Auth policy JSON file and pass this to the Auth Service.
+     * 
+     * @param roles
+     *            the Auth policy JSON content
+     * @return a new Auth Service configured with the supplied roles
      * @throws IOException
+     *             for I/O failures
      * @throws AAIAuthException
+     *             if the auth policy file cannot be loaded
      */
-    private AAIMicroServiceAuth createAuthService(JSONObject roles) throws IOException, AAIAuthException {
+    private AAIMicroServiceAuth createAuthService(JSONObject roles) throws AAIAuthException, IOException {
         File file = File.createTempFile("auth-policy", "json");
         file.deleteOnExit();
         FileWriter fileWriter = new FileWriter(file);
@@ -148,11 +159,14 @@ public class MicroServiceAuthTest {
     }
 
     /**
-     * Assert authorisation results for an admin user based on the test policy file
+     * Assert authorisation results for an admin user based on the test policy file.
      *
      * @param auth
+     *            the Auth Service to test
      * @param adminUser
+     *            admin username
      * @throws AAIAuthException
+     *             if the Auth Service is not initialized
      */
     private void assertAdminUserAuthorisation(AAIMicroServiceAuth auth, String adminUser) throws AAIAuthException {
         assertThat(AAIMicroServiceAuthCore.authorize(adminUser, "GET:actions"), is(true));

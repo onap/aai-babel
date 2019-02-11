@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.parser;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -64,8 +65,8 @@ public class TestToscaParser {
         GenerationData data =
                 generator.generateArtifact(CsarTest.VNF_VENDOR_CSAR.getContent(), ymlFiles, additionalParams);
 
-        assertThat(data.getErrorData().size(), is(equalTo(0)));
-        assertThat(data.getResultData().size(), is(equalTo(2)));
+        assertThat("Number of errors produced", data.getErrorData().size(), is(equalTo(0)));
+        assertThat("Number of resources generated", data.getResultData().size(), is(equalTo(2)));
     }
 
 }
