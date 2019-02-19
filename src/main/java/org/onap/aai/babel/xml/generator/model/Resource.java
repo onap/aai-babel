@@ -57,14 +57,17 @@ public class Resource extends Model {
         return false;
     }
 
+    @Override
     public boolean getDeleteFlag() {
         return deleteFlag;
     }
 
+    @Override
     public String getWidgetInvariantId() {
         return Widget.getWidget(getWidgetType()).getWidgetId();
     }
 
+    @Override
     public String getWidgetId() {
         return Widget.getWidget(getWidgetType()).getId();
     }
@@ -100,7 +103,7 @@ public class Resource extends Model {
      * Adds a Widget.
      *
      * @param widget
-     *            the widget
+     *     the widget
      * @return the boolean
      */
     @Override

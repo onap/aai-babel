@@ -58,7 +58,7 @@ public class TestModel {
      * from the Artifact Generator properties.
      *
      * @throws IOException
-     *     if the Artifact Generator properties file is not loaded
+     *             if the Artifact Generator properties file is not loaded
      */
     @Before
     public void setup() throws IOException {
@@ -68,9 +68,10 @@ public class TestModel {
         String configLocation = System.getProperty(ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE);
         if (configLocation == null) {
             throw new IllegalArgumentException(
-                    String.format(ArtifactGeneratorToscaParser.GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND, ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE));
+                    String.format(ArtifactGeneratorToscaParser.GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND,
+                            ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE));
         }
-        
+
         ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(configLocation);
         utils.loadWidgetToUuidMappings();
 
@@ -129,9 +130,9 @@ public class TestModel {
      * Assert that the TOSCA type String is mapped to the expected Widget Type.
      * 
      * @param toscaType
-     *     the TOSCA type or prefix
+     *            the TOSCA type or prefix
      * @param widgetType
-     *     the type of Widget expected from the mappings
+     *            the type of Widget expected from the mappings
      */
     private void assertMapping(String toscaType, Type widgetType) {
         assertThat(Model.getModelFor(toscaType).getWidgetType(), is(widgetType));
@@ -141,11 +142,11 @@ public class TestModel {
      * Assert that the TOSCA metadata type is mapped to the expected Widget Type.
      * 
      * @param toscaType
-     *     the name (or name prefix) of the TOSCA type
+     *            the name (or name prefix) of the TOSCA type
      * @param metadataType
-     *     the type specified in the TOSCA metadata
+     *            the type specified in the TOSCA metadata
      * @param widgetType
-     *     the type of Widget expected from the mappings
+     *            the type of Widget expected from the mappings
      */
     private void assertMapping(String toscaType, String metadataType, Type widgetType) {
         assertThat(Model.getModelFor(toscaType, metadataType).getWidgetType(), is(widgetType));

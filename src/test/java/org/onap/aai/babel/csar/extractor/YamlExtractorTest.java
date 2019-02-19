@@ -132,10 +132,14 @@ public class YamlExtractorTest {
     /**
      * Call the extractor with the specified arguments and assert that an exception is thrown.
      *
-     * @param archive the compressed archive in the form of a byte array, expected to contain one or more YAML files
-     * @param name the name of the archive
-     * @param version the version of the archive
-     * @param expectedErrorMessage the text of the InvalidArchiveException thrown by the extractor
+     * @param archive
+     *            the compressed archive in the form of a byte array, expected to contain one or more YAML files
+     * @param name
+     *            the name of the archive
+     * @param version
+     *            the version of the archive
+     * @param expectedErrorMessage
+     *            the text of the InvalidArchiveException thrown by the extractor
      */
     private void invalidArgumentsTest(byte[] archive, String name, String version, String expectedErrorMessage) {
         try {

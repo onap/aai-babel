@@ -85,7 +85,7 @@ public class ArtifactGeneratorToscaParser {
      * Constructs using csarHelper
      *
      * @param csarHelper
-     *            The csar helper
+     *     The csar helper
      */
     public ArtifactGeneratorToscaParser(ISdcCsarHelper csarHelper) {
         this.csarHelper = csarHelper;
@@ -95,7 +95,7 @@ public class ArtifactGeneratorToscaParser {
      * Get or create the artifact description.
      *
      * @param model
-     *            the artifact model
+     *     the artifact model
      * @return the artifact model's description
      */
     public static String getArtifactDescription(Model model) {
@@ -136,9 +136,9 @@ public class ArtifactGeneratorToscaParser {
      * Initialises the group filtering and TOSCA mapping configuration.
      * 
      * @param configLocation
-     *            the pathname to the JSON config file
+     *     the pathname to the JSON config file
      * @throws FileNotFoundException
-     *             if the file cannot be opened for reading
+     *     if the file cannot be opened for reading
      */
     public static void initToscaMappingsConfiguration(String configLocation) throws FileNotFoundException {
         log.debug("Getting TOSCA Mappings Configuration");
@@ -181,9 +181,9 @@ public class ArtifactGeneratorToscaParser {
      * duplicate keys then the TOSCA Property value takes precedence.
      *
      * @param stringProps
-     *            initial Map of String property values (e.g. from the TOSCA YAML metadata section)
+     *     initial Map of String property values (e.g. from the TOSCA YAML metadata section)
      * @param toscaProps
-     *            Map of TOSCA Property Type Object values to merge in (or overwrite)
+     *     Map of TOSCA Property Type Object values to merge in (or overwrite)
      * @return a Map of the property values converted to String
      */
     public Map<String, String> mergeProperties(Map<String, String> stringProps, Map<String, Property> toscaProps) {
@@ -253,13 +253,12 @@ public class ArtifactGeneratorToscaParser {
             String metaDataType = Optional.ofNullable(metadata).map(m -> m.getValue("type")).orElse(nodeTypeName);
             Resource model = Model.getModelFor(nodeTypeName, metaDataType);
 
-            if (metadata != null && hasAllottedResource(metadata.getAllProperties())) {
-                if (model.getWidgetType() == Type.VSERVER) {
-                    model = new Resource(Type.ALLOTTED_RESOURCE, false);
-                    Map<String, Object> props = new HashMap<>();
-                    props.put("providingService", true);
-                    model.setProperties(props);
-                }
+            if (metadata != null && hasAllottedResource(metadata.getAllProperties())
+                    && model.getWidgetType() == Type.VSERVER) {
+                model = new Resource(Type.ALLOTTED_RESOURCE, false);
+                Map<String, Object> props = new HashMap<>();
+                props.put("providingService", true);
+                model.setProperties(props);
             }
 
             foundProvidingService |= processModel(resourceModel, metadata, model, resourceNodeTemplate.getProperties());
@@ -276,13 +275,13 @@ public class ArtifactGeneratorToscaParser {
      * Create an Instance Group Model and populate it with the supplied data.
      *
      * @param resourceModel
-     *            the Resource node template Model
+     *     the Resource node template Model
      * @param memberNodes
-     *            the Resources and Widgets belonging to the Group
+     *     the Resources and Widgets belonging to the Group
      * @param metaProperties
-     *            the metadata of the Group
+     *     the metadata of the Group
      * @param properties
-     *            the properties of the Group
+     *     the properties of the Group
      * @return the Instance Group and Member resource models
      */
     private List<Resource> processInstanceGroup(Model resourceModel, ArrayList<NodeTemplate> memberNodes,
@@ -385,7 +384,7 @@ public class ArtifactGeneratorToscaParser {
      * Create a Map of property name against String property value from the input Map
      *
      * @param inputMap
-     *            The input Map
+     *     The input Map
      * @return Map of property name against String property value
      */
     private Map<String, String> populateStringProperties(Map<String, Property> inputMap) {
@@ -398,13 +397,13 @@ public class ArtifactGeneratorToscaParser {
      * is ProvidingService then return true, otherwise return false.
      *
      * @param resourceModel
-     *            parent Resource
+     *     parent Resource
      * @param metaData
-     *            for populating the Resource IDs
+     *     for populating the Resource IDs
      * @param resourceNode
-     *            any Model (will be ignored if not a Resource)
+     *     any Model (will be ignored if not a Resource)
      * @param nodeProperties
-     *            the node properties
+     *     the node properties
      * @return whether or not a ProvidingService was processed
      */
     private boolean processModel(Model resourceModel, Metadata metaData, Resource resourceNode,

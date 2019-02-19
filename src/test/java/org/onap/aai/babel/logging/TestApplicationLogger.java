@@ -55,14 +55,15 @@ public class TestApplicationLogger {
      * Check that each message can be logged and that (by implication of successful logging) there is a corresponding
      * resource (message format).
      *
-     * @throws IOException if the log files cannot be read
+     * @throws IOException
+     *             if the log files cannot be read
      */
     @Test
     public void logAllMessages() throws IOException {
         Logger logger = LogHelper.INSTANCE;
         LogReader errorReader = new LogReader(LogHelper.getLogDirectory(), "error");
         LogReader debugReader = new LogReader(LogHelper.getLogDirectory(), "debug");
-        String[] args = { "1", "2", "3", "4" };
+        String[] args = {"1", "2", "3", "4"};
         for (ApplicationMsgs msg : Arrays.asList(ApplicationMsgs.values())) {
             if (msg.name().endsWith("ERROR")) {
                 logger.error(msg, args);
@@ -90,7 +91,8 @@ public class TestApplicationLogger {
      * Check that each message can be logged and that (by implication of successful logging) there is a corresponding
      * resource (message format).
      *
-     * @throws IOException if the log file cannot be read
+     * @throws IOException
+     *             if the log file cannot be read
      */
     @Test
     public void logDebugMessages() throws IOException {
@@ -103,7 +105,8 @@ public class TestApplicationLogger {
     /**
      * Check logAudit with HTTP headers.
      *
-     * @throws IOException if the log file cannot be read
+     * @throws IOException
+     *             if the log file cannot be read
      */
     @Test
     public void logAuditMessage() throws IOException {
@@ -135,7 +138,8 @@ public class TestApplicationLogger {
     /**
      * Check logAudit with no HTTP headers.
      *
-     * @throws IOException if the log file cannot be read
+     * @throws IOException
+     *             if the log file cannot be read
      */
     @Test
     public void logAuditMessageWithoutHeaders() throws IOException {
@@ -152,7 +156,8 @@ public class TestApplicationLogger {
     /**
      * Check logMetrics.
      *
-     * @throws IOException if the log file cannot be read
+     * @throws IOException
+     *             if the log file cannot be read
      */
     @Test
     public void logMetricsMessage() throws IOException {
@@ -207,13 +212,15 @@ public class TestApplicationLogger {
     /**
      * Call a logger method which is expected to throw an UnsupportedOperationException.
      *
-     * @param logMethod the logger method to invoke
-     * @param dummyMsg any Application Message enumeration value
+     * @param logMethod
+     *            the logger method to invoke
+     * @param dummyMsg
+     *            any Application Message enumeration value
      */
     private void callUnsupportedOperationMethod(TriConsumer<Enum<?>, LogFields, String[]> logMethod,
             ApplicationMsgs dummyMsg) {
         try {
-            logMethod.accept(dummyMsg, new LogFields(), new String[] { "" });
+            logMethod.accept(dummyMsg, new LogFields(), new String[] {""});
             org.junit.Assert.fail("method should have thrown execption"); // NOSONAR as code not reached
         } catch (UnsupportedOperationException e) {
             // Expected to reach here
@@ -223,10 +230,14 @@ public class TestApplicationLogger {
     /**
      * Assert that a log message was logged to the expected log file at the expected severity.
      *
-     * @param msg the Application Message enumeration value
-     * @param reader the log reader for the message
-     * @param severity log level
-     * @throws IOException if the log file cannot be read
+     * @param msg
+     *            the Application Message enumeration value
+     * @param reader
+     *            the log reader for the message
+     * @param severity
+     *            log level
+     * @throws IOException
+     *             if the log file cannot be read
      */
     private void validateLoggedMessage(ApplicationMsgs msg, LogReader reader, String severity) throws IOException {
         String str = reader.getNewLines();
