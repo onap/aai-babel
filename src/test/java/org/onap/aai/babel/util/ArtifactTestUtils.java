@@ -78,6 +78,17 @@ public class ArtifactTestUtils {
     }
 
     /**
+     * Load the Widget to UUID mappings from the Artifact Generator Properties (resource).
+     * 
+     * @throws IOException
+     *             if the properties file is not loaded
+     */
+    public void loadWidgetMappings() throws IOException {
+        ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(getResourcePath(Resources.TOSCA_MAPPING_CONFIG));
+    }
+
+
+    /**
      * Specific test method for the YAML Extractor test.
      *
      * @param toscaFiles

@@ -29,6 +29,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
+import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.aai.babel.xml.generator.model.Service;
 import org.onap.aai.babel.xml.generator.model.Widget;
@@ -56,9 +57,10 @@ public class AaiModelGeneratorImpl implements AaiModelGenerator {
      * @param service
      *            Java object model representing an AAI {@link Service} model
      * @return XML representation of the service model in String format
+     * @throws XmlArtifactGenerationException 
      */
     @Override
-    public String generateModelFor(Service service) {
+    public String generateModelFor(Service service) throws XmlArtifactGenerationException {
         // Create a JAXB Model for AAI service model
         Model aaiServiceModel = new Model();
         log.debug("Generating Model for Service with ModelName: " + service.getModelName());
@@ -116,9 +118,10 @@ public class AaiModelGeneratorImpl implements AaiModelGenerator {
      * @param resource
      *            Java object model representing an AAI {@link Resource} model
      * @return XML representation of the resource model in String format
+     * @throws XmlArtifactGenerationException 
      */
     @Override
-    public String generateModelFor(Resource resource) {
+    public String generateModelFor(Resource resource) throws XmlArtifactGenerationException {
         // Create a JAXB Model for AAI Resource model
         Model aaiResourceModel = new Model();
         log.debug("Generating Model for Resource with ModelName: " + resource.getModelName());

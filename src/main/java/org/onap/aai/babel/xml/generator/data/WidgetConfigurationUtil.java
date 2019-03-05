@@ -27,17 +27,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.aai.babel.xml.generator.model.Widget;
+import org.onap.aai.babel.xml.generator.model.Widget.Type;
 
 public class WidgetConfigurationUtil {
 
     private static Properties config;
     private static List<String> instanceGroups = Collections.emptyList();
-    private static Map<String, Resource> typeToWidget = new HashMap<>();
+    private static Map<String, Resource> typeToResource = new HashMap<>();
+    private static Map<String, Widget> typeToWidget = new HashMap<>();
 
     /*
-     * Private constructor to prevent instantiation
+     * Private constructor to prevent instantiation.
      */
     private WidgetConfigurationUtil() {
         throw new UnsupportedOperationException("This static class should not be instantiated!");
@@ -60,7 +63,27 @@ public class WidgetConfigurationUtil {
     }
 
     public static Optional<Resource> createModelFromType(String typePrefix) {
-        return Optional.ofNullable(typeToWidget.get(typePrefix));
+        return Optional.ofNullable(typeToResource.get(typePrefix));
+    }
+
+    public static Widget createWidgetFromType(Type type) throws XmlArtifactGenerationException {
+        Optional<Widget> widget = Optional.ofNullable(typeToWidget.get(type.toString()));
+        if (widget.isPresent()) {
+            // Make a copy of the Widget found in the mappings table.
+            return new Widget(widget.get());
+        }
+        return null;
+    }
+
+    public static void setWidgetTypes(List<WidgetType> types) {
+        for (WidgetType type : types) {
+            if (type.type == null || type.name == null) {
+                throw new IllegalArgumentException("Incomplete widget type specified: " + type);
+            }
+            Type widgetType = Widget.Type.valueOf(type.type);
+            Widget widget = new Widget(widgetType, type.name, type.deleteFlag);
+            typeToWidget.put(type.type, widget);
+        }
     }
 
     public static void setWidgetMappings(List<WidgetMapping> mappings) {
@@ -70,7 +93,7 @@ public class WidgetConfigurationUtil {
             }
             Resource resource = new Resource(Widget.Type.valueOf(mapping.widget), mapping.deleteFlag);
             resource.setIsResource(mapping.type.equalsIgnoreCase("resource"));
-            typeToWidget.put(mapping.prefix, resource);
+            typeToResource.put(mapping.prefix, resource);
         }
     }
 }

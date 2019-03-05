@@ -65,7 +65,7 @@ public class TestToscaParser {
         GenerationData data =
                 generator.generateArtifact(CsarTest.VNF_VENDOR_CSAR.getContent(), ymlFiles, additionalParams);
 
-        assertThat("Number of errors produced", data.getErrorData().size(), is(equalTo(0)));
+        assertThat("Number of errors produced " + data.getErrorData(), data.getErrorData().size(), is(equalTo(0)));
         assertThat("Number of resources generated", data.getResultData().size(), is(equalTo(2)));
     }
 

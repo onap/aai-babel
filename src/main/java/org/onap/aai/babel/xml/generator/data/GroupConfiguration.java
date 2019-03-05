@@ -31,6 +31,11 @@ public class GroupConfiguration {
     private List<String> instanceGroupTypes;
 
     /**
+     * Set of Widget Types.
+     */
+    private List<WidgetType> widgetTypes;
+
+    /**
      * Mapping from TOSCA type to Widget directly.
      */
     private List<WidgetMapping> widgetMappings;
@@ -39,7 +44,12 @@ public class GroupConfiguration {
         return instanceGroupTypes;
     }
 
+    public List<WidgetType> getWidgetTypes() {
+        return widgetTypes;
+    }
+
     public List<WidgetMapping> getWidgetMappings() {
         return widgetMappings;
     }
+
 }

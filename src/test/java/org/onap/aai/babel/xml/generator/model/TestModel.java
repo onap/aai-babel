@@ -46,7 +46,7 @@ public class TestModel {
     private Service serviceModel = new Service();
     private List<Resource> resourceModels =
             Arrays.asList(new Resource(Type.CR, true), new Resource(Type.INSTANCE_GROUP, true));
-    private Widget widgetModel = new OamNetwork();
+    private Widget widgetModel = new Widget(Type.OAM_NETWORK, "oam-network", true);
     private Model anonymousModel;
 
     static {
@@ -54,7 +54,7 @@ public class TestModel {
     }
 
     /**
-     * Initialise the Artifact Generator with filtering and mapping configuration. Also Load the Widget to UUID mappings
+     * Initialize the Artifact Generator with filtering and mapping configuration. Also Load the Widget to UUID mappings
      * from the Artifact Generator properties.
      *
      * @throws IOException

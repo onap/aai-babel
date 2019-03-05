@@ -25,12 +25,16 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.onap.aai.babel.util.ArtifactTestUtils;
+import org.onap.aai.babel.util.Resources;
+import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.data.WidgetMapping;
 import org.onap.aai.babel.xml.generator.model.Resource;
@@ -48,6 +52,49 @@ import org.onap.sdc.toscaparser.api.SubstitutionMappings;
 public class TestArtifactGeneratorToscaParser {
 
     private static final String TEST_UUID = "1234";
+
+    /**
+     * Initialize the Generator with an invalid artifact generator properties file path.
+     * 
+     * @throws IOException
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testMissingPropertiesFile() throws IOException {
+        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE, "non-existent.file");
+        ArtifactGeneratorToscaParser.initWidgetConfiguration();
+    }
+
+    /**
+     * Initialize the Generator with an invalid mappings file path.
+     * 
+     * @throws IOException
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testMissingMappingsFile() throws IOException {
+        ArtifactGeneratorToscaParser.initToscaMappingsConfiguration("non-existent.file");
+    }
+
+    /**
+     * Initialize the Generator with no Widget Mappings content.
+     * 
+     * @throws IOException
+     */
+    @Test(expected = IOException.class)
+    public void testMissingMappingsContent() throws IOException {
+        String invalidJson = new ArtifactTestUtils().getResourcePath(Resources.EMPTY_TOSCA_MAPPING_CONFIG);
+        ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(invalidJson);
+    }
+
+    /**
+     * Initialize the Generator with invalid Widget Mappings content.
+     * 
+     * @throws IOException
+     */
+    @Test(expected = IOException.class)
+    public void testInvalidMappingsContent() throws IOException {
+        String invalidJson = new ArtifactTestUtils().getResourcePath(Resources.INVALID_TOSCA_MAPPING_CONFIG);
+        ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(invalidJson);
+    }
 
     /**
      * Process an Allotted Resource that does not have a Providing Service.
@@ -92,9 +139,11 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Process a dummy Group object for a Service Resource.
+     * 
+     * @throws XmlArtifactGenerationException
      */
     @Test
-    public void testInstanceGroups() {
+    public void testInstanceGroups() throws XmlArtifactGenerationException {
         final String instanceGroupType = "org.openecomp.groups.ResourceInstanceGroup";
         WidgetConfigurationUtil.setSupportedInstanceGroups(Collections.singletonList(instanceGroupType));
 

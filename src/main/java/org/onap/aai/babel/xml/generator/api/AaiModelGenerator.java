@@ -18,14 +18,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.api;
 
+import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.aai.babel.xml.generator.model.Service;
 
 public interface AaiModelGenerator {
 
-    public String generateModelFor(Service service);
+    public String generateModelFor(Service service) throws XmlArtifactGenerationException;
 
-    public String generateModelFor(Resource resource);
+    public String generateModelFor(Resource resource) throws XmlArtifactGenerationException;
 }

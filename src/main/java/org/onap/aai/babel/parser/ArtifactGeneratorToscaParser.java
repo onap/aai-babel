@@ -22,10 +22,10 @@
 package org.onap.aai.babel.parser;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +37,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.onap.aai.babel.logging.LogHelper;
+import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.data.GroupConfiguration;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.model.Model;
@@ -85,7 +86,7 @@ public class ArtifactGeneratorToscaParser {
      * Constructs using csarHelper
      *
      * @param csarHelper
-     *     The csar helper
+     *            The csar helper
      */
     public ArtifactGeneratorToscaParser(ISdcCsarHelper csarHelper) {
         this.csarHelper = csarHelper;
@@ -95,7 +96,7 @@ public class ArtifactGeneratorToscaParser {
      * Get or create the artifact description.
      *
      * @param model
-     *     the artifact model
+     *            the artifact model
      * @return the artifact model's description
      */
     public static String getArtifactDescription(Model model) {
@@ -110,7 +111,7 @@ public class ArtifactGeneratorToscaParser {
     }
 
     /**
-     * Initialises the widget configuration.
+     * Initializes the Widget to UUID mapping configuration.
      *
      * @throws IOException
      */
@@ -133,26 +134,35 @@ public class ArtifactGeneratorToscaParser {
     }
 
     /**
-     * Initialises the group filtering and TOSCA mapping configuration.
+     * Initializes the group filtering and TOSCA to Widget mapping configuration.
      * 
      * @param configLocation
-     *     the pathname to the JSON config file
-     * @throws FileNotFoundException
-     *     if the file cannot be opened for reading
+     *            the pathname to the JSON mappings file
+     * @throws IOException
+     *             if the file content could not be read successfully
      */
-    public static void initToscaMappingsConfiguration(String configLocation) throws FileNotFoundException {
+    public static void initToscaMappingsConfiguration(String configLocation) throws IOException {
         log.debug("Getting TOSCA Mappings Configuration");
         File file = new File(configLocation);
         if (!file.exists()) {
             throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGFILE_NOT_FOUND, configLocation));
         }
 
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(configLocation));
-        GroupConfiguration config = new Gson().fromJson(bufferedReader, GroupConfiguration.class);
-        if (config != null) {
-            WidgetConfigurationUtil.setSupportedInstanceGroups(config.getInstanceGroupTypes());
-            WidgetConfigurationUtil.setWidgetMappings(config.getWidgetMappings());
+        GroupConfiguration config;
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(configLocation))) {
+            config = new Gson().fromJson(bufferedReader, GroupConfiguration.class);
+        } catch (JsonSyntaxException e) {
+            throw new IOException("Invalid Mappings Configuration " + configLocation, e);
         }
+
+        if (config == null) {
+            throw new IOException("There is no content for the Mappings Configuration " + configLocation);
+        }
+
+        WidgetConfigurationUtil.setSupportedInstanceGroups(config.getInstanceGroupTypes());
+        WidgetConfigurationUtil.setWidgetTypes(config.getWidgetTypes());
+        WidgetConfigurationUtil.setWidgetMappings(config.getWidgetMappings());
     }
 
     /**
@@ -161,8 +171,10 @@ public class ArtifactGeneratorToscaParser {
      * @param resourceModel
      * @param serviceNodeTemplate
      * @return resources for which XML Models should be generated
+     * @throws XmlArtifactGenerationException
      */
-    public List<Resource> processInstanceGroups(Model resourceModel, NodeTemplate serviceNodeTemplate) {
+    public List<Resource> processInstanceGroups(Model resourceModel, NodeTemplate serviceNodeTemplate)
+            throws XmlArtifactGenerationException {
         List<Resource> resources = new ArrayList<>();
         if (serviceNodeTemplate.getSubMappingToscaTemplate() != null) {
             List<Group> serviceGroups = csarHelper.getGroupsOfOriginOfNodeTemplate(serviceNodeTemplate);
@@ -181,9 +193,9 @@ public class ArtifactGeneratorToscaParser {
      * duplicate keys then the TOSCA Property value takes precedence.
      *
      * @param stringProps
-     *     initial Map of String property values (e.g. from the TOSCA YAML metadata section)
+     *            initial Map of String property values (e.g. from the TOSCA YAML metadata section)
      * @param toscaProps
-     *     Map of TOSCA Property Type Object values to merge in (or overwrite)
+     *            Map of TOSCA Property Type Object values to merge in (or overwrite)
      * @return a Map of the property values converted to String
      */
     public Map<String, String> mergeProperties(Map<String, String> stringProps, Map<String, Property> toscaProps) {
@@ -202,8 +214,9 @@ public class ArtifactGeneratorToscaParser {
     /**
      * @param model
      * @param relation
+     * @throws XmlArtifactGenerationException
      */
-    public void addRelatedModel(final Model model, final Resource relation) {
+    public void addRelatedModel(final Model model, final Resource relation) throws XmlArtifactGenerationException {
         if (relation.isResource()) {
             model.addResource(relation);
         } else {
@@ -225,8 +238,10 @@ public class ArtifactGeneratorToscaParser {
      * @param resources
      * @param model
      * @param serviceNode
+     * @throws XmlArtifactGenerationException
      */
-    public void processVfModules(List<Resource> resources, Model resourceModel, NodeTemplate serviceNode) {
+    public void processVfModules(List<Resource> resources, Model resourceModel, NodeTemplate serviceNode)
+            throws XmlArtifactGenerationException {
         // Get the customisation UUID for each VF node and use it to get its Groups
         String uuid = csarHelper.getNodeTemplateCustomizationUuid(serviceNode);
         List<Group> serviceGroups = csarHelper.getVfModulesByVf(uuid);
@@ -275,17 +290,19 @@ public class ArtifactGeneratorToscaParser {
      * Create an Instance Group Model and populate it with the supplied data.
      *
      * @param resourceModel
-     *     the Resource node template Model
+     *            the Resource node template Model
      * @param memberNodes
-     *     the Resources and Widgets belonging to the Group
+     *            the Resources and Widgets belonging to the Group
      * @param metaProperties
-     *     the metadata of the Group
+     *            the metadata of the Group
      * @param properties
-     *     the properties of the Group
+     *            the properties of the Group
      * @return the Instance Group and Member resource models
+     * @throws XmlArtifactGenerationException
      */
     private List<Resource> processInstanceGroup(Model resourceModel, ArrayList<NodeTemplate> memberNodes,
-            Map<String, String> metaProperties, Map<String, Property> properties) {
+            Map<String, String> metaProperties, Map<String, Property> properties)
+            throws XmlArtifactGenerationException {
         Resource groupModel = createInstanceGroupModel(mergeProperties(metaProperties, properties));
         resourceModel.addResource(groupModel);
         List<Resource> resources = Stream.of(groupModel).collect(Collectors.toList());
@@ -301,9 +318,10 @@ public class ArtifactGeneratorToscaParser {
      * @param memberNodes
      * @param groupModel
      * @return
+     * @throws XmlArtifactGenerationException
      */
     private List<Resource> generateResourcesAndWidgets(final ArrayList<NodeTemplate> memberNodes,
-            final Resource groupModel) {
+            final Resource groupModel) throws XmlArtifactGenerationException {
         log.debug(String.format("Processing member nodes for Group %s (invariant UUID %s)", //
                 groupModel.getModelName(), groupModel.getModelId()));
 
@@ -332,7 +350,7 @@ public class ArtifactGeneratorToscaParser {
     }
 
     private void processVfModule(List<Resource> resources, Model vfModel, Group groupDefinition,
-            NodeTemplate serviceNode, Resource groupModel) {
+            NodeTemplate serviceNode, Resource groupModel) throws XmlArtifactGenerationException {
         groupModel.populateModelIdentificationInformation(
                 mergeProperties(groupDefinition.getMetadata().getAllProperties(), groupDefinition.getProperties()));
 
@@ -345,7 +363,8 @@ public class ArtifactGeneratorToscaParser {
         }
     }
 
-    private void processVfModuleGroup(Resource groupModel, List<NodeTemplate> members) {
+    private void processVfModuleGroup(Resource groupModel, List<NodeTemplate> members)
+            throws XmlArtifactGenerationException {
         if (members != null && !members.isEmpty()) {
             // Get names of the members of the service group
             List<String> memberNames = members.stream().map(NodeTemplate::getName).collect(Collectors.toList());
@@ -361,8 +380,9 @@ public class ArtifactGeneratorToscaParser {
      * 
      * @param group
      * @param member
+     * @throws XmlArtifactGenerationException
      */
-    private void processGroupMembers(Resource group, NodeTemplate member) {
+    private void processGroupMembers(Resource group, NodeTemplate member) throws XmlArtifactGenerationException {
         Resource resource = Model.getModelFor(member.getType());
 
         log.debug(member.getType() + " mapped to " + resource);
@@ -384,7 +404,7 @@ public class ArtifactGeneratorToscaParser {
      * Create a Map of property name against String property value from the input Map
      *
      * @param inputMap
-     *     The input Map
+     *            The input Map
      * @return Map of property name against String property value
      */
     private Map<String, String> populateStringProperties(Map<String, Property> inputMap) {
@@ -397,13 +417,13 @@ public class ArtifactGeneratorToscaParser {
      * is ProvidingService then return true, otherwise return false.
      *
      * @param resourceModel
-     *     parent Resource
+     *            parent Resource
      * @param metaData
-     *     for populating the Resource IDs
+     *            for populating the Resource IDs
      * @param resourceNode
-     *     any Model (will be ignored if not a Resource)
+     *            any Model (will be ignored if not a Resource)
      * @param nodeProperties
-     *     the node properties
+     *            the node properties
      * @return whether or not a ProvidingService was processed
      */
     private boolean processModel(Model resourceModel, Metadata metaData, Resource resourceNode,

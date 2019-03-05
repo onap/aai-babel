@@ -20,24 +20,19 @@
  */
 package org.onap.aai.babel.xml.generator.model;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import org.onap.aai.babel.logging.ApplicationMsgs;
-import org.onap.aai.babel.logging.LogHelper;
+import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.data.ArtifactType;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.error.IllegalAccessException;
 import org.onap.aai.babel.xml.generator.types.ModelType;
-import org.onap.aai.babel.xml.generator.types.ModelWidget;
-import org.onap.aai.cl.api.Logger;
 
-public abstract class Widget extends Model {
+public class Widget extends Model {
 
     public static final String GENERATOR_AAI_CONFIGLPROP_NOT_FOUND =
             "Cannot generate artifacts. Widget configuration not found for %s";
@@ -46,30 +41,32 @@ public abstract class Widget extends Model {
         SERVICE, VF, VFC, VSERVER, VOLUME, FLAVOR, TENANT, VOLUME_GROUP, LINT, L3_NET, VFMODULE, IMAGE, OAM_NETWORK, ALLOTTED_RESOURCE, TUNNEL_XCONNECT, CONFIGURATION, CR, INSTANCE_GROUP;
     }
 
-    private static Logger log = LogHelper.INSTANCE;
-
     private Set<String> keys = new HashSet<>();
 
-    private static EnumMap<Widget.Type, Class<? extends Widget>> typeToWidget = new EnumMap<>(Widget.Type.class);
-    static {
-        typeToWidget.put(Type.SERVICE, ServiceWidget.class);
-        typeToWidget.put(Type.VF, VfWidget.class);
-        typeToWidget.put(Type.VFC, VfcWidget.class);
-        typeToWidget.put(Type.VSERVER, VServerWidget.class);
-        typeToWidget.put(Type.VOLUME, VolumeWidget.class);
-        typeToWidget.put(Type.FLAVOR, FlavorWidget.class);
-        typeToWidget.put(Type.TENANT, TenantWidget.class);
-        typeToWidget.put(Type.VOLUME_GROUP, VolumeGroupWidget.class);
-        typeToWidget.put(Type.LINT, LIntfWidget.class);
-        typeToWidget.put(Type.L3_NET, L3NetworkWidget.class);
-        typeToWidget.put(Type.VFMODULE, VfModuleWidget.class);
-        typeToWidget.put(Type.IMAGE, ImageWidget.class);
-        typeToWidget.put(Type.OAM_NETWORK, OamNetwork.class);
-        typeToWidget.put(Type.ALLOTTED_RESOURCE, AllotedResourceWidget.class);
-        typeToWidget.put(Type.TUNNEL_XCONNECT, TunnelXconnectWidget.class);
-        typeToWidget.put(Type.CONFIGURATION, ConfigurationWidget.class);
-        typeToWidget.put(Type.CR, CRWidget.class);
-        typeToWidget.put(Type.INSTANCE_GROUP, InstanceGroupWidget.class);
+    protected String name;
+    protected Type type;
+    protected boolean deleteFlag = false;
+
+    public Widget(Type widgetType, String name, boolean deleteFlag) {
+        type = widgetType;
+        this.name = name;
+        this.deleteFlag = deleteFlag;
+    }
+
+    /**
+     * Copy Constructor
+     * 
+     * @param baseWidget
+     * @throws XmlArtifactGenerationException 
+     */
+    public Widget(Widget baseWidget) throws XmlArtifactGenerationException {
+        this(baseWidget.getWidgetType(), baseWidget.getName(), baseWidget.getDeleteFlag());
+        if (type == Type.VSERVER) {
+            widgets.add(getWidget(Type.FLAVOR));
+            widgets.add(getWidget(Type.IMAGE));
+            widgets.add(getWidget(Type.TENANT));
+            widgets.add(getWidget(Type.VFC));
+        }
     }
 
     /**
@@ -77,18 +74,13 @@ public abstract class Widget extends Model {
      *
      * @param type
      *            the type
-     * @return the widget
+     * @return a new widget of the specified type
+     * @throws XmlArtifactGenerationException 
      */
-    public static Widget getWidget(Type type) {
-        Widget widget = null;
-        Class<? extends Widget> clazz = typeToWidget.get(type);
-        if (clazz != null) {
-            try {
-                widget = clazz.getConstructor().newInstance();
-            } catch (InstantiationException | java.lang.IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-                log.error(ApplicationMsgs.INVALID_CSAR_FILE, e);
-            }
+    public static Widget getWidget(Type type) throws XmlArtifactGenerationException {
+        Widget widget = WidgetConfigurationUtil.createWidgetFromType(type);
+        if (widget == null) {
+            throw new XmlArtifactGenerationException("No widget type is defined for " + type);
         }
         return widget;
     }
@@ -109,12 +101,11 @@ public abstract class Widget extends Model {
     }
 
     public ModelType getType() {
-        ModelWidget widgetModel = this.getClass().getAnnotation(ModelWidget.class);
-        return widgetModel.type();
+        return ModelType.WIDGET;
     }
 
     public String getName() {
-        return this.getClass().getAnnotation(ModelWidget.class).name();
+        return name;
     }
 
     /**
@@ -140,7 +131,7 @@ public abstract class Widget extends Model {
 
     @Override
     public Type getWidgetType() {
-        return null;
+        return type;
     }
 
     /**
@@ -188,11 +179,24 @@ public abstract class Widget extends Model {
 
     @Override
     public boolean addWidget(Widget widget) {
+        if (getWidgetType() == Type.VSERVER) {
+            return widgets.add(widget);
+        }
         return true;
     }
 
     @Override
     public Map<String, Object> getProperties() {
         return Collections.emptyMap();
+    }
+
+    @Override
+    public String toString() {
+        return getName() + " Widget keys=" + keys + ", resources=" + resources + ", widgets=" + widgets;
+    }
+
+    @Override
+    public boolean getDeleteFlag() {
+        return deleteFlag;
     }
 }

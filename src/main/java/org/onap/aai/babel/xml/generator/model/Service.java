@@ -22,10 +22,8 @@ package org.onap.aai.babel.xml.generator.model;
 
 import java.util.Collections;
 import java.util.Map;
-import org.onap.aai.babel.xml.generator.types.Cardinality;
+import org.onap.aai.babel.xml.generator.model.Widget.Type;
 
-@org.onap.aai.babel.xml.generator.types.Model(widget = Widget.Type.SERVICE, cardinality = Cardinality.UNBOUNDED,
-        dataDeleteFlag = true)
 public class Service extends Model {
 
     @Override
@@ -40,9 +38,9 @@ public class Service extends Model {
 
     @Override
     public Widget.Type getWidgetType() {
-        return null;
+        return Type.SERVICE;
     }
-    
+
     @Override
     public Map<String, Object> getProperties() {
         return Collections.emptyMap();

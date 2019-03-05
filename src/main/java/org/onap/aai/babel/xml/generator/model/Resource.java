@@ -24,6 +24,7 @@ package org.onap.aai.babel.xml.generator.model;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
 
 public class Resource extends Model {
@@ -62,15 +63,7 @@ public class Resource extends Model {
         return deleteFlag;
     }
 
-    @Override
-    public String getWidgetInvariantId() {
-        return Widget.getWidget(getWidgetType()).getWidgetId();
-    }
 
-    @Override
-    public String getWidgetId() {
-        return Widget.getWidget(getWidgetType()).getId();
-    }
 
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
@@ -105,20 +98,21 @@ public class Resource extends Model {
      * @param widget
      *     the widget
      * @return the boolean
+     * @throws XmlArtifactGenerationException 
      */
     @Override
-    public boolean addWidget(Widget widget) {
+    public boolean addWidget(Widget widget) throws XmlArtifactGenerationException {
         if (type == Type.VFMODULE) {
             if (widget.memberOf(members)) {
-                if (vserver == null && widget instanceof VServerWidget) {
+                if (vserver == null && widget.getWidgetType() == Type.VSERVER) {
                     addVserverWidget(widget);
-                } else if (widget instanceof LIntfWidget) {
+                } else if (widget.getWidgetType() == Type.LINT) {
                     return addLIntfWidget(widget);
-                } else if (widget instanceof VolumeWidget) {
+                } else if (widget.getWidgetType() == Type.VOLUME) {
                     addVolumeWidget(widget);
                     return true;
                 }
-                if (!(widget instanceof OamNetwork)) {
+                if (widget.getWidgetType() != Type.OAM_NETWORK) {
                     return widgets.add(widget);
                 }
             }
@@ -159,13 +153,13 @@ public class Resource extends Model {
         }
     }
 
-    private void addVserverWidget(Widget widget) {
+    private void addVserverWidget(Widget widget) throws XmlArtifactGenerationException {
         vserver = widget;
         if (addlintf) {
-            vserver.addWidget(new LIntfWidget());
+            vserver.addWidget(Widget.getWidget(Type.LINT));
         }
         if (addvolume) {
-            vserver.addWidget(new VolumeWidget());
+            vserver.addWidget(Widget.getWidget(Type.VOLUME));
         }
     }
 

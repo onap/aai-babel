@@ -116,7 +116,7 @@ public class CsarToXmlConverterTest {
      */
     @Test
     public void testArtifactGeneratorConfigMissing() throws CsarConverterException, IOException {
-        exception.expect(CsarConverterException.class);
+        exception.expect(IllegalArgumentException.class);
         exception.expectMessage("Cannot generate artifacts. System property artifactgenerator.config not configured");
 
         // Unset the required system property

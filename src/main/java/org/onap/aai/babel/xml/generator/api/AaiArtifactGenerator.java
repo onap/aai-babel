@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
+import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.data.AdditionalParams;
 import org.onap.aai.babel.xml.generator.data.Artifact;
 import org.onap.aai.babel.xml.generator.data.ArtifactType;
@@ -43,10 +44,11 @@ import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.model.Model;
 import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.aai.babel.xml.generator.model.Service;
-import org.onap.aai.babel.xml.generator.model.TunnelXconnectWidget;
+import org.onap.aai.babel.xml.generator.model.Widget;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
 import org.onap.aai.cl.api.Logger;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
@@ -71,15 +73,6 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     @Override
     public GenerationData generateArtifact(byte[] csarArchive, List<Artifact> input,
             Map<String, String> additionalParams) {
-        Path csarPath;
-
-        try {
-            csarPath = createTempFile(csarArchive);
-        } catch (IOException e) {
-            log.error(ApplicationMsgs.TEMP_FILE_ERROR, e);
-            return createErrorData(e);
-        }
-
         String configLocation = System.getProperty(ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE);
         if (configLocation == null) {
             throw new IllegalArgumentException(
@@ -90,10 +83,25 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         try {
             ArtifactGeneratorToscaParser.initWidgetConfiguration();
             ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(configLocation);
+        } catch (IOException e) {
+            log.error(ApplicationMsgs.LOAD_PROPERTIES, e);
+            return createErrorData(e);
+        }
+
+        Path csarPath;
+
+        try {
+            csarPath = createTempFile(csarArchive);
+        } catch (IOException e) {
+            log.error(ApplicationMsgs.TEMP_FILE_ERROR, e);
+            return createErrorData(e);
+        }
+
+        try {
             ISdcCsarHelper csarHelper =
                     SdcToscaParserFactory.getInstance().getSdcCsarHelper(csarPath.toAbsolutePath().toString());
             return generateAllArtifacts(validateServiceVersion(additionalParams), csarHelper);
-        } catch (Exception e) {
+        } catch (SdcToscaParserException | XmlArtifactGenerationException e) {
             log.error(ApplicationMsgs.INVALID_CSAR_FILE, e);
             return createErrorData(e);
         } finally {
@@ -112,10 +120,12 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      *
      * @param serviceVersion
      * @param csarHelper
-     *     interface to the TOSCA parser
+     *            interface to the TOSCA parser
      * @return the generated Artifacts (containing XML models)
+     * @throws XmlArtifactGenerationException
      */
-    private GenerationData generateAllArtifacts(final String serviceVersion, ISdcCsarHelper csarHelper) {
+    private GenerationData generateAllArtifacts(final String serviceVersion, ISdcCsarHelper csarHelper)
+            throws XmlArtifactGenerationException {
         List<NodeTemplate> serviceNodeTemplates = csarHelper.getServiceNodeTemplates();
         if (serviceNodeTemplates == null) {
             throw new IllegalArgumentException(GENERATOR_AAI_ERROR_MISSING_SERVICE_TOSCA);
@@ -170,9 +180,10 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      * @param serviceNodeTemplates
      * @param serviceModel
      * @return the generated Models
+     * @throws XmlArtifactGenerationException
      */
     private List<Resource> generateResourceModels(ISdcCsarHelper csarHelper, List<NodeTemplate> serviceNodeTemplates,
-            Service serviceModel) {
+            Service serviceModel) throws XmlArtifactGenerationException {
         final List<Group> serviceGroups = csarHelper.getGroupsOfTopologyTemplate();
         final ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(csarHelper);
 
@@ -191,7 +202,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
     private void generateModelFromNodeTemplate(ISdcCsarHelper csarHelper, Service serviceModel,
             List<Resource> resources, final List<Group> serviceGroups, ArtifactGeneratorToscaParser parser,
-            NodeTemplate nodeTemplate) {
+            NodeTemplate nodeTemplate) throws XmlArtifactGenerationException {
         Resource model = getModelFor(parser, nodeTemplate);
 
         if (model != null) {
@@ -239,7 +250,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     }
 
     private void generateResourceModel(ISdcCsarHelper csarHelper, List<Resource> resources,
-            ArtifactGeneratorToscaParser parser, NodeTemplate nodeTemplate) {
+            ArtifactGeneratorToscaParser parser, NodeTemplate nodeTemplate) throws XmlArtifactGenerationException {
         Resource resourceModel = getModelFor(parser, nodeTemplate);
         if (resourceModel == null) {
             log.info(ApplicationMsgs.DISTRIBUTION_EVENT, "Could not generate resource model");
@@ -256,7 +267,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         }
 
         if (parser.hasSubCategoryTunnelXConnect(serviceMetadata) && parser.hasAllottedResource(serviceMetadata)) {
-            resourceModel.addWidget(new TunnelXconnectWidget());
+            resourceModel.addWidget(Widget.getWidget(Type.TUNNEL_XCONNECT));
         }
 
         resources.addAll(parser.processInstanceGroups(resourceModel, nodeTemplate));
@@ -266,8 +277,10 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     /**
      * @param generationData
      * @param resource
+     * @throws XmlArtifactGenerationException
      */
-    private void generateResourceArtifact(GenerationData generationData, Resource resource) {
+    private void generateResourceArtifact(GenerationData generationData, Resource resource)
+            throws XmlArtifactGenerationException {
         if (!isContained(generationData, getArtifactName(resource))) {
             log.info(ApplicationMsgs.DISTRIBUTION_EVENT, "Generating resource model");
             generationData.add(getResourceArtifact(resource, modelGenerator.generateModelFor(resource)));
@@ -300,7 +313,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      * Method to generate the artifact name for an AAI model.
      *
      * @param model
-     *     AAI artifact model
+     *            AAI artifact model
      * @return Model artifact name
      */
     private String getArtifactName(Model model) {
@@ -324,9 +337,9 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      * Create Resource artifact model from the AAI xml model string.
      *
      * @param resourceModel
-     *     Model of the resource artifact
+     *            Model of the resource artifact
      * @param aaiResourceModel
-     *     AAI model as string
+     *            AAI model as string
      * @return Generated {@link Artifact} model for the resource
      */
     private Artifact getResourceArtifact(Model resourceModel, String aaiResourceModel) {
@@ -356,9 +369,9 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      * Create Service artifact model from the AAI XML model.
      *
      * @param serviceModel
-     *     Model of the service artifact
+     *            Model of the service artifact
      * @param aaiServiceModel
-     *     AAI model as string
+     *            AAI model as string
      * @return Generated {@link Artifact} model for the service
      */
     private Artifact getServiceArtifact(Service serviceModel, String aaiServiceModel) {

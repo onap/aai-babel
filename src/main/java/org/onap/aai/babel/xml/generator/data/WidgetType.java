@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.aai.babel.xml.generator.model;
 
-import org.onap.aai.babel.xml.generator.types.Cardinality;
-import org.onap.aai.babel.xml.generator.types.Model;
-import org.onap.aai.babel.xml.generator.types.ModelType;
-import org.onap.aai.babel.xml.generator.types.ModelWidget;
+package org.onap.aai.babel.xml.generator.data;
 
-@Model(widget = Widget.Type.FLAVOR, cardinality = Cardinality.UNBOUNDED, dataDeleteFlag = false)
-@ModelWidget(type = ModelType.WIDGET, name = "flavor")
-public class FlavorWidget extends ResourceWidget {
+public class WidgetType {
+
+    String type;
+    String name;
+    boolean deleteFlag = false;
+
 }

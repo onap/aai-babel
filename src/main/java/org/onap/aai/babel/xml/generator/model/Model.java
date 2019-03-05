@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.error.IllegalAccessException;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
@@ -158,7 +159,7 @@ public abstract class Model {
 
     public abstract boolean addResource(Resource resource);
 
-    public abstract boolean addWidget(Widget resource);
+    public abstract boolean addWidget(Widget resource) throws XmlArtifactGenerationException;
 
     public abstract Widget.Type getWidgetType();
 
@@ -172,9 +173,7 @@ public abstract class Model {
      * @return the delete flag
      */
     public boolean getDeleteFlag() {
-        org.onap.aai.babel.xml.generator.types.Model model =
-                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
-        return model.dataDeleteFlag();
+        return true;
     }
 
     public String getModelDescription() {
@@ -220,24 +219,22 @@ public abstract class Model {
      * Gets widget version id.
      *
      * @return the widget version id
+     * @throws XmlArtifactGenerationException 
      */
-    public String getWidgetId() {
-        org.onap.aai.babel.xml.generator.types.Model model =
-                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
-        return Widget.getWidget(model.widget()).getId();
+    public String getWidgetId() throws XmlArtifactGenerationException {
+        return Widget.getWidget(getWidgetType()).getId();
     }
 
     /**
      * Gets invariant id.
      *
      * @return the invariant id
+     * @throws XmlArtifactGenerationException 
      */
-    public String getWidgetInvariantId() {
-        org.onap.aai.babel.xml.generator.types.Model model =
-                this.getClass().getAnnotation(org.onap.aai.babel.xml.generator.types.Model.class);
-        return Widget.getWidget(model.widget()).getWidgetId();
+    public String getWidgetInvariantId() throws XmlArtifactGenerationException {
+        return Widget.getWidget(getWidgetType()).getWidgetId();
     }
-
+    
     /**
      * Populate model identification information.
      *
