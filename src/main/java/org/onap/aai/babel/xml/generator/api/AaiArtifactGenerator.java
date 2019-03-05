@@ -84,7 +84,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
             ArtifactGeneratorToscaParser.initWidgetConfiguration();
             ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(configLocation);
         } catch (IOException e) {
-            log.error(ApplicationMsgs.LOAD_PROPERTIES, e);
+            log.error(ApplicationMsgs.LOAD_PROPERTIES, e, configLocation);
             return createErrorData(e);
         }
 

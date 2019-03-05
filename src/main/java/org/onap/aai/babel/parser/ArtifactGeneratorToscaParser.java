@@ -112,8 +112,9 @@ public class ArtifactGeneratorToscaParser {
 
     /**
      * Initializes the Widget to UUID mapping configuration.
-     *
+     * 
      * @throws IOException
+     *             if an error occurs reading the configuration properties
      */
     public static void initWidgetConfiguration() throws IOException {
         log.debug("Getting Widget Configuration");
@@ -172,6 +173,7 @@ public class ArtifactGeneratorToscaParser {
      * @param serviceNodeTemplate
      * @return resources for which XML Models should be generated
      * @throws XmlArtifactGenerationException
+     *             if there is no configuration defined for a member Widget of an instance group
      */
     public List<Resource> processInstanceGroups(Model resourceModel, NodeTemplate serviceNodeTemplate)
             throws XmlArtifactGenerationException {
@@ -212,9 +214,13 @@ public class ArtifactGeneratorToscaParser {
     }
 
     /**
+     * Add the resource/widget to the specified model.
+     * 
      * @param model
      * @param relation
+     *            resource or widget model to add
      * @throws XmlArtifactGenerationException
+     *             if the relation is a widget and there is no configuration defined for the relation's widget type
      */
     public void addRelatedModel(final Model model, final Resource relation) throws XmlArtifactGenerationException {
         if (relation.isResource()) {
@@ -299,6 +305,7 @@ public class ArtifactGeneratorToscaParser {
      *            the properties of the Group
      * @return the Instance Group and Member resource models
      * @throws XmlArtifactGenerationException
+     *             if there is no configuration defined for one of the member Widgets
      */
     private List<Resource> processInstanceGroup(Model resourceModel, ArrayList<NodeTemplate> memberNodes,
             Map<String, String> metaProperties, Map<String, Property> properties)
@@ -317,8 +324,10 @@ public class ArtifactGeneratorToscaParser {
     /**
      * @param memberNodes
      * @param groupModel
-     * @return
+     * @return a list of Resources
      * @throws XmlArtifactGenerationException
+     *             if a member node template is a widget and there is no configuration defined for that relation's
+     *             widget type
      */
     private List<Resource> generateResourcesAndWidgets(final ArrayList<NodeTemplate> memberNodes,
             final Resource groupModel) throws XmlArtifactGenerationException {

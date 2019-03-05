@@ -57,7 +57,7 @@ public class Widget extends Model {
      * Copy Constructor
      * 
      * @param baseWidget
-     * @throws XmlArtifactGenerationException 
+     * @throws XmlArtifactGenerationException
      */
     public Widget(Widget baseWidget) throws XmlArtifactGenerationException {
         this(baseWidget.getWidgetType(), baseWidget.getName(), baseWidget.getDeleteFlag());
@@ -75,7 +75,8 @@ public class Widget extends Model {
      * @param type
      *            the type
      * @return a new widget of the specified type
-     * @throws XmlArtifactGenerationException 
+     * @throws XmlArtifactGenerationException
+     *             if there is no configuration defined for the specified type
      */
     public static Widget getWidget(Type type) throws XmlArtifactGenerationException {
         Widget widget = WidgetConfigurationUtil.createWidgetFromType(type);

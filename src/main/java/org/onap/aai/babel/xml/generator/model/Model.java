@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.model;
 
 import java.util.Collections;
@@ -110,10 +111,10 @@ public abstract class Model {
     protected Set<Widget> widgets = new HashSet<>();
 
     /**
-     * Gets the object (model) corresponding to the supplied TOSCA type.
+     * Gets the Resource Model corresponding to the supplied TOSCA type.
      *
      * @param toscaType
-     *     the tosca type
+     *            the tosca type
      * @return the model for the type, or null
      */
     public static Resource getModelFor(String toscaType) {
@@ -142,9 +143,9 @@ public abstract class Model {
      * information.
      *
      * @param toscaType
-     *     the TOSCA type
+     *            the TOSCA type
      * @param metaDataType
-     *     the type from the TOSCA metadata
+     *            the type from the TOSCA metadata
      * @return the model for the type, or null
      */
     public static Resource getModelFor(String toscaType, String metaDataType) {
@@ -219,7 +220,7 @@ public abstract class Model {
      * Gets widget version id.
      *
      * @return the widget version id
-     * @throws XmlArtifactGenerationException 
+     * @throws XmlArtifactGenerationException
      */
     public String getWidgetId() throws XmlArtifactGenerationException {
         return Widget.getWidget(getWidgetType()).getId();
@@ -229,17 +230,17 @@ public abstract class Model {
      * Gets invariant id.
      *
      * @return the invariant id
-     * @throws XmlArtifactGenerationException 
+     * @throws XmlArtifactGenerationException
      */
     public String getWidgetInvariantId() throws XmlArtifactGenerationException {
         return Widget.getWidget(getWidgetType()).getWidgetId();
     }
-    
+
     /**
      * Populate model identification information.
      *
      * @param modelIdentInfo
-     *     the model ident info
+     *            the model ident info
      */
     public void populateModelIdentificationInformation(Map<String, String> modelIdentInfo) {
         Iterator<String> iter = modelIdentInfo.keySet().iterator();

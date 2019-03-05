@@ -34,7 +34,7 @@ import org.onap.aai.babel.xml.generator.model.Widget.Type;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 
 /**
- * Direct tests of the Widget class for code coverage.  
+ * Direct tests of the Widget class for code coverage.
  */
 public class TestWidget {
 
@@ -61,7 +61,7 @@ public class TestWidget {
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("service-instance"));
         assertThat(widget.getDeleteFlag(), is(true));
-        
+
         widget = Widget.getWidget(Type.VF);
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("generic-vnf"));

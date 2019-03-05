@@ -46,6 +46,8 @@ public class TestVfModule {
     }
 
     /**
+     * Initialize the Widget mappings.
+     * 
      * @throws IOException
      *             if a properties file is not loaded
      */
@@ -99,7 +101,9 @@ public class TestVfModule {
     /**
      * Add a new Widget to a VF Module, where the Widget is NOT set as a member. N.B. For the current VF Module
      * implementation the actual Widget type is not important.
-     * @throws XmlArtifactGenerationException 
+     * 
+     * @throws XmlArtifactGenerationException
+     *             if the Widget mapping configuration is missing
      */
     @Test
     public void testNonMemberWidgetToVf() throws XmlArtifactGenerationException {
@@ -110,7 +114,9 @@ public class TestVfModule {
 
     /**
      * OAM Network is specifically excluded from a VF Module.
-     * @throws XmlArtifactGenerationException 
+     * 
+     * @throws XmlArtifactGenerationException
+     *             if the Widget mapping configuration is missing
      */
     @Test
     public void testAddOamNetworkWidgetToVf() throws XmlArtifactGenerationException {
@@ -126,7 +132,9 @@ public class TestVfModule {
      * <li>Add a Volume Widget</li>
      * <li>Add a vserver Widget</li>
      * <li>Check that the Volume Widget appears under the vserver</li>
-     * @throws XmlArtifactGenerationException 
+     * 
+     * @throws XmlArtifactGenerationException
+     *             if the Widget mapping configuration is missing
      */
     @Test
     public void testAddVolumeWidgetToVf() throws XmlArtifactGenerationException {
@@ -159,7 +167,9 @@ public class TestVfModule {
      * <li>Add an L-Interface Widget</li>
      * <li>Add a vserver Widget</li>
      * <li>Check that the L-Interface Widget appears under the vserver</li>
-     * @throws XmlArtifactGenerationException 
+     * 
+     * @throws XmlArtifactGenerationException
+     *             if the Widget mapping configuration is missing
      */
     @Test
     public void testAddLinterfaceWidgetToVf() throws XmlArtifactGenerationException {
@@ -193,7 +203,9 @@ public class TestVfModule {
      * <li>Add an L-Interface Widget</li>
      * <li>Add a vserver Widget</li>
      * <li>Check that both Widgets appear under the vserver</li>
-     * @throws XmlArtifactGenerationException 
+     * 
+     * @throws XmlArtifactGenerationException
+     *             if the Widget mapping configuration is missing
      */
     @Test
     public void testAddVolumeAndLinterfaceWidgetToVf() throws XmlArtifactGenerationException {
@@ -234,7 +246,8 @@ public class TestVfModule {
      * @param widgetType
      *            type of Widget to create
      * @return a new Widget
-     * @throws XmlArtifactGenerationException 
+     * @throws XmlArtifactGenerationException
+     *             if the Widget mapping configuration is missing
      */
     private Widget createNewWidget(Type widgetType) throws XmlArtifactGenerationException {
         return Widget.getWidget(widgetType);
@@ -270,7 +283,8 @@ public class TestVfModule {
      *            the VF Module to update
      * @param widgetType
      *            the type of Widget to create and add
-     * @throws XmlArtifactGenerationException 
+     * @throws XmlArtifactGenerationException
+     *             if the Widget mapping configuration is missing
      */
     private void assertAddWidget(Resource vfModule, Type widgetType) throws XmlArtifactGenerationException {
         assertThat(createNewWidgetForModule(vfModule, widgetType), is(true));
@@ -283,7 +297,8 @@ public class TestVfModule {
      *            the VF Module
      * @param widgetType
      *            the type of Widget to create and attempt to add
-     * @throws XmlArtifactGenerationException 
+     * @throws XmlArtifactGenerationException
+     *             if the Widget mapping configuration is missing
      */
     private void assertFailToAddWidget(Resource vfModule, Type widgetType) throws XmlArtifactGenerationException {
         assertThat(createNewWidgetForModule(vfModule, widgetType), is(false));
@@ -297,7 +312,8 @@ public class TestVfModule {
      * @param widgetType
      *            the type of Widget to create and attempt to add
      * @return whether or not the Widget was added to the module
-     * @throws XmlArtifactGenerationException 
+     * @throws XmlArtifactGenerationException
+     *             if the Widget mapping configuration is missing
      */
     private boolean createNewWidgetForModule(Resource vfModule, Type widgetType) throws XmlArtifactGenerationException {
         Widget widget = createNewWidget(widgetType);
@@ -327,7 +343,8 @@ public class TestVfModule {
      * @param vfModule
      *            the VF Module to update
      * @return the number of Widgets present in the vserver on creation
-     * @throws XmlArtifactGenerationException 
+     * @throws XmlArtifactGenerationException
+     *             if the Widget mapping configuration is missing
      */
     private int createVserverForVf(Resource vfModule) throws XmlArtifactGenerationException {
         Widget vserverWidget = createNewWidget(Type.VSERVER);
@@ -345,7 +362,8 @@ public class TestVfModule {
      * @param vserverWidget
      *            the Widget to add
      * @return initial widget count for the vserver Widget
-     * @throws XmlArtifactGenerationException 
+     * @throws XmlArtifactGenerationException
+     *             if the Widget mapping configuration is missing
      */
     private int addVserverToVf(Resource vfModule, Widget vserverWidget) throws XmlArtifactGenerationException {
         // A vserver (initially) has Flavor, Image, Tenant and Vfc.

@@ -57,6 +57,7 @@ public class TestArtifactGeneratorToscaParser {
      * Initialize the Generator with an invalid artifact generator properties file path.
      * 
      * @throws IOException
+     *             if an error occurs reading the configuration properties
      */
     @Test(expected = IllegalArgumentException.class)
     public void testMissingPropertiesFile() throws IOException {
@@ -68,6 +69,7 @@ public class TestArtifactGeneratorToscaParser {
      * Initialize the Generator with an invalid mappings file path.
      * 
      * @throws IOException
+     *             if the file content could not be read successfully
      */
     @Test(expected = IllegalArgumentException.class)
     public void testMissingMappingsFile() throws IOException {
@@ -78,6 +80,7 @@ public class TestArtifactGeneratorToscaParser {
      * Initialize the Generator with no Widget Mappings content.
      * 
      * @throws IOException
+     *             if the file content could not be read successfully
      */
     @Test(expected = IOException.class)
     public void testMissingMappingsContent() throws IOException {
@@ -89,6 +92,7 @@ public class TestArtifactGeneratorToscaParser {
      * Initialize the Generator with invalid Widget Mappings content.
      * 
      * @throws IOException
+     *             if the file content could not be read successfully
      */
     @Test(expected = IOException.class)
     public void testInvalidMappingsContent() throws IOException {
@@ -118,7 +122,7 @@ public class TestArtifactGeneratorToscaParser {
     }
 
     /**
-     * Initialise the Artifact Generator Widget Mapping config with incomplete data.
+     * Initialise the Artifact Generator Widget Mapping config with incomplete data (no type).
      */
     @Test(expected = IllegalArgumentException.class)
     public void testToscaMappingWithoutType() {
@@ -128,7 +132,7 @@ public class TestArtifactGeneratorToscaParser {
     }
 
     /**
-     * Initialise the Artifact Generator Widget Mapping config with incomplete data.
+     * Initialise the Artifact Generator Widget Mapping config with incomplete data (no widget name).
      */
     @Test(expected = IllegalArgumentException.class)
     public void testToscaMappingWithoutWidget() {
@@ -141,6 +145,7 @@ public class TestArtifactGeneratorToscaParser {
      * Process a dummy Group object for a Service Resource.
      * 
      * @throws XmlArtifactGenerationException
+     *             if there is no configuration defined for a member Widget of an instance group
      */
     @Test
     public void testInstanceGroups() throws XmlArtifactGenerationException {
