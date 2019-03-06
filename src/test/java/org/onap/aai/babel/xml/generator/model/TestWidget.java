@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,15 +38,11 @@ import org.onap.aai.babel.xml.generator.types.ModelType;
  */
 public class TestWidget {
 
-    static {
-        System.setProperty("APP_HOME", ".");
-    }
-
     /**
-     * Load the Widget to UUID mappings from the Artifact Generator properties.
+     * Load the Widget Configuration, including the type mappings and the UUID mappings.
      *
      * @throws IOException
-     *             if the properties file is not loaded
+     *             if the mappings configuration cannot be loaded
      */
     @BeforeClass
     public static void setup() throws IOException {

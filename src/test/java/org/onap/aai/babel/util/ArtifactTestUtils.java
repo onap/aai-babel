@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public class ArtifactTestUtils {
     private static final String CSAR_INPUTS_FOLDER = "compressedArtifacts/";
 
     /**
-     * Initialise System Properties for test configuration files.
+     * Initialize System Properties for test configuration files.
      */
     public void setGeneratorSystemProperties() {
         System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
@@ -78,15 +78,14 @@ public class ArtifactTestUtils {
     }
 
     /**
-     * Load the Widget to UUID mappings from the Artifact Generator Properties (resource).
+     * Load the Widget type mappings (resource).
      * 
      * @throws IOException
-     *             if the properties file is not loaded
+     *             if the configuration file is not loaded
      */
     public void loadWidgetMappings() throws IOException {
         ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(getResourcePath(Resources.TOSCA_MAPPING_CONFIG));
     }
-
 
     /**
      * Specific test method for the YAML Extractor test.

@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,12 +56,6 @@ public class CsarToXmlConverterTest {
 
     private static final String INCORRECT_CSAR_NAME = "the_name_of_the_csar_file.csar";
     private static final String SERVICE_VERSION = "1.0";
-
-    static {
-        if (System.getProperty("APP_HOME") == null) {
-            System.setProperty("APP_HOME", ".");
-        }
-    }
 
     // The class to be tested.
     private CsarToXmlConverter converter;
@@ -117,7 +111,8 @@ public class CsarToXmlConverterTest {
     @Test
     public void testArtifactGeneratorConfigMissing() throws CsarConverterException, IOException {
         exception.expect(IllegalArgumentException.class);
-        exception.expectMessage("Cannot generate artifacts. System property artifactgenerator.config not configured");
+        exception.expectMessage("Cannot generate artifacts. System property "
+                + ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE + " not configured");
 
         // Unset the required system property
         System.clearProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE);

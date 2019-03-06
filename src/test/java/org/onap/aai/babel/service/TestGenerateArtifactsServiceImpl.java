@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,12 +59,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class TestGenerateArtifactsServiceImpl {
 
     static {
-        if (System.getProperty("APP_HOME") == null) {
-            System.setProperty("APP_HOME", ".");
-        }
         System.setProperty("CONFIG_HOME", "src/test/resources");
     }
-
 
     @Inject
     private AAIMicroServiceAuth auth;
@@ -72,7 +68,6 @@ public class TestGenerateArtifactsServiceImpl {
     @BeforeClass
     public static void setup() {
         new ArtifactTestUtils().setGeneratorSystemProperties();
-
     }
 
     @Test

@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,11 +47,11 @@ public class MicroServiceAuthTest {
     private static final String authPolicyFile = "auth_policy.json";
 
     static {
-        System.setProperty("CONFIG_HOME", System.getProperty("user.dir") + File.separator + "src/test/resources");
+        System.setProperty("CONFIG_HOME", "src/test/resources");
     }
 
     /**
-     * Temporarily invalidate the default policy file and then try to initialise the authorisation class using the name
+     * Temporarily invalidate the default policy file and then try to initialize the authorization class using the name
      * of a policy file that does not exist.
      *
      * @throws AAIAuthException

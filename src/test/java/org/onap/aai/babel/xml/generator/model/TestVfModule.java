@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,19 +37,15 @@ import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
 
 /**
- * Direct tests of the VfModule Model class to improve code coverage.
+ * Direct tests of the VFMODULE Resource and Widget functionality to improve code coverage.
  */
 public class TestVfModule {
 
-    static {
-        System.setProperty("APP_HOME", ".");
-    }
-
     /**
-     * Initialize the Widget mappings.
-     * 
+     * Load the Widget Configuration, including the type mappings and the UUID mappings.
+     *
      * @throws IOException
-     *             if a properties file is not loaded
+     *             if the mappings configuration cannot be loaded
      */
     @BeforeClass
     public static void setup() throws IOException {

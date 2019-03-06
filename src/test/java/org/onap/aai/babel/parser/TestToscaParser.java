@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,16 +27,15 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.aai.babel.csar.extractor.InvalidArchiveException;
 import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
+import org.onap.aai.babel.util.Resources;
 import org.onap.aai.babel.xml.generator.api.AaiArtifactGenerator;
 import org.onap.aai.babel.xml.generator.data.AdditionalParams;
-import org.onap.aai.babel.xml.generator.data.Artifact;
 import org.onap.aai.babel.xml.generator.data.GenerationData;
 
 /**
@@ -44,29 +43,41 @@ import org.onap.aai.babel.xml.generator.data.GenerationData;
  */
 public class TestToscaParser {
 
-    static {
-        if (System.getProperty("APP_HOME") == null) {
-            System.setProperty("APP_HOME", ".");
-        }
-    }
-
     @Before
     public void setup() {
         new ArtifactTestUtils().setGeneratorSystemProperties();
     }
 
     @Test
+    public void testParserWithInvalidMappings() throws IOException, InvalidArchiveException {
+        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE,
+                new ArtifactTestUtils().getResourcePath(Resources.INVALID_TOSCA_MAPPING_CONFIG));
+
+        GenerationData data = generateArtifactsFromCsarFile();
+        assertThat("Number of errors produced " + data.getErrorData(), data.getErrorData().size(), is(equalTo(1)));
+        assertThat("Number of resources generated", data.getResultData().size(), is(equalTo(0)));
+    }
+
+    @Test
     public void testParserWithCsarFile() throws IOException, InvalidArchiveException {
-        List<Artifact> ymlFiles = CsarTest.VNF_VENDOR_CSAR.extractArtifacts();
-        Map<String, String> additionalParams = new HashMap<>();
-        additionalParams.put(AdditionalParams.SERVICE_VERSION.getName(), "1.0");
-
-        AaiArtifactGenerator generator = new AaiArtifactGenerator();
-        GenerationData data =
-                generator.generateArtifact(CsarTest.VNF_VENDOR_CSAR.getContent(), ymlFiles, additionalParams);
-
+        GenerationData data = generateArtifactsFromCsarFile();
         assertThat("Number of errors produced " + data.getErrorData(), data.getErrorData().size(), is(equalTo(0)));
         assertThat("Number of resources generated", data.getResultData().size(), is(equalTo(2)));
     }
 
+    /**
+     * Invoke the generator with a sample CSAR file.
+     * 
+     * @return the generated AAI Artifacts
+     * @throws InvalidArchiveException
+     *             if the test CSAR file is invalid
+     * @throws IOException
+     *             if there are I/O errors reading the CSAR content
+     */
+    private GenerationData generateArtifactsFromCsarFile() throws InvalidArchiveException, IOException {
+        Map<String, String> additionalParams = new HashMap<>();
+        additionalParams.put(AdditionalParams.SERVICE_VERSION.getName(), "1.0");
+        return new AaiArtifactGenerator().generateArtifact(CsarTest.VNF_VENDOR_CSAR.getContent(),
+                CsarTest.VNF_VENDOR_CSAR.extractArtifacts(), additionalParams);
+    }
 }

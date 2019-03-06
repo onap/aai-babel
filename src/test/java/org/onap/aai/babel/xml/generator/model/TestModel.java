@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,16 +49,12 @@ public class TestModel {
     private Widget widgetModel = new Widget(Type.OAM_NETWORK, "oam-network", true);
     private Model anonymousModel;
 
-    static {
-        System.setProperty("APP_HOME", ".");
-    }
-
     /**
-     * Initialize the Artifact Generator with filtering and mapping configuration. Also Load the Widget to UUID mappings
+     * Initialize the Artifact Generator with filtering and mapping configuration. Also load the Widget to UUID mappings
      * from the Artifact Generator properties.
      *
      * @throws IOException
-     *             if the Artifact Generator properties file is not loaded
+     *             if the mappings configuration cannot be loaded
      */
     @Before
     public void setup() throws IOException {
