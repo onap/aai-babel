@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.data;
 
 import java.util.Base64;
@@ -27,19 +28,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 public final class GeneratorUtil {
 
     /*
-     * Private constructor to prevent instantiation
+     * Private constructor to prevent instantiation.
      */
     private GeneratorUtil() {}
-
-    /**
-     * Decodes Base64 encode byte array input.
-     *
-     * @param input Base64 encoded byte array
-     * @return Decoded byte array
-     */
-    public static byte[] decode(byte[] input) {
-        return input != null ? Base64.getDecoder().decode(input) : new byte[0];
-    }
 
     /**
      * Encode a byte array input using Base64 encoding.

@@ -50,23 +50,6 @@ public class TestGeneratorUtil {
     }
 
     @Test
-    public void shouldDecodeUsingBase64() {
-        byte[] input = Base64.getEncoder().encode(TEST_BYTES);
-        byte[] expected = Base64.getDecoder().decode(input);
-
-        byte[] result = GeneratorUtil.decode(input);
-
-        assertThat(result, is(expected));
-    }
-
-    @Test
-    public void shouldReturnEmptyByteArrayWhenNullPassedToDecode() {
-        byte[] result = GeneratorUtil.decode(null);
-
-        assertThat(result, is(EMPTY_BYTE_ARRAY));
-    }
-
-    @Test
     public void shouldReturnNullWhenNullPassedToCheckSum() {
         assertNull(GeneratorUtil.checkSum(null));
     }

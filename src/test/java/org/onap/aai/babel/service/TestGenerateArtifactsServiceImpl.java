@@ -73,7 +73,7 @@ public class TestGenerateArtifactsServiceImpl {
     @Test
     public void testGenerateArtifacts() throws Exception {
         Response response = processJsonRequest(CsarTest.VNF_VENDOR_CSAR);
-        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
 

@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.csar.vnfcatalog;
 
 import com.google.gson.annotations.SerializedName;
@@ -76,30 +77,6 @@ class VendorImageConfiguration {
     VendorImageConfiguration(String application, String applicationVendor, String applicationVersion) {
         this.application = application;
         this.applicationVendor = applicationVendor;
-        this.applicationVersion = applicationVersion;
-    }
-
-    public String getApplication() {
-        return application;
-    }
-
-    public void setApplication(String application) {
-        this.application = application;
-    }
-
-    public String getApplicationVendor() {
-        return applicationVendor;
-    }
-
-    public void setApplicationVendor(String applicationVendor) {
-        this.applicationVendor = applicationVendor;
-    }
-
-    public String getApplicationVersion() {
-        return applicationVersion;
-    }
-
-    public void setApplicationVersion(String applicationVersion) {
         this.applicationVersion = applicationVersion;
     }
 

@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.model;
 
 import java.util.Collection;
@@ -54,10 +55,10 @@ public class Widget extends Model {
     }
 
     /**
-     * Copy Constructor
+     * Copy Constructor.
      * 
      * @param baseWidget
-     * @throws XmlArtifactGenerationException
+     * @throws XmlArtifactGenerationException 
      */
     public Widget(Widget baseWidget) throws XmlArtifactGenerationException {
         this(baseWidget.getWidgetType(), baseWidget.getName(), baseWidget.getDeleteFlag());
@@ -75,7 +76,7 @@ public class Widget extends Model {
      * @param type
      *            the type
      * @return a new widget of the specified type
-     * @throws XmlArtifactGenerationException
+     * @throws XmlArtifactGenerationException 
      *             if there is no configuration defined for the specified type
      */
     public static Widget getWidget(Type type) throws XmlArtifactGenerationException {

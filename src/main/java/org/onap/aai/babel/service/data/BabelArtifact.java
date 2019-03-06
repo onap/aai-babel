@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.service.data;
 
 /** Bean representing the return artifacts of the Babel microservice. */
 public class BabelArtifact {
 
     public enum ArtifactType {
-        MODEL,
-        VNFCATALOG;
+        MODEL, VNFCATALOG;
     }
 
     String name;
@@ -42,23 +42,11 @@ public class BabelArtifact {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public ArtifactType getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = ArtifactType.valueOf(type);
-    }
-
     public String getPayload() {
         return payload;
-    }
-
-    public void setPayload(String payload) {
-        this.payload = payload;
     }
 }

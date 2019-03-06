@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.data;
 
 import java.util.ArrayList;
@@ -30,17 +31,12 @@ public class GenerationData {
     List<Artifact> resultData = new ArrayList<>();
     Map<String, List<String>> errorData = new HashMap<>();
 
-    public void add(List<Artifact> resultData, Map<String, List<String>> errorData) {
-        this.resultData.addAll(resultData);
-        this.errorData.putAll(errorData);
-    }
-
     public void add(Artifact generatedArtifact) {
         resultData.add(generatedArtifact);
     }
 
     /**
-     * Add the error code to the list of error codes for the given ID
+     * Add the error code to the list of error codes for the given ID.
      *
      * @param generatorId the generator id
      * @param errorCode the error code
@@ -48,11 +44,6 @@ public class GenerationData {
     public void add(String generatorId, String errorCode) {
         errorData.computeIfAbsent(generatorId, k -> new ArrayList<>());
         errorData.get(generatorId).add(errorCode);
-    }
-
-    public void add(GenerationData generationData) {
-        this.resultData.addAll(generationData.resultData);
-        this.errorData.putAll(generationData.errorData);
     }
 
     public List<Artifact> getResultData() {
