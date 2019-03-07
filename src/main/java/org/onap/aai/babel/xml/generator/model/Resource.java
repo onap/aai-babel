@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,13 @@ import java.util.List;
 import java.util.Map;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
+import org.onap.aai.babel.xml.generator.types.ModelType;
 
 public class Resource extends Model {
-
+  
     private Type type;
     private boolean deleteFlag;
-    private boolean isResource = true;
+    private ModelType modelType = ModelType.RESOURCE;
     private Map<String, Object> properties = Collections.emptyMap();
 
     Widget vserver = null;
@@ -63,33 +64,24 @@ public class Resource extends Model {
         return deleteFlag;
     }
 
-
-
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
 
-    @Override
     public Map<String, Object> getProperties() {
         return properties;
     }
-
-    public void setIsResource(boolean isResource) {
-        this.isResource = isResource;
+    
+    public void setModelType(ModelType type) {
+        this.modelType = type;
     }
-
-    @Override
-    public boolean isResource() {
-        return isResource;
+    
+    public ModelType getModelType() {
+        return modelType;
     }
-
+    
     public void setMembers(List<String> members) {
         this.members = members;
-    }
-
-    @Override
-    public boolean addResource(Resource resource) {
-        return resources.add(resource);
     }
 
     /**
@@ -121,14 +113,20 @@ public class Resource extends Model {
             return widgets.add(widget);
         }
     }
-
+    
     public Type getWidgetType() {
         return type;
+    }
+    
+    public String getModelTypeName() {
+        return "resource";
     }
 
     @Override
     public String toString() {
-        return "Widget type " + getWidgetType() + ", isResource=" + isResource() + ", deleteFlag=" + deleteFlag;
+        return "Resource [widget type=" + getWidgetType() + ", deleteFlag=" + deleteFlag + ", modelType=" + modelType
+                + ", properties=" + properties + ", vserver=" + vserver + ", addlintf=" + addlintf + ", addvolume="
+                + addvolume + ", members=" + members + "]";
     }
 
     private void addVolumeWidget(Widget widget) {

@@ -24,7 +24,6 @@ package org.onap.aai.babel.xml.generator.model;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
@@ -58,7 +57,7 @@ public class Widget extends Model {
      * Copy Constructor.
      * 
      * @param baseWidget
-     * @throws XmlArtifactGenerationException 
+     * @throws XmlArtifactGenerationException
      */
     public Widget(Widget baseWidget) throws XmlArtifactGenerationException {
         this(baseWidget.getWidgetType(), baseWidget.getName(), baseWidget.getDeleteFlag());
@@ -76,7 +75,7 @@ public class Widget extends Model {
      * @param type
      *            the type
      * @return a new widget of the specified type
-     * @throws XmlArtifactGenerationException 
+     * @throws XmlArtifactGenerationException
      *             if there is no configuration defined for the specified type
      */
     public static Widget getWidget(Type type) throws XmlArtifactGenerationException {
@@ -85,11 +84,6 @@ public class Widget extends Model {
             throw new XmlArtifactGenerationException("No widget type is defined for " + type);
         }
         return widget;
-    }
-
-    @Override
-    public boolean isResource() {
-        return false;
     }
 
     public String getId() {
@@ -188,11 +182,6 @@ public class Widget extends Model {
     }
 
     @Override
-    public Map<String, Object> getProperties() {
-        return Collections.emptyMap();
-    }
-
-    @Override
     public String toString() {
         return getName() + " Widget keys=" + keys + ", resources=" + resources + ", widgets=" + widgets;
     }
@@ -201,4 +190,20 @@ public class Widget extends Model {
     public boolean getDeleteFlag() {
         return deleteFlag;
     }
+
+    @Override
+    public String getModelTypeName() {
+        throw new IllegalAccessException(GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION);
+    }
+
+    @Override
+    public String getModelId() {
+        throw new IllegalAccessException(GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION);
+    }
+
+    @Override
+    public String getModelNameVersionId() {
+        throw new IllegalAccessException(GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION);
+    }
+
 }

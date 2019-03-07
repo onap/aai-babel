@@ -122,25 +122,41 @@ public class TestArtifactGeneratorToscaParser {
     }
 
     /**
-     * Initialise the Artifact Generator Widget Mapping config with incomplete data (no type).
+     * Initialize the Artifact Generator Widget Mapping config with incomplete data (no type).
+     * 
+     * @throws IOException
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testToscaMappingWithoutType() {
+    @Test(expected = IOException.class)
+    public void testToscaMappingWithoutType() throws IOException {
         WidgetMapping invalidMapping = new WidgetMapping();
         invalidMapping.setType(null);
         WidgetConfigurationUtil.setWidgetMappings(Collections.singletonList(invalidMapping));
     }
 
     /**
-     * Initialise the Artifact Generator Widget Mapping config with incomplete data (no widget name).
+     * Initialize the Artifact Generator Widget Mapping config with invalid data (type value).
+     * 
+     * @throws IOException
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testToscaMappingWithoutWidget() {
+    @Test(expected = IOException.class)
+    public void testToscaMappingWithInvalidType() throws IOException {
+        WidgetMapping invalidMapping = new WidgetMapping();
+        invalidMapping.setType("invalid");
+        WidgetConfigurationUtil.setWidgetMappings(Collections.singletonList(invalidMapping));
+    }
+    
+    /**
+     * Initialize the Artifact Generator Widget Mapping config with incomplete data (no widget name).
+     * 
+     * @throws IOException
+     */
+    @Test(expected = IOException.class)
+    public void testToscaMappingWithoutWidget() throws IOException {
         WidgetMapping invalidMapping = new WidgetMapping();
         invalidMapping.setWidget(null);
         WidgetConfigurationUtil.setWidgetMappings(Collections.singletonList(invalidMapping));
     }
-
+    
     /**
      * Process a dummy Group object for a Service Resource.
      * 

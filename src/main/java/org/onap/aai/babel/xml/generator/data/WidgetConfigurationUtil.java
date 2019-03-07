@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@
 
 package org.onap.aai.babel.xml.generator.data;
 
+import com.google.common.base.Enums;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +33,7 @@ import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.aai.babel.xml.generator.model.Widget;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
+import org.onap.aai.babel.xml.generator.types.ModelType;
 
 public class WidgetConfigurationUtil {
 
@@ -86,13 +89,15 @@ public class WidgetConfigurationUtil {
         }
     }
 
-    public static void setWidgetMappings(List<WidgetMapping> mappings) {
+    public static void setWidgetMappings(List<WidgetMapping> mappings) throws IOException {
         for (WidgetMapping mapping : mappings) {
-            if (mapping.prefix == null || mapping.widget == null) {
-                throw new IllegalArgumentException("Incomplete widget mapping specified: " + mapping);
+            ModelType modelType = Optional.ofNullable(mapping.type).map(String::toUpperCase)
+                    .map(s -> Enums.getIfPresent(ModelType.class, s).orNull()).orElse(null);
+            if (mapping.prefix == null || mapping.widget == null || modelType == null) {
+                throw new IOException("Invalid widget mapping specified: " + mapping);
             }
             Resource resource = new Resource(Widget.Type.valueOf(mapping.widget), mapping.deleteFlag);
-            resource.setIsResource(mapping.type.equalsIgnoreCase("resource"));
+            resource.setModelType(modelType);
             typeToResource.put(mapping.prefix, resource);
         }
     }

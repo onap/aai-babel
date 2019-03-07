@@ -30,9 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
-import org.onap.aai.babel.xml.generator.error.IllegalAccessException;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
-import org.onap.aai.babel.xml.generator.types.ModelType;
 
 public abstract class Model {
 
@@ -158,15 +156,15 @@ public abstract class Model {
         }
     }
 
-    public abstract boolean addResource(Resource resource);
-
     public abstract boolean addWidget(Widget resource) throws XmlArtifactGenerationException;
 
     public abstract Widget.Type getWidgetType();
 
-    public abstract Map<String, Object> getProperties();
+    public abstract String getModelTypeName();
 
-    public abstract boolean isResource();
+    public boolean addResource(Resource resource) {
+        return resources.add(resource);
+    }
 
     /**
      * Gets delete flag.
@@ -182,7 +180,6 @@ public abstract class Model {
     }
 
     public String getModelId() {
-        checkSupported();
         return modelId;
     }
 
@@ -195,25 +192,7 @@ public abstract class Model {
     }
 
     public String getModelNameVersionId() {
-        checkSupported();
         return modelNameVersionId;
-    }
-
-    /**
-     * Gets model type.
-     *
-     * @return the model type
-     */
-    public ModelType getModelType() {
-        if (this instanceof Service) {
-            return ModelType.SERVICE;
-        } else if (this instanceof Resource) {
-            return ModelType.RESOURCE;
-        } else if (this instanceof Widget) {
-            return ModelType.WIDGET;
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -266,10 +245,9 @@ public abstract class Model {
         return widgets;
     }
 
-    private void checkSupported() {
-        if (this instanceof Widget) {
-            throw new IllegalAccessException(GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION);
-        }
+    @Override
+    public String toString() {
+        return "Model [type=" + getModelTypeName() + ", name=" + getModelName() + "]";
     }
 
 }

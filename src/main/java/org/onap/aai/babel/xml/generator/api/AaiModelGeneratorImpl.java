@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ public class AaiModelGeneratorImpl implements AaiModelGenerator {
         modelVer.setModelElements(new ModelElements());
         ModelElements modelElements = modelVer.getModelElements();
         // Populate basic model details
-        aaiServiceModel.setModelType(service.getModelType().name().toLowerCase()); // Using enum name as model type
+        aaiServiceModel.setModelType(service.getModelTypeName());
         List<ModelElement> modelElementList = modelElements.getModelElement();
 
         // Add service base widget model element
@@ -134,7 +134,7 @@ public class AaiModelGeneratorImpl implements AaiModelGenerator {
         modelVer.setModelVersionId(resource.getModelNameVersionId());
         modelVer.setModelElements(new ModelElements());
         ModelElements modelElements = modelVer.getModelElements();
-        aaiResourceModel.setModelType(resource.getModelType().name().toLowerCase()); // Using enum name as model type
+        aaiResourceModel.setModelType(resource.getModelTypeName());
         List<ModelElement> modelElementList = modelElements.getModelElement();
 
         // Add resource base widget model element

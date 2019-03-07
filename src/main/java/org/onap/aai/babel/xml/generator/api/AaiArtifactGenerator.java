@@ -46,6 +46,7 @@ import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.aai.babel.xml.generator.model.Service;
 import org.onap.aai.babel.xml.generator.model.Widget;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
+import org.onap.aai.babel.xml.generator.types.ModelType;
 import org.onap.aai.cl.api.Logger;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
@@ -211,7 +212,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
             }
 
             parser.addRelatedModel(serviceModel, model);
-            if (model.isResource()) {
+            if (model.getModelType() == ModelType.RESOURCE) {
                 generateResourceModel(csarHelper, resources, parser, nodeTemplate);
             }
         } else {
@@ -303,7 +304,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     private String getArtifactLabel(Model model) {
         StringBuilder artifactName = new StringBuilder(ArtifactType.AAI.name());
         artifactName.append("-");
-        artifactName.append(model.getModelType().name().toLowerCase());
+        artifactName.append(model.getModelTypeName());
         artifactName.append("-");
         artifactName.append(hashCodeUuId(model.getModelNameVersionId()));
         return (artifactName.toString()).replaceAll("[^a-zA-Z0-9 +]+", "-");
@@ -324,7 +325,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         artifactName.append(truncatedArtifactName);
 
         artifactName.append("-");
-        artifactName.append(model.getModelType().name().toLowerCase());
+        artifactName.append(model.getModelTypeName());
         artifactName.append("-");
         artifactName.append(model.getModelVersion());
 
@@ -342,7 +343,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      *            AAI model as string
      * @return Generated {@link Artifact} model for the resource
      */
-    private Artifact getResourceArtifact(Model resourceModel, String aaiResourceModel) {
+    private Artifact getResourceArtifact(Resource resourceModel, String aaiResourceModel) {
         final String resourceArtifactLabel = getArtifactLabel(resourceModel);
         MDC.put(MDC_PARAM_MODEL_INFO, resourceModel.getModelName() + "," + resourceArtifactLabel);
         final byte[] bytes = aaiResourceModel.getBytes();
@@ -351,7 +352,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
                 GeneratorUtil.checkSum(bytes), GeneratorUtil.encode(bytes));
         artifact.setName(getArtifactName(resourceModel));
         artifact.setLabel(resourceArtifactLabel);
-        artifact.setDescription(ArtifactGeneratorToscaParser.getArtifactDescription(resourceModel));
+        artifact.setDescription("AAI Resource Model");
         return artifact;
     }
 
@@ -381,8 +382,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         String serviceArtifactLabel = getArtifactLabel(serviceModel);
         artifact.setName(serviceArtifactName);
         artifact.setLabel(serviceArtifactLabel);
-        String description = ArtifactGeneratorToscaParser.getArtifactDescription(serviceModel);
-        artifact.setDescription(description);
+        artifact.setDescription("AAI Service Model");
         return artifact;
     }
 

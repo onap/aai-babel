@@ -26,16 +26,11 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
-import org.onap.aai.babel.xml.generator.types.ModelType;
 
 /**
  * Direct tests of the Model abstract class (to improve code coverage). Not all methods are tested here. Some are
@@ -43,9 +38,6 @@ import org.onap.aai.babel.xml.generator.types.ModelType;
  */
 public class TestModel {
 
-    private Service serviceModel = new Service();
-    private List<Resource> resourceModels =
-            Arrays.asList(new Resource(Type.CR, true), new Resource(Type.INSTANCE_GROUP, true));
     private Widget widgetModel = new Widget(Type.OAM_NETWORK, "oam-network", true);
     private Model anonymousModel;
 
@@ -73,11 +65,6 @@ public class TestModel {
 
         anonymousModel = new Model() {
             @Override
-            public boolean addResource(Resource resource) {
-                return false;
-            }
-
-            @Override
             public boolean addWidget(Widget resource) {
                 return false;
             }
@@ -88,13 +75,8 @@ public class TestModel {
             }
 
             @Override
-            public Map<String, Object> getProperties() {
-                return Collections.emptyMap();
-            }
-
-            @Override
-            public boolean isResource() {
-                return false;
+            public String getModelTypeName() {
+                return null;
             }
         };
     }
@@ -149,16 +131,6 @@ public class TestModel {
     }
 
     @Test
-    public void testGetModelType() {
-        assertThat(serviceModel.getModelType(), is(ModelType.SERVICE));
-        for (Resource resourceModel : resourceModels) {
-            assertThat(resourceModel.getModelType(), is(ModelType.RESOURCE));
-        }
-        assertThat(widgetModel.getModelType(), is(ModelType.WIDGET));
-        assertThat(anonymousModel.getModelType(), is(nullValue()));
-    }
-
-    @Test
     public void testGetModelNameVersionId() {
         assertThat(anonymousModel.getModelNameVersionId(), is(nullValue()));
     }
@@ -166,9 +138,6 @@ public class TestModel {
     @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
     public void testGetModelNameVersionIdIsUnsupported() {
         assertThat(widgetModel.getModelNameVersionId(), is(nullValue()));
-        assertThat(resourceModels.get(0).getModelType(), is(ModelType.RESOURCE));
-        assertThat(widgetModel.getModelType(), is(ModelType.WIDGET));
-        assertThat(anonymousModel.getModelType(), is(nullValue()));
     }
 
 }

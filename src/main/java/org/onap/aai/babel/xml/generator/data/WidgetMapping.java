@@ -21,15 +21,12 @@
 
 package org.onap.aai.babel.xml.generator.data;
 
-import java.util.Map;
-
 public class WidgetMapping {
 
     String prefix;
     String type = "resource"; // Default type is Resource (not Widget)
     String widget;
     boolean deleteFlag = true;
-    Map<String, Object> properties;
 
     public void setType(String type) {
         this.type = type;
@@ -42,6 +39,6 @@ public class WidgetMapping {
     @Override
     public String toString() {
         return "WidgetMapping [prefix=" + prefix + ", type=" + type + ", widget=" + widget + ", deleteFlag="
-                + deleteFlag + ", properties=" + properties + "]";
+                + deleteFlag + "]";
     }
 }

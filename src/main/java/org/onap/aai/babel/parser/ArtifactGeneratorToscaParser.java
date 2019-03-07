@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import org.onap.aai.babel.xml.generator.model.Model;
 import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.aai.babel.xml.generator.model.Widget;
 import org.onap.aai.babel.xml.generator.model.Widget.Type;
+import org.onap.aai.babel.xml.generator.types.ModelType;
 import org.onap.aai.cl.api.Logger;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.toscaparser.api.Group;
@@ -90,24 +91,6 @@ public class ArtifactGeneratorToscaParser {
      */
     public ArtifactGeneratorToscaParser(ISdcCsarHelper csarHelper) {
         this.csarHelper = csarHelper;
-    }
-
-    /**
-     * Get or create the artifact description.
-     *
-     * @param model
-     *            the artifact model
-     * @return the artifact model's description
-     */
-    public static String getArtifactDescription(Model model) {
-        switch (model.getModelType()) {
-            case SERVICE:
-                return "AAI Service Model";
-            case RESOURCE:
-                return "AAI Resource Model";
-            default:
-                return model.getModelDescription();
-        }
     }
 
     /**
@@ -223,7 +206,7 @@ public class ArtifactGeneratorToscaParser {
      *             if the relation is a widget and there is no configuration defined for the relation's widget type
      */
     public void addRelatedModel(final Model model, final Resource relation) throws XmlArtifactGenerationException {
-        if (relation.isResource()) {
+        if (relation.getModelType() == ModelType.RESOURCE) {
             model.addResource(relation);
         } else {
             model.addWidget(Widget.getWidget(relation.getWidgetType()));
@@ -350,7 +333,7 @@ public class ArtifactGeneratorToscaParser {
                         memberModel.getClass().getSuperclass().getSimpleName(), memberModel.getClass(), nodeTypeName));
 
                 addRelatedModel(groupModel, memberModel);
-                if (memberModel.isResource()) {
+                if (memberModel.getModelType() == ModelType.RESOURCE) {
                     resources.add(memberModel);
                 }
             }
@@ -398,10 +381,10 @@ public class ArtifactGeneratorToscaParser {
 
         if (resource.getWidgetType() == Type.L3_NET) {
             // An l3-network inside a vf-module is treated as a Widget
-            resource.setIsResource(false);
+            resource.setModelType(ModelType.WIDGET);
         }
 
-        if (!resource.isResource()) {
+        if (resource.getModelType() == ModelType.WIDGET) {
             Widget widget = Widget.getWidget(resource.getWidgetType());
             widget.addKey(member.getName());
             // Add the widget element encountered to the Group model
@@ -442,7 +425,7 @@ public class ArtifactGeneratorToscaParser {
 
         if (foundProvidingService) {
             processProvidingService(resourceModel, resourceNode, nodeProperties);
-        } else if (resourceNode != null && resourceNode.isResource()
+        } else if (resourceNode != null && resourceNode.getModelType() == ModelType.RESOURCE
                 && resourceNode.getWidgetType() != Widget.Type.L3_NET) {
             if (metaData != null) {
                 resourceNode.populateModelIdentificationInformation(metaData.getAllProperties());
