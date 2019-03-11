@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -44,15 +46,15 @@ public class AAIMicroServiceAuthCore {
 
     private static LogHelper applicationLogger = LogHelper.INSTANCE;
 
-    private static final String CONFIG_HOME = System.getProperty("CONFIG_HOME");
-
-    public static final String FILESEP =
-            (System.getProperty("file.separator") == null) ? "/" : System.getProperty("file.separator");
-    public static final String APPCONFIG_DIR =
-            (CONFIG_HOME == null) ? System.getProperty("APP_HOME") + FILESEP + "appconfig" : CONFIG_HOME;
-
-    private static String appConfigAuthDir = APPCONFIG_DIR + FILESEP + "auth";
-    private static String defaultAuthFileName = appConfigAuthDir + FILESEP + "auth_policy.json";
+    /**
+     * The default policy file is expected to be located in either one of
+     * <ul>
+     * <li><code>$CONFIG_HOME/auth_policy.json</code></li>
+     * <li><code>$CONFIG_HOME/auth/auth_policy.json</code></li>
+     * <p>
+     * Note that if <code>CONFIG_HOME</code> is not set then assume it has a value of <code>$APP_HOME/appconfig</code>
+     */
+    private static String defaultAuthFileName = "auth_policy.json";
 
     private static boolean usersInitialized = false;
     private static HashMap<String, AAIAuthUser> users;
@@ -83,8 +85,9 @@ public class AAIMicroServiceAuthCore {
             applicationLogger.error(ApplicationMsgs.PROCESS_REQUEST_ERROR, e);
             throw new AAIAuthException(e.getMessage());
         }
+
         if (policyAuthFileName == null) {
-            throw new AAIAuthException("Auth policy file could not be found" + CONFIG_HOME + APPCONFIG_DIR);
+            throw new AAIAuthException("Auth policy file could not be found");
         }
         AAIMicroServiceAuthCore.reloadUsers();
 
@@ -116,21 +119,46 @@ public class AAIMicroServiceAuthCore {
     }
 
     public static String getConfigFile(String authPolicyFile) throws IOException {
-        File authFile = new File(authPolicyFile);
-        if (authFile.exists()) {
-            return authFile.getCanonicalPath();
-        }
-        authFile = new File(appConfigAuthDir + FILESEP + authPolicyFile);
-        if (authFile.exists()) {
-            return authFile.getCanonicalPath();
-        }
-        if (defaultAuthFileName != null) {
-            authFile = new File(defaultAuthFileName);
-            if (authFile.exists()) {
-                return defaultAuthFileName;
+        return locateConfigFile(authPolicyFile).orElse(locateConfigFile(defaultAuthFileName).orElse(null));
+    }
+
+    /**
+     * Locate the auth policy file by its name or path.
+     * <ul>
+     * <li>First try to use the absolute path to the file (if provided), or instead locate the path relative to the
+     * current (or user) dir.</li>
+     * <li>If this fails, try resolving the path relative to the configuration home location (either
+     * <code>$CONFIG_HOME</code> or <code>$APP_HOME/appconfig</code>).</li>
+     * <li>If this fails try resolving relative to the <code>auth</code> folder under configuration home.</li>
+     * 
+     * @param authPolicyFile
+     *            filename or path
+     * @return the Optional canonical path to the located policy file
+     * @throws IOException
+     *             if the construction of the canonical pathname requires filesystem queries which cause I/O error(s)
+     */
+    private static Optional<String> locateConfigFile(String authPolicyFile) throws IOException {
+        if (authPolicyFile != null) {
+            List<Path> paths = new ArrayList<>();
+            paths.add(Paths.get("."));
+
+            String configHome = System.getProperty("CONFIG_HOME");
+            if (configHome == null) {
+                configHome = System.getProperty("APP_HOME") + "/appconfig";
+            }
+
+            paths.add(Paths.get(configHome));
+            paths.add(Paths.get(configHome).resolve("auth"));
+
+            for (Path path : paths) {
+                File authFile = path.resolve(authPolicyFile).toFile();
+                if (authFile.exists()) {
+                    return Optional.of(authFile.getCanonicalPath());
+                }
             }
         }
-        return null;
+
+        return Optional.empty();
     }
 
     public static synchronized void reloadUsers() throws AAIAuthException {
@@ -190,26 +218,16 @@ public class AAIMicroServiceAuthCore {
                 user = new AAIAuthUser();
             }
             applicationLogger.debug("Assigning " + roleName + " to user " + name);
-            user.setUser(name);
             user.addRole(roleName, r);
             users.put(name, user);
         }
     }
 
     public static class AAIAuthUser {
-        private String username;
         private HashMap<String, AAIAuthRole> roles;
 
         public AAIAuthUser() {
             this.roles = new HashMap<>();
-        }
-
-        public String getUser() {
-            return this.username;
-        }
-
-        public Map<String, AAIAuthRole> getRoles() {
-            return this.roles;
         }
 
         public void addRole(String roleName, AAIAuthRole r) {
@@ -225,10 +243,6 @@ public class AAIMicroServiceAuthCore {
             }
             return false;
         }
-
-        public void setUser(String myuser) {
-            this.username = myuser;
-        }
     }
 
     public static class AAIAuthRole {
@@ -241,12 +255,6 @@ public class AAIMicroServiceAuthCore {
 
         public void addAllowedFunction(String func) {
             this.allowedFunctions.add(func);
-        }
-
-        public void delAllowedFunction(String delFunc) {
-            if (this.allowedFunctions.contains(delFunc)) {
-                this.allowedFunctions.remove(delFunc);
-            }
         }
 
         public boolean hasAllowedFunction(String afunc) {

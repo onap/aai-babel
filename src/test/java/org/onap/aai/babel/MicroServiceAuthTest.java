@@ -27,9 +27,11 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.onap.aai.auth.AAIAuthException;
 import org.onap.aai.auth.AAIMicroServiceAuth;
@@ -46,8 +48,23 @@ public class MicroServiceAuthTest {
     private static final String VALID_ADMIN_USER = "cn=common-name, ou=org-unit, o=org, l=location, st=state, c=us";
     private static final String authPolicyFile = "auth_policy.json";
 
-    static {
+    @Before
+    public void setup() {
         System.setProperty("CONFIG_HOME", "src/test/resources");
+    }
+
+    /**
+     * Test authorization of a request when authentication is disabled.
+     *
+     * @throws AAIAuthException
+     *             if the test creates invalid Auth Policy roles
+     */
+    @Test
+    public void testAuthenticationDisabled() throws AAIAuthException {
+        BabelAuthConfig babelAuthConfig = new BabelAuthConfig();
+        babelAuthConfig.setAuthenticationDisable(true);
+        AAIMicroServiceAuth auth = new AAIMicroServiceAuth(babelAuthConfig);
+        assertThat(auth.validateRequest(null, new MockHttpServletRequest(), null, "any/uri"), is(true));
     }
 
     /**
@@ -64,6 +81,26 @@ public class MicroServiceAuthTest {
             AAIMicroServiceAuthCore.setDefaultAuthFileName("invalid.default.file");
             BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
             babelServiceAuthConfig.setAuthPolicyFile("invalid.file.name");
+            new AAIMicroServiceAuth(babelServiceAuthConfig);
+        } finally {
+            AAIMicroServiceAuthCore.setDefaultAuthFileName(defaultFile);
+        }
+    }
+
+    /**
+     * Temporarily invalidate the default policy file and then try to initialize the authorization class using a null
+     * policy file name.
+     *
+     * @throws AAIAuthException
+     *             if the Auth policy file cannot be loaded
+     */
+    @Test(expected = AAIAuthException.class)
+    public void testNullPolicyFile() throws AAIAuthException {
+        String defaultFile = AAIMicroServiceAuthCore.getDefaultAuthFileName();
+        try {
+            AAIMicroServiceAuthCore.setDefaultAuthFileName("invalid.default.file");
+            BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
+            babelServiceAuthConfig.setAuthPolicyFile(null);
             new AAIMicroServiceAuth(babelServiceAuthConfig);
         } finally {
             AAIMicroServiceAuthCore.setDefaultAuthFileName(defaultFile);
@@ -89,6 +126,40 @@ public class MicroServiceAuthTest {
     }
 
     /**
+     * Test re-loading of users by changing the contents of a temporary file.
+     *
+     * @throws JSONException
+     *             if this test creates an invalid JSON object
+     * @throws AAIAuthException
+     *             if the test creates invalid Auth Policy roles
+     * @throws IOException
+     *             for I/O failures
+     * @throws InterruptedException
+     *             if interrupted while sleeping
+     */
+    @Test
+    public void createLocalAuthFileOnChange()
+            throws JSONException, AAIAuthException, IOException, InterruptedException {
+        JSONObject roles = createRoleObject("role", createUserObject("user"), createFunctionObject("func"));
+        File file = createTempPolicyFile(roles);
+
+        BabelAuthConfig babelAuthConfig = new BabelAuthConfig();
+        babelAuthConfig.setAuthPolicyFile(file.getAbsolutePath());
+        new AAIMicroServiceAuth(babelAuthConfig);
+
+        // Make changes to the temp file
+        FileWriter fileWriter = new FileWriter(file);
+        fileWriter.write("");
+        fileWriter.flush();
+        fileWriter.close();
+
+        // Wait for the file to be reloaded
+        TimeUnit.SECONDS.sleep(3);
+
+        AAIMicroServiceAuthCore.cleanup();
+    }
+
+    /**
      * Test that the default policy file is loaded when a non-existent file is passed to the authorisation class.
      *
      * @throws AAIAuthException
@@ -101,6 +172,23 @@ public class MicroServiceAuthTest {
         AAIMicroServiceAuth auth = new AAIMicroServiceAuth(babelServiceAuthConfig);
         // The default policy will have been loaded
         assertAdminUserAuthorisation(auth, VALID_ADMIN_USER);
+    }
+
+    /**
+     * Test that the default policy file is loaded when a non-existent file is passed to the authorisation class and
+     * CONFIG_HOME is not set.
+     *
+     * @throws AAIAuthException
+     *             if the Auth Policy cannot be loaded
+     */
+    @Test
+    public void createAuthFromDefaultFileAppHome() throws AAIAuthException {
+        System.clearProperty("CONFIG_HOME");
+        System.setProperty("APP_HOME", "src/test/resources");
+        BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
+        babelServiceAuthConfig.setAuthPolicyFile("non-existent-file");
+        new AAIMicroServiceAuth(babelServiceAuthConfig);
+        // The default policy will have been loaded from APP_HOME/appconfig
     }
 
     /**
@@ -146,16 +234,29 @@ public class MicroServiceAuthTest {
      *             if the auth policy file cannot be loaded
      */
     private AAIMicroServiceAuth createAuthService(JSONObject roles) throws AAIAuthException, IOException {
+        File file = createTempPolicyFile(roles);
+        BabelAuthConfig babelAuthConfig = new BabelAuthConfig();
+        babelAuthConfig.setAuthPolicyFile(file.getAbsolutePath());
+        return new AAIMicroServiceAuth(babelAuthConfig);
+    }
+
+    /**
+     * Create a temporary JSON file using the supplied roles.
+     * 
+     * @param roles
+     *            the roles to use to populate the new file
+     * @return the new temporary file
+     * @throws IOException
+     *             for I/O errors
+     */
+    private File createTempPolicyFile(JSONObject roles) throws IOException {
         File file = File.createTempFile("auth-policy", "json");
         file.deleteOnExit();
         FileWriter fileWriter = new FileWriter(file);
         fileWriter.write(roles.toString());
         fileWriter.flush();
         fileWriter.close();
-
-        BabelAuthConfig babelAuthConfig = new BabelAuthConfig();
-        babelAuthConfig.setAuthPolicyFile(file.getAbsolutePath());
-        return new AAIMicroServiceAuth(babelAuthConfig);
+        return file;
     }
 
     /**

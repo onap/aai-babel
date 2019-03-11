@@ -1,0 +1,12 @@
+{"roles": [
+    {
+        "name": "nofuncauth",
+        "functions": [{
+            "name": "nofuncutil"
+        }],        
+        "users": [{
+            "user": "aai",
+            "pass": "OBF:1u2a1t2v1vgb1s3g1s3m1vgj1t3b1u30"
+        }]
+    }    
+]}
