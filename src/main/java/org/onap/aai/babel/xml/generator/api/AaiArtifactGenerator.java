@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     private static final String GENERATOR_AAI_INVALID_SERVICE_VERSION =
             "Cannot generate artifacts. Service version is incorrect";
 
-    private AaiModelGenerator modelGenerator = new AaiModelGeneratorImpl();
+    private AaiModelGenerator modelGenerator = new AaiModelGenerator();
 
     @Override
     public GenerationData generateArtifact(byte[] csarArchive, List<Artifact> input,
