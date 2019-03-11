@@ -22,6 +22,7 @@
 package org.onap.aai.babel;
 
 import java.io.IOException;
+import org.eclipse.jetty.util.security.Password;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
@@ -36,6 +37,9 @@ public class TestApplication {
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
 
+    /**
+     * Initialize System Properties.
+     */
     @Before
     public void init() {
         System.setProperty("APP_HOME", ".");
@@ -47,6 +51,14 @@ public class TestApplication {
     public void testApplicationStarts() {
         System.setProperty("KEY_STORE_PASSWORD", "password");
         BabelApplication.main(new String[] {});
+        BabelApplication.exit();
+    }
+
+    @Test
+    public void testApplicationStartsWithObfuscatedPassword() {
+        System.setProperty("KEY_STORE_PASSWORD", Password.obfuscate("password"));
+        BabelApplication.main(new String[] {});
+        BabelApplication.exit();
     }
 
     @Test

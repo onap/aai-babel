@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,21 +23,24 @@ package org.onap.aai.babel;
 
 import java.util.HashMap;
 import org.eclipse.jetty.util.security.Password;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ImportResource;
 
 @SpringBootApplication
 @ImportResource("classpath:babel-beans.xml")
 public class BabelApplication extends SpringBootServletInitializer {
 
-    private static final String OBFS_PATTERN = "OBF:";
+    private static ConfigurableApplicationContext context;
 
     /**
      * Spring Boot Initialization.
      * 
-     * @param args main args
+     * @param args
+     *            main args
      */
     public static void main(String[] args) {
         String keyStorePassword = System.getProperty("KEY_STORE_PASSWORD");
@@ -45,15 +48,19 @@ public class BabelApplication extends SpringBootServletInitializer {
             throw new IllegalArgumentException("Env property KEY_STORE_PASSWORD not set");
         }
         HashMap<String, Object> props = new HashMap<>();
-        String decryptedValue =
-                keyStorePassword.startsWith(OBFS_PATTERN) ? Password.deobfuscate(keyStorePassword) : keyStorePassword;
+        String decryptedValue = keyStorePassword.startsWith(Password.__OBFUSCATE) ? //
+                Password.deobfuscate(keyStorePassword) : keyStorePassword;
         props.put("server.ssl.key-store-password", decryptedValue);
 
         String requireClientAuth = System.getenv("REQUIRE_CLIENT_AUTH");
         props.put("server.ssl.client-auth",
                 Boolean.FALSE.toString().equalsIgnoreCase(requireClientAuth) ? "want" : "need");
 
-        new BabelApplication().configure(new SpringApplicationBuilder(BabelApplication.class).properties(props))
-                .run(args);
+        context = new BabelApplication()
+                .configure(new SpringApplicationBuilder(BabelApplication.class).properties(props)).run(args);
+    }
+
+    public static void exit() {
+        SpringApplication.exit(context);
     }
 }
