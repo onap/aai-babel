@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.data.WidgetMapping;
 import org.onap.aai.babel.xml.generator.model.Resource;
-import org.onap.aai.babel.xml.generator.model.Widget.Type;
+import org.onap.aai.babel.xml.generator.model.WidgetType;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
@@ -106,8 +106,8 @@ public class TestArtifactGeneratorToscaParser {
     @Test(expected = IllegalArgumentException.class)
     public void testMissingProvidingService() {
         List<NodeTemplate> nodeTemplateList = Collections.singletonList(buildNodeTemplate("name", "BlockStorage"));
-        new ArtifactGeneratorToscaParser(null).processResourceModels(new Resource(Type.ALLOTTED_RESOURCE, true),
-                nodeTemplateList);
+        new ArtifactGeneratorToscaParser(null)
+                .processResourceModels(new Resource(WidgetType.valueOf("ALLOTTED_RESOURCE"), true), nodeTemplateList);
     }
 
     /**
@@ -117,7 +117,7 @@ public class TestArtifactGeneratorToscaParser {
     public void testAddResourceNotProvidingService() {
         List<NodeTemplate> nodeTemplateList = Collections.singletonList(buildNodeTemplate("testCR", "CR"));
         // Create any Resource to which the CR can be added
-        final Resource dummyResource = new Resource(Type.ALLOTTED_RESOURCE, true);
+        final Resource dummyResource = new Resource(WidgetType.valueOf("ALLOTTED_RESOURCE"), true);
         new ArtifactGeneratorToscaParser(null).processResourceModels(dummyResource, nodeTemplateList);
     }
 
@@ -125,6 +125,7 @@ public class TestArtifactGeneratorToscaParser {
      * Initialize the Artifact Generator Widget Mapping config with incomplete data (no type).
      * 
      * @throws IOException
+     *             if a WidgetMapping is invalid
      */
     @Test(expected = IOException.class)
     public void testToscaMappingWithoutType() throws IOException {
@@ -137,6 +138,7 @@ public class TestArtifactGeneratorToscaParser {
      * Initialize the Artifact Generator Widget Mapping config with invalid data (type value).
      * 
      * @throws IOException
+     *             if a WidgetMapping is invalid
      */
     @Test(expected = IOException.class)
     public void testToscaMappingWithInvalidType() throws IOException {
@@ -144,11 +146,12 @@ public class TestArtifactGeneratorToscaParser {
         invalidMapping.setType("invalid");
         WidgetConfigurationUtil.setWidgetMappings(Collections.singletonList(invalidMapping));
     }
-    
+
     /**
      * Initialize the Artifact Generator Widget Mapping config with incomplete data (no widget name).
      * 
      * @throws IOException
+     *             if a WidgetMapping is invalid
      */
     @Test(expected = IOException.class)
     public void testToscaMappingWithoutWidget() throws IOException {
@@ -156,15 +159,19 @@ public class TestArtifactGeneratorToscaParser {
         invalidMapping.setWidget(null);
         WidgetConfigurationUtil.setWidgetMappings(Collections.singletonList(invalidMapping));
     }
-    
+
     /**
      * Process a dummy Group object for a Service Resource.
      * 
      * @throws XmlArtifactGenerationException
      *             if there is no configuration defined for a member Widget of an instance group
+     * @throws IOException
+     *             if the widget mappings cannot be loaded
      */
     @Test
-    public void testInstanceGroups() throws XmlArtifactGenerationException {
+    public void testInstanceGroups() throws XmlArtifactGenerationException, IOException {
+        new ArtifactTestUtils().loadWidgetMappings();
+
         final String instanceGroupType = "org.openecomp.groups.ResourceInstanceGroup";
         WidgetConfigurationUtil.setSupportedInstanceGroups(Collections.singletonList(instanceGroupType));
 
@@ -181,8 +188,8 @@ public class TestArtifactGeneratorToscaParser {
         Mockito.when(helper.getGroupsOfOriginOfNodeTemplate(serviceNodeTemplate)).thenReturn(groups);
 
         ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(helper);
-        List<Resource> resources =
-                parser.processInstanceGroups(new Resource(Type.INSTANCE_GROUP, true), serviceNodeTemplate);
+        Resource groupResource = new Resource(WidgetType.valueOf("INSTANCE_GROUP"), true);
+        List<Resource> resources = parser.processInstanceGroups(groupResource, serviceNodeTemplate);
 
         assertThat(resources.size(), is(1));
         Resource resource = resources.get(0);

@@ -25,12 +25,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
-import org.onap.aai.babel.xml.generator.model.Widget.Type;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 
 public class Resource extends Model {
-  
-    private Type type;
+
+    private WidgetType type;
     private boolean deleteFlag;
     private ModelType modelType = ModelType.RESOURCE;
     private Map<String, Object> properties = Collections.emptyMap();
@@ -40,7 +39,7 @@ public class Resource extends Model {
     boolean addvolume = false;
     List<String> members;
 
-    public Resource(Type type, boolean deleteFlag) {
+    public Resource(WidgetType type, boolean deleteFlag) {
         this.type = type;
         this.deleteFlag = deleteFlag;
     }
@@ -71,15 +70,15 @@ public class Resource extends Model {
     public Map<String, Object> getProperties() {
         return properties;
     }
-    
+
     public void setModelType(ModelType type) {
         this.modelType = type;
     }
-    
+
     public ModelType getModelType() {
         return modelType;
     }
-    
+
     public void setMembers(List<String> members) {
         this.members = members;
     }
@@ -88,23 +87,23 @@ public class Resource extends Model {
      * Adds a Widget.
      *
      * @param widget
-     *     the widget
+     *            the widget
      * @return the boolean
-     * @throws XmlArtifactGenerationException 
+     * @throws XmlArtifactGenerationException
      */
     @Override
     public boolean addWidget(Widget widget) throws XmlArtifactGenerationException {
-        if (type == Type.VFMODULE) {
+        if (type == WidgetType.valueOf("VFMODULE")) {
             if (widget.memberOf(members)) {
-                if (vserver == null && widget.getWidgetType() == Type.VSERVER) {
+                if (vserver == null && widget.getWidgetType() == WidgetType.valueOf("VSERVER")) {
                     addVserverWidget(widget);
-                } else if (widget.getWidgetType() == Type.LINT) {
+                } else if (widget.getWidgetType() == WidgetType.valueOf("LINT")) {
                     return addLIntfWidget(widget);
-                } else if (widget.getWidgetType() == Type.VOLUME) {
+                } else if (widget.getWidgetType() == WidgetType.valueOf("VOLUME")) {
                     addVolumeWidget(widget);
                     return true;
                 }
-                if (widget.getWidgetType() != Type.OAM_NETWORK) {
+                if (widget.getWidgetType() != WidgetType.valueOf("OAM_NETWORK")) {
                     return widgets.add(widget);
                 }
             }
@@ -113,11 +112,11 @@ public class Resource extends Model {
             return widgets.add(widget);
         }
     }
-    
-    public Type getWidgetType() {
+
+    public WidgetType getWidgetType() {
         return type;
     }
-    
+
     public String getModelTypeName() {
         return "resource";
     }
@@ -154,10 +153,10 @@ public class Resource extends Model {
     private void addVserverWidget(Widget widget) throws XmlArtifactGenerationException {
         vserver = widget;
         if (addlintf) {
-            vserver.addWidget(Widget.getWidget(Type.LINT));
+            vserver.addWidget(Widget.getWidget(WidgetType.valueOf("LINT")));
         }
         if (addvolume) {
-            vserver.addWidget(Widget.getWidget(Type.VOLUME));
+            vserver.addWidget(Widget.getWidget(WidgetType.valueOf("VOLUME")));
         }
     }
 

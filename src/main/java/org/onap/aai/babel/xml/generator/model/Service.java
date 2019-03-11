@@ -21,8 +21,6 @@
 
 package org.onap.aai.babel.xml.generator.model;
 
-import org.onap.aai.babel.xml.generator.model.Widget.Type;
-
 public class Service extends Model {
 
     @Override
@@ -31,8 +29,8 @@ public class Service extends Model {
     }
 
     @Override
-    public Widget.Type getWidgetType() {
-        return Type.SERVICE;
+    public WidgetType getWidgetType() {
+        return WidgetType.valueOf("SERVICE");
     }
 
     public String getModelTypeName() {

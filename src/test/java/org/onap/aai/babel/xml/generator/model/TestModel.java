@@ -26,11 +26,9 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
 import org.onap.aai.babel.util.ArtifactTestUtils;
-import org.onap.aai.babel.xml.generator.model.Widget.Type;
 
 /**
  * Direct tests of the Model abstract class (to improve code coverage). Not all methods are tested here. Some are
@@ -38,47 +36,17 @@ import org.onap.aai.babel.xml.generator.model.Widget.Type;
  */
 public class TestModel {
 
-    private Widget widgetModel = new Widget(Type.OAM_NETWORK, "oam-network", true);
-    private Model anonymousModel;
-
     /**
-     * Initialize the Artifact Generator with filtering and mapping configuration. Also load the Widget to UUID mappings
-     * from the Artifact Generator properties.
+     * Load the Widget Configuration, including the type mappings and the UUID mappings.
      *
      * @throws IOException
      *             if the mappings configuration cannot be loaded
      */
-    @Before
-    public void setup() throws IOException {
-        ArtifactTestUtils utils = new ArtifactTestUtils();
-        utils.setGeneratorSystemProperties();
-
-        String configLocation = System.getProperty(ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE);
-        if (configLocation == null) {
-            throw new IllegalArgumentException(
-                    String.format(ArtifactGeneratorToscaParser.GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND,
-                            ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE));
-        }
-
-        ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(configLocation);
-        utils.loadWidgetToUuidMappings();
-
-        anonymousModel = new Model() {
-            @Override
-            public boolean addWidget(Widget resource) {
-                return false;
-            }
-
-            @Override
-            public Type getWidgetType() {
-                return null;
-            }
-
-            @Override
-            public String getModelTypeName() {
-                return null;
-            }
-        };
+    @BeforeClass
+    public static void setup() throws IOException {
+        ArtifactTestUtils util = new ArtifactTestUtils();
+        util.loadWidgetToUuidMappings();
+        util.loadWidgetMappings();
     }
 
     @Test
@@ -87,21 +55,22 @@ public class TestModel {
         assertThat(Model.getModelFor(""), is(nullValue()));
         assertThat(Model.getModelFor("any.unknown.type"), is(nullValue()));
 
-        assertMapping("org.openecomp.resource.vfc", Type.VSERVER);
-        assertMapping("org.openecomp.resource.cp", Type.LINT);
-        assertMapping("org.openecomp.cp", Type.LINT);
-        assertMapping("org.openecomp.cp.some.suffix", Type.LINT);
-        assertMapping("org.openecomp.resource.vl", Type.L3_NET);
-        assertMapping("org.openecomp.resource.vf", Type.VF);
-        assertMapping("org.openecomp.groups.vfmodule", Type.VFMODULE);
-        assertMapping("org.openecomp.groups.VfModule", Type.VFMODULE);
-        assertMapping("org.openecomp.resource.vfc.nodes.heat.cinder", Type.VOLUME);
-        assertMapping("org.openecomp.nodes.PortMirroringConfiguration", "Configuration", Type.CONFIGURATION);
-        assertMapping("any.string", "Configuration", Type.CONFIGURATION);
-        assertMapping("org.openecomp.resource.cr.Kk1806Cr1", "CR", Type.CR);
-        assertMapping("any.string", "CR", Type.CR);
+        assertMapping("org.openecomp.resource.vfc", WidgetType.valueOf("VSERVER"));
+        assertMapping("org.openecomp.resource.cp", WidgetType.valueOf("LINT"));
+        assertMapping("org.openecomp.cp", WidgetType.valueOf("LINT"));
+        assertMapping("org.openecomp.cp.some.suffix", WidgetType.valueOf("LINT"));
+        assertMapping("org.openecomp.resource.vl", WidgetType.valueOf("L3_NET"));
+        assertMapping("org.openecomp.resource.vf", WidgetType.valueOf("VF"));
+        assertMapping("org.openecomp.groups.vfmodule", WidgetType.valueOf("VFMODULE"));
+        assertMapping("org.openecomp.groups.VfModule", WidgetType.valueOf("VFMODULE"));
+        assertMapping("org.openecomp.resource.vfc.nodes.heat.cinder", WidgetType.valueOf("VOLUME"));
+        assertMapping("org.openecomp.nodes.PortMirroringConfiguration", "Configuration",
+                WidgetType.valueOf("CONFIGURATION"));
+        assertMapping("any.string", "Configuration", WidgetType.valueOf("CONFIGURATION"));
+        assertMapping("org.openecomp.resource.cr.Kk1806Cr1", "CR", WidgetType.valueOf("CR"));
+        assertMapping("any.string", "CR", WidgetType.valueOf("CR"));
 
-        assertMapping("org.openecomp.resource.vfc", "an.unknown.type", Type.VSERVER);
+        assertMapping("org.openecomp.resource.vfc", "an.unknown.type", WidgetType.valueOf("VSERVER"));
     }
 
     /**
@@ -112,7 +81,7 @@ public class TestModel {
      * @param widgetType
      *            the type of Widget expected from the mappings
      */
-    private void assertMapping(String toscaType, Type widgetType) {
+    private void assertMapping(String toscaType, WidgetType widgetType) {
         assertThat(Model.getModelFor(toscaType).getWidgetType(), is(widgetType));
     }
 
@@ -126,18 +95,8 @@ public class TestModel {
      * @param widgetType
      *            the type of Widget expected from the mappings
      */
-    private void assertMapping(String toscaType, String metadataType, Type widgetType) {
+    private void assertMapping(String toscaType, String metadataType, WidgetType widgetType) {
         assertThat(Model.getModelFor(toscaType, metadataType).getWidgetType(), is(widgetType));
-    }
-
-    @Test
-    public void testGetModelNameVersionId() {
-        assertThat(anonymousModel.getModelNameVersionId(), is(nullValue()));
-    }
-
-    @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
-    public void testGetModelNameVersionIdIsUnsupported() {
-        assertThat(widgetModel.getModelNameVersionId(), is(nullValue()));
     }
 
 }

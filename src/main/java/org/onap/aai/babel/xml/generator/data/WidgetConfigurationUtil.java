@@ -31,8 +31,8 @@ import java.util.Optional;
 import java.util.Properties;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.model.Resource;
+import org.onap.aai.babel.xml.generator.model.WidgetType;
 import org.onap.aai.babel.xml.generator.model.Widget;
-import org.onap.aai.babel.xml.generator.model.Widget.Type;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 
 public class WidgetConfigurationUtil {
@@ -69,8 +69,8 @@ public class WidgetConfigurationUtil {
         return Optional.ofNullable(typeToResource.get(typePrefix));
     }
 
-    public static Widget createWidgetFromType(Type type) throws XmlArtifactGenerationException {
-        Optional<Widget> widget = Optional.ofNullable(typeToWidget.get(type.toString()));
+    public static Widget createWidgetFromType(String widgetType) throws XmlArtifactGenerationException {
+        Optional<Widget> widget = Optional.ofNullable(typeToWidget.get(widgetType));
         if (widget.isPresent()) {
             // Make a copy of the Widget found in the mappings table.
             return new Widget(widget.get());
@@ -78,25 +78,26 @@ public class WidgetConfigurationUtil {
         return null;
     }
 
-    public static void setWidgetTypes(List<WidgetType> types) {
-        for (WidgetType type : types) {
+    public static void setWidgetTypes(List<WidgetTypeConfig> types) {
+        for (WidgetTypeConfig type : types) {
             if (type.type == null || type.name == null) {
                 throw new IllegalArgumentException("Incomplete widget type specified: " + type);
             }
-            Type widgetType = Widget.Type.valueOf(type.type);
+            WidgetType widgetType = new WidgetType(type.type);
             Widget widget = new Widget(widgetType, type.name, type.deleteFlag);
             typeToWidget.put(type.type, widget);
         }
+        WidgetType.validateElements();
     }
 
-    public static void setWidgetMappings(List<WidgetMapping> mappings) throws IOException {
+    public static void setWidgetMappings(List<WidgetMapping> mappings) throws IOException  {
         for (WidgetMapping mapping : mappings) {
             ModelType modelType = Optional.ofNullable(mapping.type).map(String::toUpperCase)
                     .map(s -> Enums.getIfPresent(ModelType.class, s).orNull()).orElse(null);
             if (mapping.prefix == null || mapping.widget == null || modelType == null) {
                 throw new IOException("Invalid widget mapping specified: " + mapping);
             }
-            Resource resource = new Resource(Widget.Type.valueOf(mapping.widget), mapping.deleteFlag);
+            Resource resource = new Resource(WidgetType.valueOf(mapping.widget), mapping.deleteFlag);
             resource.setModelType(modelType);
             typeToResource.put(mapping.prefix, resource);
         }

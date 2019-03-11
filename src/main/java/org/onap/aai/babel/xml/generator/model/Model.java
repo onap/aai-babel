@@ -30,7 +30,6 @@ import java.util.Optional;
 import java.util.Set;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
-import org.onap.aai.babel.xml.generator.model.Widget.Type;
 
 public abstract class Model {
 
@@ -148,9 +147,9 @@ public abstract class Model {
      */
     public static Resource getModelFor(String toscaType, String metaDataType) {
         if ("Configuration".equals(metaDataType)) {
-            return new Resource(Type.CONFIGURATION, true);
+            return new Resource(WidgetType.valueOf("CONFIGURATION"), true);
         } else if ("CR".equals(metaDataType)) {
-            return new Resource(Type.CR, true);
+            return new Resource(WidgetType.valueOf("CR"), true);
         } else {
             return getModelFor(toscaType);
         }
@@ -158,7 +157,7 @@ public abstract class Model {
 
     public abstract boolean addWidget(Widget resource) throws XmlArtifactGenerationException;
 
-    public abstract Widget.Type getWidgetType();
+    public abstract WidgetType getWidgetType();
 
     public abstract String getModelTypeName();
 

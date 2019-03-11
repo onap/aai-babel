@@ -43,7 +43,7 @@ import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.model.Model;
 import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.aai.babel.xml.generator.model.Widget;
-import org.onap.aai.babel.xml.generator.model.Widget.Type;
+import org.onap.aai.babel.xml.generator.model.WidgetType;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 import org.onap.aai.cl.api.Logger;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
@@ -191,7 +191,7 @@ public class ArtifactGeneratorToscaParser {
     }
 
     public Resource createInstanceGroupModel(Map<String, String> properties) {
-        Resource groupModel = new Resource(Type.INSTANCE_GROUP, true);
+        Resource groupModel = new Resource(WidgetType.valueOf("INSTANCE_GROUP"), true);
         groupModel.populateModelIdentificationInformation(properties);
         return groupModel;
     }
@@ -238,7 +238,7 @@ public class ArtifactGeneratorToscaParser {
         // Process each VF Group
         for (Group serviceGroup : serviceGroups) {
             Model groupModel = Model.getModelFor(serviceGroup.getType());
-            if (groupModel.getWidgetType() == Type.VFMODULE) {
+            if (groupModel.getWidgetType() == WidgetType.valueOf("VFMODULE")) {
                 processVfModule(resources, resourceModel, serviceGroup, serviceNode, (Resource) groupModel);
             }
         }
@@ -258,8 +258,8 @@ public class ArtifactGeneratorToscaParser {
             Resource model = Model.getModelFor(nodeTypeName, metaDataType);
 
             if (metadata != null && hasAllottedResource(metadata.getAllProperties())
-                    && model.getWidgetType() == Type.VSERVER) {
-                model = new Resource(Type.ALLOTTED_RESOURCE, false);
+                    && model.getWidgetType() == WidgetType.valueOf("VSERVER")) {
+                model = new Resource(WidgetType.valueOf("ALLOTTED_RESOURCE"), false);
                 Map<String, Object> props = new HashMap<>();
                 props.put("providingService", true);
                 model.setProperties(props);
@@ -268,7 +268,7 @@ public class ArtifactGeneratorToscaParser {
             foundProvidingService |= processModel(resourceModel, metadata, model, resourceNodeTemplate.getProperties());
         }
 
-        if (resourceModel.getWidgetType() == Type.ALLOTTED_RESOURCE && !foundProvidingService) {
+        if (resourceModel.getWidgetType() == WidgetType.valueOf("ALLOTTED_RESOURCE") && !foundProvidingService) {
             final String modelInvariantId = resourceModel.getModelId();
             throw new IllegalArgumentException(String.format(GENERATOR_AAI_PROVIDING_SERVICE_MISSING,
                     modelInvariantId == null ? "<null ID>" : modelInvariantId));
@@ -379,7 +379,7 @@ public class ArtifactGeneratorToscaParser {
 
         log.debug(member.getType() + " mapped to " + resource);
 
-        if (resource.getWidgetType() == Type.L3_NET) {
+        if (resource.getWidgetType() == WidgetType.valueOf("L3_NET")) {
             // An l3-network inside a vf-module is treated as a Widget
             resource.setModelType(ModelType.WIDGET);
         }
@@ -426,7 +426,7 @@ public class ArtifactGeneratorToscaParser {
         if (foundProvidingService) {
             processProvidingService(resourceModel, resourceNode, nodeProperties);
         } else if (resourceNode != null && resourceNode.getModelType() == ModelType.RESOURCE
-                && resourceNode.getWidgetType() != Widget.Type.L3_NET) {
+                && resourceNode.getWidgetType() != WidgetType.valueOf("L3_NET")) {
             if (metaData != null) {
                 resourceNode.populateModelIdentificationInformation(metaData.getAllProperties());
             }

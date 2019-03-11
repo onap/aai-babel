@@ -22,6 +22,7 @@
 package org.onap.aai.babel.xml.generator.model;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -30,7 +31,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
-import org.onap.aai.babel.xml.generator.model.Widget.Type;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 
 /**
@@ -53,82 +53,82 @@ public class TestWidget {
 
     @Test
     public void testGetWidgets() throws XmlArtifactGenerationException {
-        Widget widget = Widget.getWidget(Type.SERVICE);
+        Widget widget = Widget.getWidget(WidgetType.valueOf("SERVICE"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("service-instance"));
         assertThat(widget.getDeleteFlag(), is(true));
 
-        widget = Widget.getWidget(Type.VF);
+        widget = Widget.getWidget(WidgetType.valueOf("VF"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("generic-vnf"));
         assertThat(widget.getDeleteFlag(), is(false));
 
-        widget = Widget.getWidget(Type.VFC);
+        widget = Widget.getWidget(WidgetType.valueOf("VFC"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("vnfc"));
         assertThat(widget.getDeleteFlag(), is(true));
 
-        widget = Widget.getWidget(Type.VSERVER);
+        widget = Widget.getWidget(WidgetType.valueOf("VSERVER"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("vserver"));
         assertThat(widget.getDeleteFlag(), is(true));
 
-        widget = Widget.getWidget(Type.VOLUME);
+        widget = Widget.getWidget(WidgetType.valueOf("VOLUME"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("volume"));
         assertThat(widget.getDeleteFlag(), is(true));
 
-        widget = Widget.getWidget(Type.FLAVOR);
+        widget = Widget.getWidget(WidgetType.valueOf("FLAVOR"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("flavor"));
         assertThat(widget.getDeleteFlag(), is(false));
 
-        widget = Widget.getWidget(Type.TENANT);
+        widget = Widget.getWidget(WidgetType.valueOf("TENANT"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("tenant"));
         assertThat(widget.getDeleteFlag(), is(false));
 
-        widget = Widget.getWidget(Type.VOLUME_GROUP);
+        widget = Widget.getWidget(WidgetType.valueOf("VOLUME_GROUP"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("volume-group"));
         assertThat(widget.getDeleteFlag(), is(true));
 
-        widget = Widget.getWidget(Type.LINT);
+        widget = Widget.getWidget(WidgetType.valueOf("LINT"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("l-interface"));
         assertThat(widget.getDeleteFlag(), is(true));
 
-        widget = Widget.getWidget(Type.L3_NET);
+        widget = Widget.getWidget(WidgetType.valueOf("L3_NET"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("l3-network"));
         assertThat(widget.getDeleteFlag(), is(true));
 
-        widget = Widget.getWidget(Type.VFMODULE);
+        widget = Widget.getWidget(WidgetType.valueOf("VFMODULE"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("vf-module"));
         assertThat(widget.getDeleteFlag(), is(true));
 
-        widget = Widget.getWidget(Type.IMAGE);
+        widget = Widget.getWidget(WidgetType.valueOf("IMAGE"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("image"));
         assertThat(widget.getDeleteFlag(), is(false));
 
-        widget = Widget.getWidget(Type.OAM_NETWORK);
+        widget = Widget.getWidget(WidgetType.valueOf("OAM_NETWORK"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("oam-network"));
         assertThat(widget.getDeleteFlag(), is(true));
 
-        widget = Widget.getWidget(Type.ALLOTTED_RESOURCE);
+        widget = Widget.getWidget(WidgetType.valueOf("ALLOTTED_RESOURCE"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("allotted-resource"));
         assertThat(widget.getDeleteFlag(), is(true));
 
-        widget = Widget.getWidget(Type.TUNNEL_XCONNECT);
+        widget = Widget.getWidget(WidgetType.valueOf("TUNNEL_XCONNECT"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("tunnel-xconnect"));
         assertThat(widget.getDeleteFlag(), is(true));
 
-        widget = Widget.getWidget(Type.CONFIGURATION);
+        widget = Widget.getWidget(WidgetType.valueOf("CONFIGURATION"));
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("configuration"));
         assertThat(widget.getDeleteFlag(), is(true));
@@ -136,16 +136,63 @@ public class TestWidget {
 
     @Test
     public void testWidgetMethods() throws XmlArtifactGenerationException {
-        Widget widget = new Widget(Type.SERVICE, "service-instance", true);
+        Widget widget = new Widget(WidgetType.valueOf("SERVICE"), "service-instance", true);
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getWidgetId(), is("service-instance-invariant-id"));
-        assertThat(widget.addWidget(Widget.getWidget(Type.TENANT)), is(true));
+        assertThat(widget.addWidget(Widget.getWidget(WidgetType.valueOf("TENANT"))), is(true));
         assertThat(widget.memberOf(null), is(false));
         assertThat(widget.memberOf(Collections.emptyList()), is(false));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetUnknownWidget() throws XmlArtifactGenerationException {
+        WidgetType.valueOf("invalid-widget-name");
+    }
+
+    /**
+     * Try to get the Widget object for an unsupported (non-configured) type.
+     * 
+     * @throws XmlArtifactGenerationException
+     *             if there is no configuration defined for the specified Widget type
+     */
+    @Test(expected = XmlArtifactGenerationException.class)
+    public void testGetDynamicWidget() throws XmlArtifactGenerationException {
+        Widget.getWidget(new WidgetType(null));
+    }
+    
     @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
     public void testAddResourceIsUnsupported() throws XmlArtifactGenerationException {
-        Widget.getWidget(Type.OAM_NETWORK).addResource(null);
+        Widget.getWidget(WidgetType.valueOf("OAM_NETWORK")).addResource(null);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetVersionIdForUknownWidget() {
+        new Widget(new WidgetType("test"), null, false).getId();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetInvariantIdForUknownWidget() {
+        new Widget(new WidgetType("test"), null, false).getWidgetId();
+    }
+
+    // Call Widget methods which are not supported, purely for code coverage.
+
+    @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
+    public void testGetModelNameVersionIdIsUnsupported() {
+        Widget widgetModel = new Widget(WidgetType.valueOf("OAM_NETWORK"), "oam-network", true);
+        assertThat(widgetModel.getModelNameVersionId(), is(nullValue()));
+    }
+
+    @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
+    public void testGetModelTypeNameIsUnsupported() {
+        Widget widgetModel = new Widget(WidgetType.valueOf("OAM_NETWORK"), "oam-network", true);
+        assertThat(widgetModel.getModelTypeName(), is(nullValue()));
+    }
+
+    @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
+    public void testGetModelIdIsUnsupported() {
+        Widget widgetModel = new Widget(WidgetType.valueOf("OAM_NETWORK"), "oam-network", true);
+        assertThat(widgetModel.getModelId(), is(nullValue()));
+    }
+
 }

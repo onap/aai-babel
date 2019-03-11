@@ -37,17 +37,13 @@ public class Widget extends Model {
     public static final String GENERATOR_AAI_CONFIGLPROP_NOT_FOUND =
             "Cannot generate artifacts. Widget configuration not found for %s";
 
-    public enum Type {
-        SERVICE, VF, VFC, VSERVER, VOLUME, FLAVOR, TENANT, VOLUME_GROUP, LINT, L3_NET, VFMODULE, IMAGE, OAM_NETWORK, ALLOTTED_RESOURCE, TUNNEL_XCONNECT, CONFIGURATION, CR, INSTANCE_GROUP;
-    }
-
     private Set<String> keys = new HashSet<>();
 
     protected String name;
-    protected Type type;
+    protected WidgetType type;
     protected boolean deleteFlag = false;
 
-    public Widget(Type widgetType, String name, boolean deleteFlag) {
+    public Widget(WidgetType widgetType, String name, boolean deleteFlag) {
         type = widgetType;
         this.name = name;
         this.deleteFlag = deleteFlag;
@@ -61,25 +57,25 @@ public class Widget extends Model {
      */
     public Widget(Widget baseWidget) throws XmlArtifactGenerationException {
         this(baseWidget.getWidgetType(), baseWidget.getName(), baseWidget.getDeleteFlag());
-        if (type == Type.VSERVER) {
-            widgets.add(getWidget(Type.FLAVOR));
-            widgets.add(getWidget(Type.IMAGE));
-            widgets.add(getWidget(Type.TENANT));
-            widgets.add(getWidget(Type.VFC));
+        if (type == WidgetType.valueOf("VSERVER")) {
+            widgets.add(getWidget(WidgetType.valueOf("FLAVOR")));
+            widgets.add(getWidget(WidgetType.valueOf("IMAGE")));
+            widgets.add(getWidget(WidgetType.valueOf("TENANT")));
+            widgets.add(getWidget(WidgetType.valueOf("VFC")));
         }
     }
 
     /**
      * Gets widget.
      *
-     * @param type
-     *            the type
+     * @param typeString
+     * 
      * @return a new widget of the specified type
      * @throws XmlArtifactGenerationException
      *             if there is no configuration defined for the specified type
      */
-    public static Widget getWidget(Type type) throws XmlArtifactGenerationException {
-        Widget widget = WidgetConfigurationUtil.createWidgetFromType(type);
+    public static Widget getWidget(WidgetType type) throws XmlArtifactGenerationException {
+        Widget widget = WidgetConfigurationUtil.createWidgetFromType(type.toString());
         if (widget == null) {
             throw new XmlArtifactGenerationException("No widget type is defined for " + type);
         }
@@ -126,7 +122,7 @@ public class Widget extends Model {
     }
 
     @Override
-    public Type getWidgetType() {
+    public WidgetType getWidgetType() {
         return type;
     }
 
@@ -175,7 +171,7 @@ public class Widget extends Model {
 
     @Override
     public boolean addWidget(Widget widget) {
-        if (getWidgetType() == Type.VSERVER) {
+        if (getWidgetType() == WidgetType.valueOf("VSERVER")) {
             return widgets.add(widget);
         }
         return true;

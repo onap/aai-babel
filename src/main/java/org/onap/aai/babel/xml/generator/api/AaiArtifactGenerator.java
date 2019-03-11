@@ -44,8 +44,8 @@ import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.model.Model;
 import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.aai.babel.xml.generator.model.Service;
+import org.onap.aai.babel.xml.generator.model.WidgetType;
 import org.onap.aai.babel.xml.generator.model.Widget;
-import org.onap.aai.babel.xml.generator.model.Widget.Type;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 import org.onap.aai.cl.api.Logger;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
@@ -242,8 +242,8 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         if (model != null) {
             Metadata metadata = nodeTemplate.getMetaData();
             if (metadata != null && parser.hasAllottedResource(metadata.getAllProperties())
-                    && model.getWidgetType() == Type.VF) {
-                model = new Resource(Type.ALLOTTED_RESOURCE, true);
+                    && model.getWidgetType() == WidgetType.valueOf("VF")) {
+                model = new Resource(WidgetType.valueOf("ALLOTTED_RESOURCE"), true);
             }
         }
 
@@ -268,7 +268,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         }
 
         if (parser.hasSubCategoryTunnelXConnect(serviceMetadata) && parser.hasAllottedResource(serviceMetadata)) {
-            resourceModel.addWidget(Widget.getWidget(Type.TUNNEL_XCONNECT));
+            resourceModel.addWidget(Widget.getWidget(WidgetType.valueOf("TUNNEL_XCONNECT")));
         }
 
         resources.addAll(parser.processInstanceGroups(resourceModel, nodeTemplate));

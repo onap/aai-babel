@@ -34,7 +34,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
-import org.onap.aai.babel.xml.generator.model.Widget.Type;
 
 /**
  * Direct tests of the VFMODULE Resource and Widget functionality to improve code coverage.
@@ -86,12 +85,12 @@ public class TestVfModule {
 
     @Test
     public void testAddVServerWidgetToVf() throws XmlArtifactGenerationException {
-        assertAddWidget(createNewVfModule(), Type.VSERVER);
+        assertAddWidget(createNewVfModule(), WidgetType.valueOf("VSERVER"));
     }
 
     @Test
     public void testAddServiceWidgetToVf() throws XmlArtifactGenerationException {
-        assertAddWidget(createNewVfModule(), Type.SERVICE);
+        assertAddWidget(createNewVfModule(), WidgetType.valueOf("SERVICE"));
     }
 
     /**
@@ -104,7 +103,7 @@ public class TestVfModule {
     @Test
     public void testNonMemberWidgetToVf() throws XmlArtifactGenerationException {
         Resource vfModule = createNewVfModule();
-        assertThat(vfModule.addWidget(createNewWidget(Type.SERVICE)), is(false));
+        assertThat(vfModule.addWidget(createNewWidget(WidgetType.valueOf("SERVICE"))), is(false));
         assertNumberOfWidgets(vfModule, 0);
     }
 
@@ -117,7 +116,7 @@ public class TestVfModule {
     @Test
     public void testAddOamNetworkWidgetToVf() throws XmlArtifactGenerationException {
         Resource vfModule = createNewVfModule();
-        assertThat(createNewWidgetForModule(vfModule, Type.OAM_NETWORK), is(false));
+        assertThat(createNewWidgetForModule(vfModule, WidgetType.valueOf("OAM_NETWORK")), is(false));
         assertNumberOfWidgets(vfModule, 0);
     }
 
@@ -137,7 +136,7 @@ public class TestVfModule {
         Resource vfModule = createNewVfModule();
 
         // Adding a Volume widget has no effect until a vserver widget is added.
-        assertAddWidget(vfModule, Type.VOLUME);
+        assertAddWidget(vfModule, WidgetType.valueOf("VOLUME"));
         assertNumberOfWidgets(vfModule, 0);
 
         final int vserverBaseWidgetCount = createVserverForVf(vfModule);
@@ -146,11 +145,11 @@ public class TestVfModule {
         assertNumberOfWidgets(vfModule.vserver, vserverBaseWidgetCount + 1);
 
         // Adding another instance of a vserver widget fails.
-        assertFailToAddWidget(vfModule, Type.VSERVER);
+        assertFailToAddWidget(vfModule, WidgetType.valueOf("VSERVER"));
         assertNumberOfWidgets(vfModule, 1);
 
         // Adding another Volume widget is always treated as successful.
-        assertAddWidget(vfModule, Type.VOLUME);
+        assertAddWidget(vfModule, WidgetType.valueOf("VOLUME"));
         // Assert that no additional Widgets are actually present.
         assertNumberOfWidgets(vfModule, 1);
         assertNumberOfWidgets(vfModule.vserver, vserverBaseWidgetCount + 1);
@@ -172,7 +171,7 @@ public class TestVfModule {
         Resource vfModule = createNewVfModule();
 
         // Adding an L-Interface widget has no effect until a vserver widget is added.
-        assertFailToAddWidget(vfModule, Type.LINT);
+        assertFailToAddWidget(vfModule, WidgetType.valueOf("LINT"));
         assertNumberOfWidgets(vfModule, 0);
 
         final int vserverBaseWidgetCount = createVserverForVf(vfModule);
@@ -181,11 +180,11 @@ public class TestVfModule {
         assertNumberOfWidgets(vfModule.vserver, vserverBaseWidgetCount + 1);
 
         // Adding another instance of a vserver widget fails.
-        assertFailToAddWidget(vfModule, Type.VSERVER);
+        assertFailToAddWidget(vfModule, WidgetType.valueOf("VSERVER"));
         assertNumberOfWidgets(vfModule, 1);
 
         // Adding an L-Interface widget is always treated as successful when a vserver exists.
-        assertAddWidget(vfModule, Type.LINT);
+        assertAddWidget(vfModule, WidgetType.valueOf("LINT"));
         // Assert that no additional Widgets are actually present.
         assertNumberOfWidgets(vfModule, 1);
         assertNumberOfWidgets(vfModule.vserver, vserverBaseWidgetCount + 1);
@@ -208,11 +207,11 @@ public class TestVfModule {
         Resource vfModule = createNewVfModule();
 
         // Adding a Volume widget has no effect until a vserver widget is added.
-        assertAddWidget(vfModule, Type.VOLUME);
+        assertAddWidget(vfModule, WidgetType.valueOf("VOLUME"));
         assertNumberOfWidgets(vfModule, 0);
 
         // Adding an L-Interface widget has no effect until a vserver widget is added.
-        assertFailToAddWidget(vfModule, Type.LINT);
+        assertFailToAddWidget(vfModule, WidgetType.valueOf("LINT"));
         assertNumberOfWidgets(vfModule, 0);
 
         final int vserverBaseWidgetCount = createVserverForVf(vfModule);
@@ -221,12 +220,12 @@ public class TestVfModule {
         assertNumberOfWidgets(vfModule.vserver, vserverBaseWidgetCount + 2);
 
         // Adding another instance of a vserver widget fails.
-        assertFailToAddWidget(vfModule, Type.VSERVER);
+        assertFailToAddWidget(vfModule, WidgetType.valueOf("VSERVER"));
         assertNumberOfWidgets(vfModule, 1);
 
         // Add new instances (with no effect).
-        assertAddWidget(vfModule, Type.VOLUME);
-        assertAddWidget(vfModule, Type.LINT);
+        assertAddWidget(vfModule, WidgetType.valueOf("VOLUME"));
+        assertAddWidget(vfModule, WidgetType.valueOf("LINT"));
         // Assert that no additional Widgets are in fact present.
         assertNumberOfWidgets(vfModule, 1);
         assertNumberOfWidgets(vfModule.vserver, vserverBaseWidgetCount + 2);
@@ -245,7 +244,7 @@ public class TestVfModule {
      * @throws XmlArtifactGenerationException
      *             if the Widget mapping configuration is missing
      */
-    private Widget createNewWidget(Type widgetType) throws XmlArtifactGenerationException {
+    private Widget createNewWidget(WidgetType widgetType) throws XmlArtifactGenerationException {
         return Widget.getWidget(widgetType);
     }
 
@@ -255,7 +254,7 @@ public class TestVfModule {
      * @return new VF Module resource
      */
     private Resource createNewVfModule() {
-        Resource vfModule = new Resource(Type.VFMODULE, true);
+        Resource vfModule = new Resource(WidgetType.valueOf("VFMODULE"), true);
         assertNumberOfWidgets(vfModule, 0);
         return vfModule;
     }
@@ -282,7 +281,7 @@ public class TestVfModule {
      * @throws XmlArtifactGenerationException
      *             if the Widget mapping configuration is missing
      */
-    private void assertAddWidget(Resource vfModule, Type widgetType) throws XmlArtifactGenerationException {
+    private void assertAddWidget(Resource vfModule, WidgetType widgetType) throws XmlArtifactGenerationException {
         assertThat(createNewWidgetForModule(vfModule, widgetType), is(true));
     }
 
@@ -296,7 +295,7 @@ public class TestVfModule {
      * @throws XmlArtifactGenerationException
      *             if the Widget mapping configuration is missing
      */
-    private void assertFailToAddWidget(Resource vfModule, Type widgetType) throws XmlArtifactGenerationException {
+    private void assertFailToAddWidget(Resource vfModule, WidgetType widgetType) throws XmlArtifactGenerationException {
         assertThat(createNewWidgetForModule(vfModule, widgetType), is(false));
     }
 
@@ -311,7 +310,8 @@ public class TestVfModule {
      * @throws XmlArtifactGenerationException
      *             if the Widget mapping configuration is missing
      */
-    private boolean createNewWidgetForModule(Resource vfModule, Type widgetType) throws XmlArtifactGenerationException {
+    private boolean createNewWidgetForModule(Resource vfModule, WidgetType widgetType)
+            throws XmlArtifactGenerationException {
         Widget widget = createNewWidget(widgetType);
         setWidgetAsMember(vfModule, widget);
         return vfModule.addWidget(widget);
@@ -343,7 +343,7 @@ public class TestVfModule {
      *             if the Widget mapping configuration is missing
      */
     private int createVserverForVf(Resource vfModule) throws XmlArtifactGenerationException {
-        Widget vserverWidget = createNewWidget(Type.VSERVER);
+        Widget vserverWidget = createNewWidget(WidgetType.valueOf("VSERVER"));
         assertNumberOfWidgets(vfModule, 0);
         final int initialWidgetCount = addVserverToVf(vfModule, vserverWidget);
         assertNumberOfWidgets(vfModule, 1);
