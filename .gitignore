@@ -1,0 +1,11 @@
+.settings
+.project
+target/
+**/logs/
+**/debug-logs/
+/.pydevproject
+/bin/
+**/.idea/
+*/.idea
+*.iml
+.idea/
