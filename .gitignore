@@ -1,10 +1,13 @@
 .settings
 .project
+.classpath
+.checkstyle
 target/
 **/logs/
 **/debug-logs/
 /.pydevproject
 /bin/
+appconfig-local/
 **/.idea/
 */.idea
 *.iml
