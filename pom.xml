@@ -42,7 +42,7 @@
 
 	<properties>
 		<!-- Spring boot version -->
-		<spring.boot.version>1.5.18.RELEASE</spring.boot.version>
+		<spring.boot.version>1.5.19.RELEASE</spring.boot.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
