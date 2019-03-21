@@ -44,6 +44,16 @@ public class Resource extends Model {
         this.deleteFlag = deleteFlag;
     }
 
+    /**
+     * Copy Constructor.
+     *
+     * @param baseResource
+     */
+    public Resource(Resource baseResource) {
+        this(baseResource.getWidgetType(), baseResource.getDeleteFlag());
+        setModelType(baseResource.getModelType());
+    }
+
     @Override
     public int hashCode() {
         final String uuid = getModelNameVersionId();
@@ -113,10 +123,12 @@ public class Resource extends Model {
         }
     }
 
+    @Override
     public WidgetType getWidgetType() {
         return type;
     }
 
+    @Override
     public String getModelTypeName() {
         return "resource";
     }

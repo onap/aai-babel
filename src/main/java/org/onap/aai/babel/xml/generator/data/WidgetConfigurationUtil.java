@@ -31,8 +31,8 @@ import java.util.Optional;
 import java.util.Properties;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.model.Resource;
-import org.onap.aai.babel.xml.generator.model.WidgetType;
 import org.onap.aai.babel.xml.generator.model.Widget;
+import org.onap.aai.babel.xml.generator.model.WidgetType;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 
 public class WidgetConfigurationUtil {
@@ -66,7 +66,12 @@ public class WidgetConfigurationUtil {
     }
 
     public static Optional<Resource> createModelFromType(String typePrefix) {
-        return Optional.ofNullable(typeToResource.get(typePrefix));
+        Optional<Resource> resource = Optional.ofNullable(typeToResource.get(typePrefix));
+        if (resource.isPresent()) {
+            // Make a copy of the Resource found in the mappings table.
+            return Optional.of(new Resource(resource.get()));
+        }
+        return resource;
     }
 
     public static Widget createWidgetFromType(String widgetType) throws XmlArtifactGenerationException {
