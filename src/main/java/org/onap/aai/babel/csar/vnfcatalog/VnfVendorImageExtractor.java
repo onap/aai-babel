@@ -24,26 +24,26 @@ package org.onap.aai.babel.csar.vnfcatalog;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.service.data.BabelArtifact;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
+import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
-import org.onap.sdc.toscaparser.api.SubstitutionMappings;
 
 /**
  * This class is responsible for extracting Virtual Network Function (VNF) information from a TOSCA 1.1 CSAR package.
@@ -96,6 +96,9 @@ public class VnfVendorImageExtractor {
 
     // The name of the property (for a VNF Configuration type) storing the Vendor Information
     private static final String VNF_CONF_TYPE_PROPERTY_VENDOR_INFO_CONTAINER = "allowed_flavors";
+
+    // Name of property key that contains the Vendor Information
+    private static final String VENDOR_INFO = "vendor_info";
 
     // Name of property key that contains the value of model of the Vendor application
     private static final String VENDOR_MODEL = "vendor_model";
@@ -177,150 +180,124 @@ public class VnfVendorImageExtractor {
      * Build VNF Vendor Image Configurations for the VNF Configuration node (if present) in the CSAR file referenced by
      * the supplied Path.
      *
-     * @param csarFilepath the path to the CSAR file
+     * @param csarFilepath
+     *            the path to the CSAR file
      * @return a List of Vendor Image Configurations
      * @throws SdcToscaParserException
      * @throws ToscaToCatalogException
      * @throws InvalidNumberOfNodesException
      */
     private List<VendorImageConfiguration> createVendorImageConfigurations(String csarFilepath)
-            throws SdcToscaParserException, ToscaToCatalogException, InvalidNumberOfNodesException {
-        List<VendorImageConfiguration> vendorImageConfigurations = new ArrayList<>();
-
+            throws SdcToscaParserException, InvalidNumberOfNodesException {
         ISdcCsarHelper csarHelper = SdcToscaParserFactory.getInstance().getSdcCsarHelper(csarFilepath);
-        NodeTemplate vnfConfigurationNode = findVnfConfigurationNode(csarHelper);
 
-        applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT,
-                String.format("Found VNF Configuration node \"%s\"", vnfConfigurationNode));
+        List<NodeTemplate> serviceVfList = csarHelper.getServiceNodeTemplates().stream() //
+                .filter(filterOnType(SdcTypes.VF)).collect(Collectors.toList());
 
-        if (vnfConfigurationNode != null) {
-            for (NodeTemplate node : csarHelper.getServiceVfList()) {
-                vendorImageConfigurations.addAll(buildVendorImageConfigurations(vnfConfigurationNode, node));
-            }
-        }
-
-        return vendorImageConfigurations;
-    }
-
-    /**
-     * Find VNF configuration node.
-     *
-     * @param csarHelper the csar helper
-     * @return the node template
-     * @throws InvalidNumberOfNodesException
-     */
-    private NodeTemplate findVnfConfigurationNode(ISdcCsarHelper csarHelper) throws InvalidNumberOfNodesException {
-        List<NodeTemplate> nodeTemplates = csarHelper.getServiceNodeTemplateBySdcType(SdcTypes.VF);
-        applicationLogger.debug(nodeTemplates.toString());
-
-        List<NodeTemplate> configNodes = nodeTemplates.stream() //
-                .map(serviceNodeTemplate -> {
-                    String uuid = csarHelper.getNodeTemplateCustomizationUuid(serviceNodeTemplate);
-                    applicationLogger.debug(serviceNodeTemplate + " Customization UUID is " + uuid);
-                    return csarHelper.getVnfConfig(uuid);
-                }) //
+        List<NodeTemplate> vnfConfigs = serviceVfList.stream()
+                .flatMap(vf -> vf.getSubMappingToscaTemplate().getNodeTemplates().stream()
+                        .filter(filterOnType(SdcTypes.VFC)) //
+                        .filter(vfc -> vfc.getType().endsWith("VnfConfiguration")))
                 .filter(Objects::nonNull) //
                 .collect(Collectors.toList());
 
-        if (configNodes.size() > 1) {
-            throw new InvalidNumberOfNodesException("Only one vnf configuration node is allowed however "
-                    + configNodes.size() + " nodes were found in the csar.");
+        if (!vnfConfigs.isEmpty()) {
+            NodeTemplate vnfConfigurationNode = vnfConfigs.get(0);
+
+            applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT,
+                    String.format("Found VNF Configuration node \"%s\"", vnfConfigurationNode));
+
+            if (vnfConfigs.size() > 1) {
+                throw new InvalidNumberOfNodesException("Only one VNF configuration node is allowed however "
+                        + vnfConfigs.size() + " nodes were found in the CSAR.");
+            }
+
+            return createVendorImageConfigurations(serviceVfList, vnfConfigurationNode);
         }
 
-        return configNodes.size() == 1 ? configNodes.get(0) : null;
+        return Collections.emptyList();
     }
 
     /**
-     * Builds the Vendor image configurations.
+     * Build VNF Vendor Image Configurations for each Service VF, using the flavors of the specified VNF Configuration
+     * node.
      *
-     * @param vendorInfoNode the vendor info node
-     * @param node the node
-     * @return the list
-     * @throws ToscaToCatalogException if there are no software versions
+     * @param serviceVfList
+     *            the Service level VF node templates
+     * @param vnfConfigurationNode
+     *            the VNF node template
+     * @return a new List of Vendor Image Configurations
      */
-    private List<VendorImageConfiguration> buildVendorImageConfigurations(NodeTemplate vendorInfoNode,
-            NodeTemplate node) throws ToscaToCatalogException {
-        List<VendorImageConfiguration> vendorImageConfigurations = new ArrayList<>();
+    private List<VendorImageConfiguration> createVendorImageConfigurations(List<NodeTemplate> serviceVfList,
+            NodeTemplate vnfConfigurationNode) {
+        List<VendorImageConfiguration> vendorImageConfigurations = Collections.emptyList();
 
-        List<String> softwareVersions = extractSoftwareVersions(node.getSubMappingToscaTemplate());
+        Object allowedFlavorProperties =
+                vnfConfigurationNode.getPropertyValue(VNF_CONF_TYPE_PROPERTY_VENDOR_INFO_CONTAINER);
 
-        Consumer<? super Pair<String, String>> buildConfigurations =
-                vi -> vendorImageConfigurations.addAll(softwareVersions.stream() //
-                        .map(sv -> (new VendorImageConfiguration(vi.getRight(), vi.getLeft(), sv)))
-                        .collect(Collectors.toList()));
+        if (allowedFlavorProperties instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Collection<Map<String, Map<String, String>>> flavorMaps =
+                    ((Map<?, Map<String, Map<String, String>>>) allowedFlavorProperties).values();
 
-        String resourceVendor = node.getMetaData().getValue("resourceVendor");
+            vendorImageConfigurations = serviceVfList.stream() //
+                    .flatMap(node -> buildVendorImageConfigurations(flavorMaps, node)) //
+                    .collect(Collectors.toList());
 
-        applicationLogger.debug("Resource Vendor " + resourceVendor);
-
-        buildVendorInfo(resourceVendor, vendorInfoNode).forEach(buildConfigurations);
-
-        applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT,
-                "Built " + vendorImageConfigurations.size() + " Vendor Image Configurations");
+            applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT,
+                    "Built " + vendorImageConfigurations.size() + " Vendor Image Configurations");
+        }
 
         return vendorImageConfigurations;
     }
 
-    /**
-     * Builds the Vendor info.
-     *
-     * @param resourceVendor the resource vendor
-     * @param vendorInfoNode the vendor info node
-     * @return the list
-     */
-    @SuppressWarnings("unchecked")
-    private List<Pair<String, String>> buildVendorInfo(String resourceVendor, NodeTemplate vendorInfoNode) {
-        Map<String, Object> otherFlavorProperties =
-                (Map<String, Object>) vendorInfoNode.getPropertyValue(VNF_CONF_TYPE_PROPERTY_VENDOR_INFO_CONTAINER);
-
-        return otherFlavorProperties.keySet().stream()
-                .map(key -> createVendorInfoPair((Map<String, Object>) otherFlavorProperties.get(key), resourceVendor))
-                .collect(Collectors.toList());
+    private Predicate<? super NodeTemplate> filterOnType(SdcTypes sdcType) {
+        return node -> (node.getMetaData() != null
+                && sdcType.getValue().equals(node.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_TYPE)));
     }
 
     /**
-     * Creates the Vendor info pair.
+     * Builds the Vendor Image configurations.
      *
-     * @param otherFlavor the other flavor
-     * @param resourceVendor the resource Vendor
-     * @return the pair
+     * @param flavorMaps
+     *            the collection of flavors and the properties for those flavors
+     * @param vfNodeTemplate
+     *            the node template for the VF
+     *
+     * @return a stream of VendorImageConfiguration objects
      */
-    private Pair<String, String> createVendorInfoPair(Map<String, Object> otherFlavor, String resourceVendor) {
-        @SuppressWarnings("unchecked")
-        String vendorModel = otherFlavor.entrySet().stream() //
-                .filter(entry -> "vendor_info".equals(entry.getKey()))
-                .map(e -> ((Map<String, String>) e.getValue()).get(VENDOR_MODEL)) //
-                .findFirst().orElse(null);
+    private Stream<VendorImageConfiguration> buildVendorImageConfigurations(
+            Collection<Map<String, Map<String, String>>> flavorMaps, NodeTemplate vfNodeTemplate) {
+        String resourceVendor = vfNodeTemplate.getMetaData().getValue("resourceVendor");
+        applicationLogger.debug("Resource Vendor " + resourceVendor);
 
-        applicationLogger.debug("Creating Vendor info pair object for vendorModel = " + vendorModel
-                + " and resourceVendor = " + resourceVendor);
+        List<String> softwareVersions =
+                extractSoftwareVersions(vfNodeTemplate.getSubMappingToscaTemplate().getNodeTemplates());
+        applicationLogger.debug("Software Versions: " + softwareVersions);
 
-        return new ImmutablePair<>(resourceVendor, vendorModel);
+        return flavorMaps.stream() //
+                .map(value -> value.entrySet().stream() //
+                        .filter(entry -> VENDOR_INFO.equals(entry.getKey())) //
+                        .map(e -> e.getValue().get(VENDOR_MODEL)) //
+                        .findFirst()) //
+                .flatMap(vendorModel -> softwareVersions.stream().map(
+                        version -> new VendorImageConfiguration(vendorModel.orElse(null), resourceVendor, version)));
     }
 
     /**
-     * Extract software versions.
+     * Extract Image software versions from node templates.
      *
-     * @param sm the substitution mappings
+     * @param nodeTemplates
+     *            the node templates to search for software versions
      * @return a List of Software Version Strings
-     * @throws ToscaToCatalogException the tosca to catalog exception
      */
     @SuppressWarnings("unchecked")
-    List<String> extractSoftwareVersions(SubstitutionMappings sm) throws ToscaToCatalogException {
-        applicationLogger.debug("Extracting software versions from " + sm);
-
-        List<NodeTemplate> imagesNodes = sm.getNodeTemplates().stream()
-                .filter(nodeTemplate -> nodeTemplate.getPropertyValue(IMAGES) != null).collect(Collectors.toList());
-
-        if (imagesNodes != null && !imagesNodes.isEmpty()) {
-            return imagesNodes.stream()
-                    .flatMap(imagesNode -> ((Map<String, Object>) imagesNode.getPropertyValue(IMAGES)) //
-                            .entrySet().stream())
-                    .map(property -> findSoftwareVersion((Map<String, Object>) property.getValue()))
-                    .collect(Collectors.toList());
-        } else {
-            throw new ToscaToCatalogException("No software versions could be found for this CSAR file");
-        }
+    List<String> extractSoftwareVersions(Collection<NodeTemplate> nodeTemplates) {
+        return nodeTemplates.stream() //
+                .filter(nodeTemplate -> nodeTemplate.getPropertyValue(IMAGES) != null) //
+                .flatMap(imagesNode -> ((Map<String, Object>) imagesNode.getPropertyValue(IMAGES)).entrySet().stream())
+                .map(property -> findSoftwareVersion((Map<String, Object>) property.getValue()))
+                .collect(Collectors.toList());
     }
 
     /**

@@ -95,24 +95,16 @@ public class VnfVendorImageExtractorTest {
         SdcToscaHelper helper = new SdcToscaHelper();
 
         List<String> versions;
-        try {
-            versions = extractor.extractSoftwareVersions(helper.buildMappings());
-            assertThat(versions.size(), is(0));
-        } catch (ToscaToCatalogException e) {
-            assertThat(e.getMessage(), containsString("No software versions"));
-        }
+        versions = extractor.extractSoftwareVersions(helper.buildMappings().getNodeTemplates());
+        assertThat(versions.size(), is(0));
 
         helper.addNodeTemplate();
-        try {
-            versions = extractor.extractSoftwareVersions(helper.buildMappings());
-            assertThat(versions.size(), is(0));
-        } catch (ToscaToCatalogException e) {
-            assertThat(e.getMessage(), containsString("No software versions"));
-        }
+        versions = extractor.extractSoftwareVersions(helper.buildMappings().getNodeTemplates());
+        assertThat(versions.size(), is(0));
 
         helper.addNodeTemplate("string");
         try {
-            versions = extractor.extractSoftwareVersions(helper.buildMappings());
+            versions = extractor.extractSoftwareVersions(helper.buildMappings().getNodeTemplates());
             assertThat(versions.size(), is(0));
         } catch (ClassCastException e) {
             assertThat(e.getMessage(), containsString("java.lang.String"));
@@ -122,7 +114,7 @@ public class VnfVendorImageExtractorTest {
         images.put("image", "string");
         helper.addNodeTemplate(images);
         try {
-            versions = extractor.extractSoftwareVersions(helper.buildMappings());
+            versions = extractor.extractSoftwareVersions(helper.buildMappings().getNodeTemplates());
             assertThat(versions.size(), is(1));
         } catch (ClassCastException e) {
             assertThat(e.getMessage(), containsString("java.lang.String"));
@@ -133,7 +125,7 @@ public class VnfVendorImageExtractorTest {
         images.put("image", image);
         helper = new SdcToscaHelper();
         helper.addNodeTemplate(images);
-        versions = extractor.extractSoftwareVersions(helper.buildMappings());
+        versions = extractor.extractSoftwareVersions(helper.buildMappings().getNodeTemplates());
         assertThat(versions.size(), is(1));
         assertThat(versions.get(0), is("1.2.3"));
     }
