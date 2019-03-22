@@ -40,13 +40,13 @@ import org.onap.aai.babel.config.BabelAuthConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- * Tests @{link AAIMicroServiceAuth}.
+ * Tests {@link AAIMicroServiceAuth}.
  */
 
-public class MicroServiceAuthTest {
+public class TestMicroServiceAuth {
 
     private static final String VALID_ADMIN_USER = "cn=common-name, ou=org-unit, o=org, l=location, st=state, c=us";
-    private static final String authPolicyFile = "auth_policy.json";
+    private static final String TEST_POLICY_FILE = "auth_policy.json";
 
     @Before
     public void setup() {
@@ -108,6 +108,42 @@ public class MicroServiceAuthTest {
     }
 
     /**
+     * Test reloading of the auth policy file after this file has been deleted.
+     *
+     * @throws AAIAuthException
+     *             if the test creates invalid Auth Policy roles
+     * @throws JSONException
+     *             if this test creates an invalid JSON object
+     * @throws IOException
+     *             for I/O failures, e.g. when creating the temporary auth policy file
+     */
+    @Test(expected = AAIAuthException.class)
+    public void testReloadDeletedFile() throws AAIAuthException, JSONException, IOException {
+        File file = createTestPolicyFile();
+        AAIMicroServiceAuthCore.init(file.getAbsolutePath());
+        assertThat(file.delete(), is(true));
+        AAIMicroServiceAuthCore.reloadUsers();
+    }
+
+    /**
+     * Test reloading of the auth policy file after this file has been made invalid.
+     *
+     * @throws AAIAuthException
+     *             if the test creates invalid Auth Policy roles
+     * @throws JSONException
+     *             if this test creates an invalid JSON object
+     * @throws IOException
+     *             for I/O failures, e.g. when creating the temporary auth policy file
+     */
+    @Test(expected = AAIAuthException.class)
+    public void testReloadInvalidFile() throws AAIAuthException, JSONException, IOException {
+        File file = createTestPolicyFile();
+        AAIMicroServiceAuthCore.init(file.getAbsolutePath());
+        writeToFile(file, "not valid JSON content");
+        AAIMicroServiceAuthCore.reloadUsers();
+    }
+
+    /**
      * Test loading of a temporary file created with the specified roles.
      *
      * @throws AAIAuthException
@@ -119,8 +155,7 @@ public class MicroServiceAuthTest {
      */
     @Test
     public void createLocalAuthFile() throws JSONException, AAIAuthException, IOException {
-        JSONObject roles = createRoleObject("role", createUserObject("user"), createFunctionObject("func"));
-        createAuthService(roles);
+        createAuthService();
         assertThat(AAIMicroServiceAuthCore.authorize("nosuchuser", "method:func"), is(false));
         assertThat(AAIMicroServiceAuthCore.authorize("user", "method:func"), is(true));
     }
@@ -140,18 +175,14 @@ public class MicroServiceAuthTest {
     @Test
     public void createLocalAuthFileOnChange()
             throws JSONException, AAIAuthException, IOException, InterruptedException {
-        JSONObject roles = createRoleObject("role", createUserObject("user"), createFunctionObject("func"));
-        File file = createTempPolicyFile(roles);
+        File file = createTestPolicyFile();
 
         BabelAuthConfig babelAuthConfig = new BabelAuthConfig();
         babelAuthConfig.setAuthPolicyFile(file.getAbsolutePath());
         new AAIMicroServiceAuth(babelAuthConfig);
 
         // Make changes to the temp file
-        FileWriter fileWriter = new FileWriter(file);
-        fileWriter.write("");
-        fileWriter.flush();
-        fileWriter.close();
+        writeToFile(file, "");
 
         // Wait for the file to be reloaded
         TimeUnit.SECONDS.sleep(3);
@@ -160,7 +191,7 @@ public class MicroServiceAuthTest {
     }
 
     /**
-     * Test that the default policy file is loaded when a non-existent file is passed to the authorisation class.
+     * Test that the default policy file is loaded when a non-existent file is passed to the authorization class.
      *
      * @throws AAIAuthException
      *             if the Auth Policy cannot be loaded
@@ -218,13 +249,25 @@ public class MicroServiceAuthTest {
 
     private AAIMicroServiceAuth createStandardAuth() throws AAIAuthException {
         BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
-        babelServiceAuthConfig.setAuthPolicyFile(authPolicyFile);
+        babelServiceAuthConfig.setAuthPolicyFile(TEST_POLICY_FILE);
         return new AAIMicroServiceAuth(babelServiceAuthConfig);
+    }
+
+
+    /**
+     * Create a temporary JSON file using some valid test roles.
+     *
+     * @return the new temporary file
+     * @throws IOException
+     *             for I/O errors
+     */
+    private File createTestPolicyFile() throws JSONException, IOException {
+        return createTempPolicyFile(createRoleObject("role", createUserObject("user"), createFunctionObject("func")));
     }
 
     /**
      * Create a test Auth policy JSON file and pass this to the Auth Service.
-     * 
+     *
      * @param roles
      *            the Auth policy JSON content
      * @return a new Auth Service configured with the supplied roles
@@ -232,9 +275,11 @@ public class MicroServiceAuthTest {
      *             for I/O failures
      * @throws AAIAuthException
      *             if the auth policy file cannot be loaded
+     * @throws JSONException
+     *             if this test creates an invalid JSON object
      */
-    private AAIMicroServiceAuth createAuthService(JSONObject roles) throws AAIAuthException, IOException {
-        File file = createTempPolicyFile(roles);
+    private AAIMicroServiceAuth createAuthService() throws AAIAuthException, IOException, JSONException {
+        File file = createTestPolicyFile();
         BabelAuthConfig babelAuthConfig = new BabelAuthConfig();
         babelAuthConfig.setAuthPolicyFile(file.getAbsolutePath());
         return new AAIMicroServiceAuth(babelAuthConfig);
@@ -242,7 +287,7 @@ public class MicroServiceAuthTest {
 
     /**
      * Create a temporary JSON file using the supplied roles.
-     * 
+     *
      * @param roles
      *            the roles to use to populate the new file
      * @return the new temporary file
@@ -252,11 +297,20 @@ public class MicroServiceAuthTest {
     private File createTempPolicyFile(JSONObject roles) throws IOException {
         File file = File.createTempFile("auth-policy", "json");
         file.deleteOnExit();
+        writeToFile(file, roles.toString());
+        return file;
+    }
+
+    /**
+     * @param file
+     * @param text
+     * @throws IOException
+     */
+    private void writeToFile(File file, String text) throws IOException {
         FileWriter fileWriter = new FileWriter(file);
-        fileWriter.write(roles.toString());
+        fileWriter.write(text);
         fileWriter.flush();
         fileWriter.close();
-        return file;
     }
 
     /**
