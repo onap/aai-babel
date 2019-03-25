@@ -125,7 +125,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      * @return the generated Artifacts (containing XML models)
      * @throws XmlArtifactGenerationException
      */
-    private GenerationData generateAllArtifacts(final String serviceVersion, ISdcCsarHelper csarHelper)
+    public GenerationData generateAllArtifacts(final String serviceVersion, ISdcCsarHelper csarHelper)
             throws XmlArtifactGenerationException {
         List<NodeTemplate> serviceNodeTemplates = csarHelper.getServiceNodeTemplates();
         if (serviceNodeTemplates == null) {

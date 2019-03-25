@@ -52,7 +52,7 @@ import org.xml.sax.SAXException;
 /**
  * Tests {@link CsarToXmlConverter}.
  */
-public class CsarToXmlConverterTest {
+public class TestCsarToXmlConverter {
 
     private static final String INCORRECT_CSAR_NAME = "the_name_of_the_csar_file.csar";
     private static final String SERVICE_VERSION = "1.0";
@@ -189,7 +189,7 @@ public class CsarToXmlConverterTest {
 
     /**
      * A Matcher for comparing generated XML Strings with expected XML content.
-     * 
+     *
      * @param expected
      *            the expected XML String
      * @return a new Matcher for comparing XML Strings

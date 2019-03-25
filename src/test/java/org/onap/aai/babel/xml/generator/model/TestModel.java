@@ -74,8 +74,34 @@ public class TestModel {
     }
 
     /**
+     * Test that there is no exception if processing a Model that has no metadata properties.
+     */
+    @Test
+    public void testNullIdentProperties() {
+        createTestModel().populateModelIdentificationInformation(null);
+    }
+
+    /**
+     * Test that an exception occurs if calling code passes an unsupported Widget Type value to the base implementation
+     * of the hasWidgetType() method.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testUnknownWidgetType() {
+        createTestModel().hasWidgetType(null);
+    }
+
+    /**
+     * Create any Model with a valid WidgetType, for method testing.
+     *
+     * @return a valid Model for testing purposes
+     */
+    private Model createTestModel() {
+        return new Resource(WidgetType.valueOf("VSERVER"), false);
+    }
+
+    /**
      * Assert that the TOSCA type String is mapped to the expected Widget Type.
-     * 
+     *
      * @param toscaType
      *            the TOSCA type or prefix
      * @param widgetType
@@ -87,7 +113,7 @@ public class TestModel {
 
     /**
      * Assert that the TOSCA metadata type is mapped to the expected Widget Type.
-     * 
+     *
      * @param toscaType
      *            the name (or name prefix) of the TOSCA type
      * @param metadataType

@@ -37,8 +37,11 @@ import org.onap.aai.babel.util.Resources;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.data.WidgetMapping;
+import org.onap.aai.babel.xml.generator.model.Model;
 import org.onap.aai.babel.xml.generator.model.Resource;
+import org.onap.aai.babel.xml.generator.model.Service;
 import org.onap.aai.babel.xml.generator.model.WidgetType;
+import org.onap.aai.babel.xml.generator.types.ModelType;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
@@ -55,7 +58,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Generator with an invalid artifact generator properties file path.
-     * 
+     *
      * @throws IOException
      *             if an error occurs reading the configuration properties
      */
@@ -67,7 +70,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Generator with an invalid mappings file path.
-     * 
+     *
      * @throws IOException
      *             if the file content could not be read successfully
      */
@@ -78,7 +81,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Generator with no Widget Mappings content.
-     * 
+     *
      * @throws IOException
      *             if the file content could not be read successfully
      */
@@ -90,7 +93,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Generator with invalid Widget Mappings content.
-     * 
+     *
      * @throws IOException
      *             if the file content could not be read successfully
      */
@@ -123,7 +126,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Artifact Generator Widget Mapping config with incomplete data (no type).
-     * 
+     *
      * @throws IOException
      *             if a WidgetMapping is invalid
      */
@@ -136,7 +139,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Artifact Generator Widget Mapping config with invalid data (type value).
-     * 
+     *
      * @throws IOException
      *             if a WidgetMapping is invalid
      */
@@ -149,7 +152,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Artifact Generator Widget Mapping config with incomplete data (no widget name).
-     * 
+     *
      * @throws IOException
      *             if a WidgetMapping is invalid
      */
@@ -161,8 +164,32 @@ public class TestArtifactGeneratorToscaParser {
     }
 
     /**
+     * Create a Resource with a Widget model type and add this to a Service. Note that there are no test CSAR files
+     * which require this functionality, but the code path exists to support it.
+     *
+     * @throws IOException
+     *             if the widget mappings are not loaded
+     * @throws XmlArtifactGenerationException
+     *             if there is no configuration defined for the test resource's widget type
+     */
+    @Test
+    public void testAddWidgetToService() throws IOException, XmlArtifactGenerationException {
+        ArtifactTestUtils testUtils = new ArtifactTestUtils();
+        testUtils.loadWidgetMappings();
+        testUtils.loadWidgetToUuidMappings();
+
+        Model serviceModel = new Service();
+        Resource resourceModel = new Resource(WidgetType.valueOf("VF"), false);
+        resourceModel.setModelType(ModelType.WIDGET);
+
+        ISdcCsarHelper helper = Mockito.mock(ISdcCsarHelper.class);
+        ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(helper);
+        parser.addRelatedModel(serviceModel, resourceModel);
+    }
+
+    /**
      * Process a dummy Group object for a Service Resource.
-     * 
+     *
      * @throws XmlArtifactGenerationException
      *             if there is no configuration defined for a member Widget of an instance group
      * @throws IOException

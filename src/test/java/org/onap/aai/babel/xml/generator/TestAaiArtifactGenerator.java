@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.aai.babel.parser;
+package org.onap.aai.babel.xml.generator;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -31,21 +31,29 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.aai.babel.csar.extractor.InvalidArchiveException;
+import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
 import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.util.Resources;
 import org.onap.aai.babel.xml.generator.api.AaiArtifactGenerator;
 import org.onap.aai.babel.xml.generator.data.AdditionalParams;
 import org.onap.aai.babel.xml.generator.data.GenerationData;
+import org.onap.aai.babel.xml.generator.model.WidgetType;
+import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
+import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 
 /**
  * Direct tests of the {@link AaiArtifactGenerator} to improve code coverage.
  */
-public class TestToscaParser {
+public class TestAaiArtifactGenerator {
+
+    private ArtifactTestUtils testUtils;
 
     @Before
     public void setup() {
-        new ArtifactTestUtils().setGeneratorSystemProperties();
+        testUtils = new ArtifactTestUtils();
+        testUtils.setGeneratorSystemProperties();
     }
 
     @Test
@@ -66,8 +74,32 @@ public class TestToscaParser {
     }
 
     /**
+     * Test that an Exception is thrown when a Widget Type (such as ALLOTTED_RESOURCE) required by Babel is not present
+     * in the WidgetType dynamic enumeration.
+     *
+     * @throws SdcToscaParserException
+     * @throws IOException
+     * @throws XmlArtifactGenerationException
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testParserWithIncompleteMappings()
+            throws SdcToscaParserException, IOException, XmlArtifactGenerationException {
+        testUtils.loadWidgetMappings();
+        testUtils.loadWidgetToUuidMappings();
+
+        AaiArtifactGenerator artifactGenerator = new AaiArtifactGenerator();
+        WidgetType.clearElements(); // Remove all WidgetTypes so that the generator fails
+
+        ISdcCsarHelper csarHelper = SdcToscaParserFactory.getInstance()
+                .getSdcCsarHelper(TestAaiArtifactGenerator.class.getClassLoader()
+                        .getResource(ArtifactTestUtils.CSAR_INPUTS_FOLDER + CsarTest.VNF_VENDOR_CSAR.getName())
+                        .getFile().toString());
+        artifactGenerator.generateAllArtifacts("1.0", csarHelper);
+    }
+
+    /**
      * Invoke the generator with a sample CSAR file.
-     * 
+     *
      * @return the generated AAI Artifacts
      * @throws InvalidArchiveException
      *             if the test CSAR file is invalid

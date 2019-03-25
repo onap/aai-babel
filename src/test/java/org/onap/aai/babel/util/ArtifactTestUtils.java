@@ -52,9 +52,9 @@ import org.xml.sax.SAXException;
  */
 public class ArtifactTestUtils {
 
+    public static final String CSAR_INPUTS_FOLDER = "compressedArtifacts/";
     private static final String JSON_REQUESTS_FOLDER = "jsonFiles/";
     private static final String JSON_RESPONSES_FOLDER = "response/";
-    private static final String CSAR_INPUTS_FOLDER = "compressedArtifacts/";
 
     /**
      * Initialize System Properties for test configuration files.
@@ -69,7 +69,7 @@ public class ArtifactTestUtils {
 
     /**
      * Load the Widget to UUID mappings from the Artifact Generator Properties (resource).
-     * 
+     *
      * @throws IOException
      *             if the properties file is not loaded
      */
@@ -79,7 +79,7 @@ public class ArtifactTestUtils {
 
     /**
      * Load the Widget type mappings (resource).
-     * 
+     *
      * @throws IOException
      *             if the configuration file is not loaded
      */
@@ -158,7 +158,7 @@ public class ArtifactTestUtils {
 
     /**
      * Create Properties from the content of the named resource (e.g. a file on the classpath).
-     * 
+     *
      * @param resourceName
      *            the resource name
      * @return Properties loaded from the named resource
