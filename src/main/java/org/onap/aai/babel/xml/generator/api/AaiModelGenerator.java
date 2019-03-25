@@ -138,8 +138,7 @@ public class AaiModelGenerator {
      * @throws XmlArtifactGenerationException
      */
     private ModelElement createWidgetRelationshipModelElement(Model model) throws XmlArtifactGenerationException {
-        return createRelationshipModelElement(model.getDeleteFlag(), model.getWidgetId(),
-                model.getWidgetInvariantId());
+        return createRelationshipModelElement(model.getDeleteFlag(), model.getWidgetId(), model.getWidgetInvariantId());
     }
 
     /**

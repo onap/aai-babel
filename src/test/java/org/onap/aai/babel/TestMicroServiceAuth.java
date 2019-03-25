@@ -302,9 +302,14 @@ public class TestMicroServiceAuth {
     }
 
     /**
+     * Write String content to a file, flush and close.
+     *
      * @param file
+     *            the file to write to
      * @param text
+     *            the String content to write to the file
      * @throws IOException
+     *             if the file cannot be opened for writing, or an I/O error occurs
      */
     private void writeToFile(File file, String text) throws IOException {
         FileWriter fileWriter = new FileWriter(file);
@@ -314,7 +319,7 @@ public class TestMicroServiceAuth {
     }
 
     /**
-     * Assert authorisation results for an admin user based on the test policy file.
+     * Assert authorization results for an admin user based on the test policy file.
      *
      * @param auth
      *            the Auth Service to test

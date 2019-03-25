@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator;
 
 import java.util.List;
@@ -30,8 +31,10 @@ public interface ArtifactGenerator {
     /**
      * Generate a {@link List} of {@link BabelArtifact}s from the Artifacts obtained from the CSAR
      *
-     * @param csarArchive original CSAR file (zip format)
-     * @param csarArtifacts YAML artifacts extracted from the CSAR file
+     * @param csarArchive
+     *            original CSAR file (zip format)
+     * @param csarArtifacts
+     *            YAML artifacts extracted from the CSAR file
      * @return generated {@link BabelArtifact}s
      * @throws XmlArtifactGenerationException
      */

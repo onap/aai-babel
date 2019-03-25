@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator.api;
 
 import java.util.List;
@@ -25,15 +26,20 @@ import java.util.Map;
 import org.onap.aai.babel.xml.generator.data.Artifact;
 import org.onap.aai.babel.xml.generator.data.GenerationData;
 
-/** Artifact Generation. Note that there is only one implementation of this interface currently. */
-@FunctionalInterface
+/**
+ * Artifact Generation. Note that there is only one implementation of this interface currently.
+ *
+ */
+@FunctionalInterface // for SONAR only
 public interface ArtifactGenerator {
 
     /**
      * Implementation of the method to generate AAI artifacts.
      *
-     * @param csarArchive original CSAR (zip format)
-     * @param input List of input tosca files
+     * @param csarArchive
+     *            original CSAR (zip format)
+     * @param input
+     *            List of input tosca files
      * @param additionalParams
      * @return Translated/Error data as a {@link GenerationData} object
      */

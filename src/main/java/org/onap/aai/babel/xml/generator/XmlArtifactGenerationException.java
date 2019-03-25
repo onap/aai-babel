@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,22 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.xml.generator;
 
-/** This class represents an exception encountered when generating an Artifact. */
+/**
+ * This class represents a fatal exception encountered when generating an Artifact.
+ *
+ */
 public class XmlArtifactGenerationException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * Constructor for an instance of this exception with just a message.
+     * Constructor for an instance of this exception with a message for the caller.
      *
-     * @param message information about the exception
+     * @param message
+     *            information about the exception
      */
     public XmlArtifactGenerationException(String message) {
         super(message);

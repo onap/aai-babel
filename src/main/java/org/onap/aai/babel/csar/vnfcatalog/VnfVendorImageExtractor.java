@@ -129,10 +129,12 @@ public class VnfVendorImageExtractor {
      * "Deployment Flavors" x "ImageInfo"
      * </p>
      *
-     * @param csar compressed format that stores multiple TOSCA files and in particular a vnfConfiguration
+     * @param csar
+     *            compressed format that stores multiple TOSCA files and in particular a vnfConfiguration
      * @return BabelArtifact VendorImageConfiguration objects created during processing represented as the Babel service
      *         public data structure
-     * @throws ToscaToCatalogException if the CSAR content is not valid
+     * @throws ToscaToCatalogException
+     *             if the CSAR content is not valid
      */
     public BabelArtifact extract(byte[] csar) throws ToscaToCatalogException {
         StopWatch stopwatch = new StopWatch();
@@ -165,9 +167,11 @@ public class VnfVendorImageExtractor {
     /**
      * Creates a temporary file to store the CSAR content.
      *
-     * @param bytes the CSAR content
+     * @param bytes
+     *            the CSAR content
      * @return Path to a temporary file containing the CSAR bytes
-     * @throws IOException if an I/O error occurs or the temporary-file directory does not exist
+     * @throws IOException
+     *             if an I/O error occurs or the temporary-file directory does not exist
      */
     private Path createTempFile(byte[] bytes) throws IOException {
         Path path = Files.createTempFile("temp", ".csar");
@@ -191,7 +195,7 @@ public class VnfVendorImageExtractor {
             throws SdcToscaParserException, InvalidNumberOfNodesException {
         ISdcCsarHelper csarHelper = SdcToscaParserFactory.getInstance().getSdcCsarHelper(csarFilepath);
 
-        List<NodeTemplate> serviceVfList = csarHelper.getServiceNodeTemplates().stream() //
+        List<NodeTemplate> serviceVfList = csarHelper.getServiceNodeTemplates().stream()
                 .filter(filterOnType(SdcTypes.VF)).collect(Collectors.toList());
 
         List<NodeTemplate> vnfConfigs = serviceVfList.stream()
@@ -301,16 +305,18 @@ public class VnfVendorImageExtractor {
     }
 
     /**
-     * Get the first software version value from the properties Map.
+     * Get the first software_version value from the properties Map.
      *
-     * @param image the properties Map
-     * @return the software version value as a String
+     * @param properties
+     *            the properties map containing the software_version key
+     * @return the software_version value as a String, or else null
      */
-    private String findSoftwareVersion(Map<String, Object> image) {
-        applicationLogger.debug("Finding " + SOFTWARE_VERSION + " from " + image);
+    private String findSoftwareVersion(Map<String, Object> properties) {
+        applicationLogger.debug("Finding " + SOFTWARE_VERSION + " from " + properties);
 
-        return (String) image.entrySet().stream()//
+        return properties.entrySet().stream() //
                 .filter(entry -> SOFTWARE_VERSION.equals(entry.getKey())) //
-                .map(Entry::getValue).findFirst().orElse(null);
+                .map(Entry::getValue).findFirst() //
+                .map(Object::toString).orElse(null);
     }
 }
