@@ -51,35 +51,49 @@ public class Widget extends Model {
 
     /**
      * Copy Constructor.
-     * 
+     *
      * @param baseWidget
      * @throws XmlArtifactGenerationException
+     *             if there is no widget mapping defined for any of the VSERVER child types
      */
     public Widget(Widget baseWidget) throws XmlArtifactGenerationException {
         this(baseWidget.getWidgetType(), baseWidget.getName(), baseWidget.getDeleteFlag());
-        if (type == WidgetType.valueOf("VSERVER")) {
-            widgets.add(getWidget(WidgetType.valueOf("FLAVOR")));
-            widgets.add(getWidget(WidgetType.valueOf("IMAGE")));
-            widgets.add(getWidget(WidgetType.valueOf("TENANT")));
-            widgets.add(getWidget(WidgetType.valueOf("VFC")));
+        if (this.hasWidgetType("VSERVER")) {
+            widgets.add(createWidget("FLAVOR"));
+            widgets.add(createWidget("IMAGE"));
+            widgets.add(createWidget("TENANT"));
+            widgets.add(createWidget("VFC"));
         }
     }
 
     /**
-     * Gets widget.
+     * Creates a new widget of the specified type.
      *
-     * @param typeString
-     * 
+     * @param type
+     *            String value of the Widget Type
      * @return a new widget of the specified type
      * @throws XmlArtifactGenerationException
-     *             if there is no configuration defined for the specified type
+     *             if the configured widget mappings do not support the specified type
      */
-    public static Widget getWidget(WidgetType type) throws XmlArtifactGenerationException {
-        Widget widget = WidgetConfigurationUtil.createWidgetFromType(type.toString());
+    public static Widget createWidget(String type) throws XmlArtifactGenerationException {
+        Widget widget = WidgetConfigurationUtil.createWidgetFromType(type);
         if (widget == null) {
             throw new XmlArtifactGenerationException("No widget type is defined for " + type);
         }
         return widget;
+    }
+
+    /**
+     * Creates a new widget of the specified type.
+     *
+     * @param type
+     *            the Widget Type
+     * @return a new widget of the specified type
+     * @throws XmlArtifactGenerationException
+     *             if there is no configuration defined for the specified type
+     */
+    public static Widget createWidget(WidgetType type) throws XmlArtifactGenerationException {
+        return createWidget(type.toString());
     }
 
     public String getId() {

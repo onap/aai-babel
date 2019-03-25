@@ -215,7 +215,7 @@ public abstract class Model {
      * @throws XmlArtifactGenerationException
      */
     public String getWidgetId() throws XmlArtifactGenerationException {
-        return Widget.getWidget(getWidgetType()).getId();
+        return Widget.createWidget(getWidgetType()).getId();
     }
 
     /**
@@ -225,7 +225,7 @@ public abstract class Model {
      * @throws XmlArtifactGenerationException
      */
     public String getWidgetInvariantId() throws XmlArtifactGenerationException {
-        return Widget.getWidget(getWidgetType()).getWidgetId();
+        return Widget.createWidget(getWidgetType()).getWidgetId();
     }
 
     /**

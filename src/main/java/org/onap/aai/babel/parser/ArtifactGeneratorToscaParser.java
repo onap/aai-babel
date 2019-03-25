@@ -209,7 +209,7 @@ public class ArtifactGeneratorToscaParser {
         if (relation.getModelType() == ModelType.RESOURCE) {
             model.addResource(relation);
         } else {
-            model.addWidget(Widget.getWidget(relation.getWidgetType()));
+            model.addWidget(Widget.createWidget(relation.getWidgetType()));
         }
     }
 
@@ -228,10 +228,11 @@ public class ArtifactGeneratorToscaParser {
      * @param model
      * @param serviceNode
      * @throws XmlArtifactGenerationException
+     *             if the configured widget mappings do not support the widget type of a VF Module
      */
     public void processVfModules(List<Resource> resources, Model resourceModel, NodeTemplate serviceNode)
             throws XmlArtifactGenerationException {
-        // Get the customisation UUID for each VF node and use it to get its Groups
+        // Get the customization UUID for each VF node and use it to get its Groups
         String uuid = csarHelper.getNodeTemplateCustomizationUuid(serviceNode);
         List<Group> serviceGroups = csarHelper.getVfModulesByVf(uuid);
 
@@ -341,6 +342,15 @@ public class ArtifactGeneratorToscaParser {
         return resources;
     }
 
+    /**
+     * @param resources
+     * @param vfModel
+     * @param groupDefinition
+     * @param serviceNode
+     * @param groupModel
+     * @throws XmlArtifactGenerationException
+     *             if the configured widget mappings do not support the widget type of a VF Module
+     */
     private void processVfModule(List<Resource> resources, Model vfModel, Group groupDefinition,
             NodeTemplate serviceNode, Resource groupModel) throws XmlArtifactGenerationException {
         groupModel.populateModelIdentificationInformation(
@@ -355,6 +365,12 @@ public class ArtifactGeneratorToscaParser {
         }
     }
 
+    /**
+     * @param groupModel
+     * @param members
+     * @throws XmlArtifactGenerationException
+     *             if the configured widget mappings do not support the widget type of a member
+     */
     private void processVfModuleGroup(Resource groupModel, List<NodeTemplate> members)
             throws XmlArtifactGenerationException {
         if (members != null && !members.isEmpty()) {
@@ -371,8 +387,11 @@ public class ArtifactGeneratorToscaParser {
      * Process the Widget members of a VF Module Group
      *
      * @param group
+     *            the group resource model
      * @param member
+     *            the group member to process
      * @throws XmlArtifactGenerationException
+     *             if the configured widget mappings do not support the widget type of the member
      */
     private void processGroupMembers(Resource group, NodeTemplate member) throws XmlArtifactGenerationException {
         Resource resource = Model.getModelFor(member.getType());
@@ -385,7 +404,7 @@ public class ArtifactGeneratorToscaParser {
         }
 
         if (resource.getModelType() == ModelType.WIDGET) {
-            Widget widget = Widget.getWidget(resource.getWidgetType());
+            Widget widget = Widget.createWidget(resource.getWidgetType());
             widget.addKey(member.getName());
             // Add the widget element encountered to the Group model
             group.addWidget(widget);

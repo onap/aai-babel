@@ -96,20 +96,20 @@ public class TestVfModule {
     /**
      * Add a new Widget to a VF Module, where the Widget is NOT set as a member. N.B. For the current VF Module
      * implementation the actual Widget type is not important.
-     * 
+     *
      * @throws XmlArtifactGenerationException
      *             if the Widget mapping configuration is missing
      */
     @Test
     public void testNonMemberWidgetToVf() throws XmlArtifactGenerationException {
         Resource vfModule = createNewVfModule();
-        assertThat(vfModule.addWidget(createNewWidget(WidgetType.valueOf("SERVICE"))), is(false));
+        assertThat(vfModule.addWidget(Widget.createWidget("SERVICE")), is(false));
         assertNumberOfWidgets(vfModule, 0);
     }
 
     /**
      * OAM Network is specifically excluded from a VF Module.
-     * 
+     *
      * @throws XmlArtifactGenerationException
      *             if the Widget mapping configuration is missing
      */
@@ -122,12 +122,12 @@ public class TestVfModule {
 
     /**
      * Add a Volume Widget to a VF Module via a vserver Widget.
-     * 
+     *
      * <li>Create a VF Module</li>
      * <li>Add a Volume Widget</li>
      * <li>Add a vserver Widget</li>
      * <li>Check that the Volume Widget appears under the vserver</li>
-     * 
+     *
      * @throws XmlArtifactGenerationException
      *             if the Widget mapping configuration is missing
      */
@@ -157,12 +157,12 @@ public class TestVfModule {
 
     /**
      * Add an L-Interface Widget to a VF Module via a vserver Widget.
-     * 
+     *
      * <li>Create a VF Module</li>
      * <li>Add an L-Interface Widget</li>
      * <li>Add a vserver Widget</li>
      * <li>Check that the L-Interface Widget appears under the vserver</li>
-     * 
+     *
      * @throws XmlArtifactGenerationException
      *             if the Widget mapping configuration is missing
      */
@@ -192,13 +192,13 @@ public class TestVfModule {
 
     /**
      * Add a Volume and an L-Interface Widget to a VF Module via a vserver Widget.
-     * 
+     *
      * <li>Create a VF Module</li>
      * <li>Add a Volume Widget</li>
      * <li>Add an L-Interface Widget</li>
      * <li>Add a vserver Widget</li>
      * <li>Check that both Widgets appear under the vserver</li>
-     * 
+     *
      * @throws XmlArtifactGenerationException
      *             if the Widget mapping configuration is missing
      */
@@ -233,19 +233,6 @@ public class TestVfModule {
 
     private void assertNumberOfWidgets(Model model, int numberOfWidgets) {
         assertThat(model.getWidgets(), hasSize(numberOfWidgets));
-    }
-
-    /**
-     * Use the static Factory method to create a new Widget.
-     *
-     * @param widgetType
-     *            type of Widget to create
-     * @return a new Widget
-     * @throws XmlArtifactGenerationException
-     *             if the Widget mapping configuration is missing
-     */
-    private Widget createNewWidget(WidgetType widgetType) throws XmlArtifactGenerationException {
-        return Widget.getWidget(widgetType);
     }
 
     /**
@@ -312,7 +299,7 @@ public class TestVfModule {
      */
     private boolean createNewWidgetForModule(Resource vfModule, WidgetType widgetType)
             throws XmlArtifactGenerationException {
-        Widget widget = createNewWidget(widgetType);
+        Widget widget = Widget.createWidget(widgetType);
         setWidgetAsMember(vfModule, widget);
         return vfModule.addWidget(widget);
     }
@@ -343,7 +330,7 @@ public class TestVfModule {
      *             if the Widget mapping configuration is missing
      */
     private int createVserverForVf(Resource vfModule) throws XmlArtifactGenerationException {
-        Widget vserverWidget = createNewWidget(WidgetType.valueOf("VSERVER"));
+        Widget vserverWidget = Widget.createWidget("VSERVER");
         assertNumberOfWidgets(vfModule, 0);
         final int initialWidgetCount = addVserverToVf(vfModule, vserverWidget);
         assertNumberOfWidgets(vfModule, 1);
@@ -352,7 +339,7 @@ public class TestVfModule {
 
     /**
      * Add the specified vserver to the specified VF Module.
-     * 
+     *
      * @param vfModule
      *            the VF Module to update
      * @param vserverWidget

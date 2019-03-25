@@ -2,9 +2,9 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
- * ================================================================================
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
+ * ===============================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,12 +18,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.csar.vnfcatalog;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

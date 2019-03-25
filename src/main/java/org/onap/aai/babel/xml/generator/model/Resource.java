@@ -165,10 +165,10 @@ public class Resource extends Model {
     private void addVserverWidget(Widget widget) throws XmlArtifactGenerationException {
         vserver = widget;
         if (addlintf) {
-            vserver.addWidget(Widget.getWidget(WidgetType.valueOf("LINT")));
+            vserver.addWidget(Widget.createWidget("LINT"));
         }
         if (addvolume) {
-            vserver.addWidget(Widget.getWidget(WidgetType.valueOf("VOLUME")));
+            vserver.addWidget(Widget.createWidget("VOLUME"));
         }
     }
 

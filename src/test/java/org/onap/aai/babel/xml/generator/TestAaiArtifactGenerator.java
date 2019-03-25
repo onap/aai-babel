@@ -78,8 +78,11 @@ public class TestAaiArtifactGenerator {
      * in the WidgetType dynamic enumeration.
      *
      * @throws SdcToscaParserException
+     *             if the test CSAR file is invalid
      * @throws IOException
+     *             if the widget mappings config cannot be loaded
      * @throws XmlArtifactGenerationException
+     *             if the configured widget mappings do not support processed widget type(s)
      */
     @Test(expected = IllegalArgumentException.class)
     public void testParserWithIncompleteMappings()

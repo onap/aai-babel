@@ -124,6 +124,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      *            interface to the TOSCA parser
      * @return the generated Artifacts (containing XML models)
      * @throws XmlArtifactGenerationException
+     *             if the configured widget mappings do not support processed widget type(s)
      */
     public GenerationData generateAllArtifacts(final String serviceVersion, ISdcCsarHelper csarHelper)
             throws XmlArtifactGenerationException {
@@ -182,6 +183,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      * @param serviceModel
      * @return the generated Models
      * @throws XmlArtifactGenerationException
+     *             if the configured widget mappings do not support processed widget type(s)
      */
     private List<Resource> generateResourceModels(ISdcCsarHelper csarHelper, List<NodeTemplate> serviceNodeTemplates,
             Service serviceModel) throws XmlArtifactGenerationException {
@@ -201,6 +203,16 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         return resources;
     }
 
+    /**
+     * @param csarHelper
+     * @param serviceModel
+     * @param resources
+     * @param serviceGroups
+     * @param parser
+     * @param nodeTemplate
+     * @throws XmlArtifactGenerationException
+     *             if the configured widget mappings do not support processed widget type(s)
+     */
     private void generateModelFromNodeTemplate(ISdcCsarHelper csarHelper, Service serviceModel,
             List<Resource> resources, final List<Group> serviceGroups, ArtifactGeneratorToscaParser parser,
             NodeTemplate nodeTemplate) throws XmlArtifactGenerationException {
@@ -250,6 +262,14 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         return model;
     }
 
+    /**
+     * @param csarHelper
+     * @param resources
+     * @param parser
+     * @param nodeTemplate
+     * @throws XmlArtifactGenerationException
+     *             if the configured widget mappings do not support processed widget type(s)
+     */
     private void generateResourceModel(ISdcCsarHelper csarHelper, List<Resource> resources,
             ArtifactGeneratorToscaParser parser, NodeTemplate nodeTemplate) throws XmlArtifactGenerationException {
         Resource resourceModel = getModelFor(parser, nodeTemplate);
@@ -268,7 +288,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         }
 
         if (parser.hasSubCategoryTunnelXConnect(serviceMetadata) && parser.hasAllottedResource(serviceMetadata)) {
-            resourceModel.addWidget(Widget.getWidget(WidgetType.valueOf("TUNNEL_XCONNECT")));
+            resourceModel.addWidget(Widget.createWidget("TUNNEL_XCONNECT"));
         }
 
         resources.addAll(parser.processInstanceGroups(resourceModel, nodeTemplate));

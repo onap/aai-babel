@@ -74,6 +74,15 @@ public class WidgetConfigurationUtil {
         return resource;
     }
 
+    /**
+     * Create a new Widget object according to the supplied Widget Type.
+     *
+     * @param widgetType
+     *            a String identifying the type of Widget to create
+     * @return a new Widget object from the defined widget type, or else null
+     * @throws XmlArtifactGenerationException
+     *             if there is an internal error creating the Widget because of the defined widget mappings
+     */
     public static Widget createWidgetFromType(String widgetType) throws XmlArtifactGenerationException {
         Optional<Widget> widget = Optional.ofNullable(typeToWidget.get(widgetType));
         if (widget.isPresent()) {
@@ -96,7 +105,7 @@ public class WidgetConfigurationUtil {
         WidgetType.validateElements();
     }
 
-    public static void setWidgetMappings(List<WidgetMapping> mappings) throws IOException  {
+    public static void setWidgetMappings(List<WidgetMapping> mappings) throws IOException {
         for (WidgetMapping mapping : mappings) {
             ModelType modelType = Optional.ofNullable(mapping.type).map(String::toUpperCase)
                     .map(s -> Enums.getIfPresent(ModelType.class, s).orNull()).orElse(null);
