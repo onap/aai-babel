@@ -84,6 +84,7 @@ public class WidgetConfigurationUtil {
     }
 
     public static void setWidgetTypes(List<WidgetTypeConfig> types) {
+        WidgetType.clearElements();
         for (WidgetTypeConfig type : types) {
             if (type.type == null || type.name == null) {
                 throw new IllegalArgumentException("Incomplete widget type specified: " + type);

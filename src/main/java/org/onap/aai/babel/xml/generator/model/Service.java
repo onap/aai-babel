@@ -33,6 +33,7 @@ public class Service extends Model {
         return WidgetType.valueOf("SERVICE");
     }
 
+    @Override
     public String getModelTypeName() {
         return "service";
     }

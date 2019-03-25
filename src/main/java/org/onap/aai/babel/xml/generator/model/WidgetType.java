@@ -52,6 +52,10 @@ public class WidgetType {
         elements.put(name, this);
     }
 
+    public static void clearElements() {
+        elements.clear();
+    }
+
     public static void validateElements() {
         mandatoryElements.forEach(WidgetType::valueOf);
     }
@@ -59,7 +63,7 @@ public class WidgetType {
     public static WidgetType valueOf(String typeName) {
         WidgetType type = elements.get(typeName);
         if (type == null) {
-            throw new IllegalArgumentException("Unknown type " + typeName);
+            throw new IllegalArgumentException("Unknown WidgetType " + typeName);
         }
         return type;
     }

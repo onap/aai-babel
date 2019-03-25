@@ -105,15 +105,15 @@ public class Resource extends Model {
     public boolean addWidget(Widget widget) throws XmlArtifactGenerationException {
         if (type == WidgetType.valueOf("VFMODULE")) {
             if (widget.memberOf(members)) {
-                if (vserver == null && widget.getWidgetType() == WidgetType.valueOf("VSERVER")) {
+                if (vserver == null && widget.hasWidgetType("VSERVER")) {
                     addVserverWidget(widget);
-                } else if (widget.getWidgetType() == WidgetType.valueOf("LINT")) {
+                } else if (widget.hasWidgetType("LINT")) {
                     return addLIntfWidget(widget);
-                } else if (widget.getWidgetType() == WidgetType.valueOf("VOLUME")) {
+                } else if (widget.hasWidgetType("VOLUME")) {
                     addVolumeWidget(widget);
                     return true;
                 }
-                if (widget.getWidgetType() != WidgetType.valueOf("OAM_NETWORK")) {
+                if (!widget.hasWidgetType("OAM_NETWORK")) {
                     return widgets.add(widget);
                 }
             }

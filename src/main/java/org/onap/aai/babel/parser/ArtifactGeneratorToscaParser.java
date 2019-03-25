@@ -95,7 +95,7 @@ public class ArtifactGeneratorToscaParser {
 
     /**
      * Initializes the Widget to UUID mapping configuration.
-     * 
+     *
      * @throws IOException
      *             if an error occurs reading the configuration properties
      */
@@ -119,7 +119,7 @@ public class ArtifactGeneratorToscaParser {
 
     /**
      * Initializes the group filtering and TOSCA to Widget mapping configuration.
-     * 
+     *
      * @param configLocation
      *            the pathname to the JSON mappings file
      * @throws IOException
@@ -198,7 +198,7 @@ public class ArtifactGeneratorToscaParser {
 
     /**
      * Add the resource/widget to the specified model.
-     * 
+     *
      * @param model
      * @param relation
      *            resource or widget model to add
@@ -238,7 +238,7 @@ public class ArtifactGeneratorToscaParser {
         // Process each VF Group
         for (Group serviceGroup : serviceGroups) {
             Model groupModel = Model.getModelFor(serviceGroup.getType());
-            if (groupModel.getWidgetType() == WidgetType.valueOf("VFMODULE")) {
+            if (groupModel.hasWidgetType("VFMODULE")) {
                 processVfModule(resources, resourceModel, serviceGroup, serviceNode, (Resource) groupModel);
             }
         }
@@ -258,7 +258,7 @@ public class ArtifactGeneratorToscaParser {
             Resource model = Model.getModelFor(nodeTypeName, metaDataType);
 
             if (metadata != null && hasAllottedResource(metadata.getAllProperties())
-                    && model.getWidgetType() == WidgetType.valueOf("VSERVER")) {
+                    && model.hasWidgetType("VSERVER")) {
                 model = new Resource(WidgetType.valueOf("ALLOTTED_RESOURCE"), false);
                 Map<String, Object> props = new HashMap<>();
                 props.put("providingService", true);
@@ -268,7 +268,7 @@ public class ArtifactGeneratorToscaParser {
             foundProvidingService |= processModel(resourceModel, metadata, model, resourceNodeTemplate.getProperties());
         }
 
-        if (resourceModel.getWidgetType() == WidgetType.valueOf("ALLOTTED_RESOURCE") && !foundProvidingService) {
+        if (resourceModel.hasWidgetType("ALLOTTED_RESOURCE") && !foundProvidingService) {
             final String modelInvariantId = resourceModel.getModelId();
             throw new IllegalArgumentException(String.format(GENERATOR_AAI_PROVIDING_SERVICE_MISSING,
                     modelInvariantId == null ? "<null ID>" : modelInvariantId));
@@ -369,7 +369,7 @@ public class ArtifactGeneratorToscaParser {
 
     /**
      * Process the Widget members of a VF Module Group
-     * 
+     *
      * @param group
      * @param member
      * @throws XmlArtifactGenerationException
@@ -379,7 +379,7 @@ public class ArtifactGeneratorToscaParser {
 
         log.debug(member.getType() + " mapped to " + resource);
 
-        if (resource.getWidgetType() == WidgetType.valueOf("L3_NET")) {
+        if (resource.hasWidgetType("L3_NET")) {
             // An l3-network inside a vf-module is treated as a Widget
             resource.setModelType(ModelType.WIDGET);
         }
@@ -426,11 +426,11 @@ public class ArtifactGeneratorToscaParser {
         if (foundProvidingService) {
             processProvidingService(resourceModel, resourceNode, nodeProperties);
         } else if (resourceNode != null && resourceNode.getModelType() == ModelType.RESOURCE
-                && resourceNode.getWidgetType() != WidgetType.valueOf("L3_NET")) {
+                && !resourceNode.hasWidgetType("L3_NET")) {
             if (metaData != null) {
                 resourceNode.populateModelIdentificationInformation(metaData.getAllProperties());
             }
-            resourceModel.addResource((Resource) resourceNode);
+            resourceModel.addResource(resourceNode);
         }
         return foundProvidingService;
     }

@@ -157,9 +157,23 @@ public abstract class Model {
 
     public abstract boolean addWidget(Widget resource) throws XmlArtifactGenerationException;
 
+    /**
+     * @return the Widget Type of this model.
+     */
     public abstract WidgetType getWidgetType();
 
     public abstract String getModelTypeName();
+
+    /**
+     * Check whether the model's Widget Type matches the supplied type.
+     *
+     * @param type
+     *            the Widget Type to compare
+     * @return true if the Widget Type of this model matches the supplied type
+     */
+    public boolean hasWidgetType(String type) {
+        return getWidgetType() == WidgetType.valueOf(type);
+    }
 
     public boolean addResource(Resource resource) {
         return resources.add(resource);
@@ -221,6 +235,9 @@ public abstract class Model {
      *            the model ident info
      */
     public void populateModelIdentificationInformation(Map<String, String> modelIdentInfo) {
+        if (modelIdentInfo == null) {
+            return;
+        }
         Iterator<String> iter = modelIdentInfo.keySet().iterator();
         String property;
         while (iter.hasNext()) {
