@@ -175,7 +175,7 @@
 					<jvmArguments>
 						-DCONFIG_HOME=./appconfig-local
 						-DAPP_HOME=.
-						-Dartifactgenerator.config=./appconfig-local/artifact-generator.properties
+                                                -Dtosca.mappings.config=./appconfig-local/tosca-mappings.json
 						-DKEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}
 					</jvmArguments>
 				</configuration>

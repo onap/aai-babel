@@ -25,7 +25,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.onap.aai.babel.logging.LogHelper;
@@ -60,7 +58,6 @@ public class ArtifactGeneratorToscaParser {
 
     private static Logger log = LogHelper.INSTANCE;
 
-    public static final String PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE = "artifactgenerator.config";
     public static final String PROPERTY_TOSCA_MAPPING_FILE = "tosca.mappings.config";
 
     public static final String GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND =
@@ -91,30 +88,6 @@ public class ArtifactGeneratorToscaParser {
      */
     public ArtifactGeneratorToscaParser(ISdcCsarHelper csarHelper) {
         this.csarHelper = csarHelper;
-    }
-
-    /**
-     * Initializes the Widget to UUID mapping configuration.
-     *
-     * @throws IOException
-     *             if an error occurs reading the configuration properties
-     */
-    public static void initWidgetConfiguration() throws IOException {
-        log.debug("Getting Widget Configuration");
-        String configLocation = System.getProperty(PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE);
-        if (configLocation != null) {
-            File file = new File(configLocation);
-            if (file.exists()) {
-                Properties properties = new Properties();
-                properties.load(new FileInputStream(file));
-                WidgetConfigurationUtil.setConfig(properties);
-            } else {
-                throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGFILE_NOT_FOUND, configLocation));
-            }
-        } else {
-            throw new IllegalArgumentException(
-                    String.format(GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND, PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE));
-        }
     }
 
     /**

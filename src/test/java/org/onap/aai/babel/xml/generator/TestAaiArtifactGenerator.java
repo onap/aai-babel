@@ -88,7 +88,6 @@ public class TestAaiArtifactGenerator {
     public void testParserWithIncompleteMappings()
             throws SdcToscaParserException, IOException, XmlArtifactGenerationException {
         testUtils.loadWidgetMappings();
-        testUtils.loadWidgetToUuidMappings();
 
         AaiArtifactGenerator artifactGenerator = new AaiArtifactGenerator();
         WidgetType.clearElements(); // Remove all WidgetTypes so that the generator fails

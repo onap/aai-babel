@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.model.Resource;
 import org.onap.aai.babel.xml.generator.model.Widget;
@@ -40,7 +39,6 @@ public class WidgetConfigurationUtil {
     public static final String GENERATOR_AAI_CONFIGLPROP_NOT_FOUND =
             "Cannot generate artifacts. Widget configuration not found for %s";
 
-    private static Properties config;
     private static List<String> instanceGroups = Collections.emptyList();
     private static Map<String, Resource> typeToResource = new HashMap<>();
     private static Map<String, Widget> typeToWidget = new HashMap<>();
@@ -50,10 +48,6 @@ public class WidgetConfigurationUtil {
      */
     private WidgetConfigurationUtil() {
         throw new UnsupportedOperationException("This static class should not be instantiated!");
-    }
-
-    public static void setConfig(Properties config) {
-        WidgetConfigurationUtil.config = config;
     }
 
     public static void setSupportedInstanceGroups(List<String> supportedInstanceGroups) {
@@ -94,14 +88,9 @@ public class WidgetConfigurationUtil {
     public static void setWidgetTypes(List<WidgetTypeConfig> types) {
         WidgetType.clearElements();
         for (WidgetTypeConfig type : types) {
-            if (type.type == null || type.name == null) {
+            if (type.type == null || type.name == null || type.modelInvariantId == null
+                    || type.modelVersionId == null) {
                 throw new IllegalArgumentException("Incomplete widget type specified: " + type);
-            }
-            if (type.modelInvariantId == null) {
-                type.modelInvariantId = WidgetConfigurationUtil.getModelInvariantId(type.name);
-            }
-            if (type.modelVersionId == null) {
-                type.modelVersionId = WidgetConfigurationUtil.getModelVersionId(type.name);
             }
             Widget widget = new Widget(new WidgetType(type.type), type.name, type.deleteFlag, //
                     type.modelInvariantId, type.modelVersionId);
@@ -123,21 +112,4 @@ public class WidgetConfigurationUtil {
         }
     }
 
-    public static String getModelInvariantId(String name) {
-        String id = config.getProperty(ArtifactType.AAI.name() + ".model-invariant-id." + name);
-        if (id == null) {
-            throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGLPROP_NOT_FOUND,
-                    ArtifactType.AAI.name() + ".model-invariant-id." + name));
-        }
-        return id;
-    }
-
-    public static String getModelVersionId(String name) {
-        String id = config.getProperty(ArtifactType.AAI.name() + ".model-version-id." + name);
-        if (id == null) {
-            throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGLPROP_NOT_FOUND,
-                    ArtifactType.AAI.name() + ".model-version-id." + name));
-        }
-        return id;
-    }
 }

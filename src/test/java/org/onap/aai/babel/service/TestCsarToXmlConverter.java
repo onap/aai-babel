@@ -101,26 +101,6 @@ public class TestCsarToXmlConverter {
     }
 
     /**
-     * Test that an Exception is thrown when the Artifact Generator properties are not present.
-     *
-     * @throws CsarConverterException
-     *             if there is an error either extracting the YAML files or generating XML artifacts
-     * @throws IOException
-     *             if an I/O exception occurs loading the test CSAR file
-     */
-    @Test
-    public void testArtifactGeneratorConfigMissing() throws CsarConverterException, IOException {
-        exception.expect(IllegalArgumentException.class);
-        exception.expectMessage("Cannot generate artifacts. System property "
-                + ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE + " not configured");
-
-        // Unset the required system property
-        System.clearProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE);
-        converter.generateXmlFromCsar(CsarTest.SD_WAN_CSAR_FILE.getContent(), CsarTest.SD_WAN_CSAR_FILE.getName(),
-                SERVICE_VERSION);
-    }
-
-    /**
      * Test that an Exception is thrown when the Artifact Generator's TOSCA Mappings configuration file is not present.
      *
      * @throws CsarConverterException

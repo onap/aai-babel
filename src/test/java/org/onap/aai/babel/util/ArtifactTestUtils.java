@@ -44,7 +44,6 @@ import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
 import org.onap.aai.babel.xml.generator.data.Artifact;
-import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.xml.sax.SAXException;
 
 /**
@@ -60,21 +59,8 @@ public class ArtifactTestUtils {
      * Initialize System Properties for test configuration files.
      */
     public void setGeneratorSystemProperties() {
-        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE,
-                getResourcePath(Resources.ARTIFACT_GENERATOR_CONFIG));
-
         System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE,
                 getResourcePath(Resources.TOSCA_MAPPING_CONFIG));
-    }
-
-    /**
-     * Load the Widget to UUID mappings from the Artifact Generator Properties (resource).
-     *
-     * @throws IOException
-     *             if the properties file is not loaded
-     */
-    public void loadWidgetToUuidMappings() throws IOException {
-        WidgetConfigurationUtil.setConfig(getResourceAsProperties(Resources.ARTIFACT_GENERATOR_CONFIG));
     }
 
     /**
