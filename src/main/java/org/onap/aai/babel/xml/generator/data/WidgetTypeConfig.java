@@ -22,7 +22,7 @@
 package org.onap.aai.babel.xml.generator.data;
 
 /**
- * Widget Type as configured in the TOSCA Mappings. 
+ * Widget Type as configured in the TOSCA Mappings.
  *
  */
 public class WidgetTypeConfig {
@@ -30,5 +30,7 @@ public class WidgetTypeConfig {
     String type;
     String name;
     boolean deleteFlag = false;
+    String modelInvariantId;
+    String modelVersionId;
 
 }

@@ -187,16 +187,6 @@ public class TestWidget {
         Widget.createWidget("OAM_NETWORK").addResource(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetVersionIdForUknownWidget() {
-        new Widget(new WidgetType("test"), null, false).getId();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetInvariantIdForUknownWidget() {
-        new Widget(new WidgetType("test"), null, false).getWidgetId();
-    }
-
     // Call Widget methods which are not supported, purely for code coverage.
 
     @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)

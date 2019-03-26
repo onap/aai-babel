@@ -37,6 +37,9 @@ import org.onap.aai.babel.xml.generator.types.ModelType;
 
 public class WidgetConfigurationUtil {
 
+    public static final String GENERATOR_AAI_CONFIGLPROP_NOT_FOUND =
+            "Cannot generate artifacts. Widget configuration not found for %s";
+
     private static Properties config;
     private static List<String> instanceGroups = Collections.emptyList();
     private static Map<String, Resource> typeToResource = new HashMap<>();
@@ -47,10 +50,6 @@ public class WidgetConfigurationUtil {
      */
     private WidgetConfigurationUtil() {
         throw new UnsupportedOperationException("This static class should not be instantiated!");
-    }
-
-    public static Properties getConfig() {
-        return config;
     }
 
     public static void setConfig(Properties config) {
@@ -98,8 +97,14 @@ public class WidgetConfigurationUtil {
             if (type.type == null || type.name == null) {
                 throw new IllegalArgumentException("Incomplete widget type specified: " + type);
             }
-            WidgetType widgetType = new WidgetType(type.type);
-            Widget widget = new Widget(widgetType, type.name, type.deleteFlag);
+            if (type.modelInvariantId == null) {
+                type.modelInvariantId = WidgetConfigurationUtil.getModelInvariantId(type.name);
+            }
+            if (type.modelVersionId == null) {
+                type.modelVersionId = WidgetConfigurationUtil.getModelVersionId(type.name);
+            }
+            Widget widget = new Widget(new WidgetType(type.type), type.name, type.deleteFlag, //
+                    type.modelInvariantId, type.modelVersionId);
             typeToWidget.put(type.type, widget);
         }
         WidgetType.validateElements();
@@ -116,5 +121,23 @@ public class WidgetConfigurationUtil {
             resource.setModelType(modelType);
             typeToResource.put(mapping.prefix, resource);
         }
+    }
+
+    public static String getModelInvariantId(String name) {
+        String id = config.getProperty(ArtifactType.AAI.name() + ".model-invariant-id." + name);
+        if (id == null) {
+            throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGLPROP_NOT_FOUND,
+                    ArtifactType.AAI.name() + ".model-invariant-id." + name));
+        }
+        return id;
+    }
+
+    public static String getModelVersionId(String name) {
+        String id = config.getProperty(ArtifactType.AAI.name() + ".model-version-id." + name);
+        if (id == null) {
+            throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGLPROP_NOT_FOUND,
+                    ArtifactType.AAI.name() + ".model-version-id." + name));
+        }
+        return id;
     }
 }

@@ -24,18 +24,13 @@ package org.onap.aai.babel.xml.generator.model;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
-import org.onap.aai.babel.xml.generator.data.ArtifactType;
 import org.onap.aai.babel.xml.generator.data.WidgetConfigurationUtil;
 import org.onap.aai.babel.xml.generator.error.IllegalAccessException;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 
 public class Widget extends Model {
-
-    public static final String GENERATOR_AAI_CONFIGLPROP_NOT_FOUND =
-            "Cannot generate artifacts. Widget configuration not found for %s";
 
     private Set<String> keys = new HashSet<>();
 
@@ -43,10 +38,15 @@ public class Widget extends Model {
     protected WidgetType type;
     protected boolean deleteFlag = false;
 
-    public Widget(WidgetType widgetType, String name, boolean deleteFlag) {
+    private String modelInvariantId;
+    private String modelVersionId;
+
+    public Widget(WidgetType widgetType, String name, boolean deleteFlag, String modelInvariantId, String modelVersionId) {
         type = widgetType;
         this.name = name;
         this.deleteFlag = deleteFlag;
+        this.modelInvariantId = modelInvariantId;
+        this.modelVersionId = modelVersionId;
     }
 
     /**
@@ -57,7 +57,7 @@ public class Widget extends Model {
      *             if there is no widget mapping defined for any of the VSERVER child types
      */
     public Widget(Widget baseWidget) throws XmlArtifactGenerationException {
-        this(baseWidget.getWidgetType(), baseWidget.getName(), baseWidget.getDeleteFlag());
+        this(baseWidget.getWidgetType(), baseWidget.getName(), baseWidget.getDeleteFlag(), baseWidget.getWidgetId(), baseWidget.getId());
         if (this.hasWidgetType("VSERVER")) {
             widgets.add(createWidget("FLAVOR"));
             widgets.add(createWidget("IMAGE"));
@@ -97,13 +97,7 @@ public class Widget extends Model {
     }
 
     public String getId() {
-        String id = WidgetConfigurationUtil.getConfig()
-                .getProperty(ArtifactType.AAI.name() + ".model-version-id." + getName());
-        if (id == null) {
-            throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGLPROP_NOT_FOUND,
-                    ArtifactType.AAI.name() + ".model-version-id." + getName()));
-        }
-        return id;
+        return modelVersionId;
     }
 
     public ModelType getType() {
@@ -121,13 +115,7 @@ public class Widget extends Model {
      */
     @Override
     public String getWidgetId() {
-        Properties properties = WidgetConfigurationUtil.getConfig();
-        String id = properties.getProperty(ArtifactType.AAI.name() + ".model-invariant-id." + getName());
-        if (id == null) {
-            throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGLPROP_NOT_FOUND,
-                    ArtifactType.AAI.name() + ".model-invariant-id." + getName()));
-        }
-        return id;
+        return modelInvariantId;
     }
 
     @Override
