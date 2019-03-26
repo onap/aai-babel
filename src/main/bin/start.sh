@@ -3,8 +3,8 @@
 # ============LICENSE_START=======================================================
 # org.onap.aai
 # ================================================================================
-# Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
-# Copyright © 2017-2019 European Software Marketing Ltd.
+# Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2019 European Software Marketing Ltd.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,18 +22,17 @@
 APP_HOME="${APP_HOME:-/opt/app/babel}"
 
 if [ -z "${CONFIG_HOME}" ]; then
-	echo "CONFIG_HOME must be set in order to start up process"
+	echo "CONFIG_HOME must be set in order to start the process"
 	exit 1
 fi
 
 if [ -z "${KEY_STORE_PASSWORD}" ]; then
-	echo "KEY_STORE_PASSWORD must be set in order to start up process"
+	echo "KEY_STORE_PASSWORD must be set in order to start the process"
 	exit 1
 fi
 
 PROPS="-DAPP_HOME=${APP_HOME}"
 PROPS="${PROPS} -DCONFIG_HOME=${CONFIG_HOME}"
-PROPS="${PROPS} -Dartifactgenerator.config=${CONFIG_HOME}/artifact-generator.properties"
 PROPS="${PROPS} -Dtosca.mappings.config=${CONFIG_HOME}/tosca-mappings.json"
 PROPS="${PROPS} -DKEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}"
 JVM_MAX_HEAP=${MAX_HEAP:-1024}

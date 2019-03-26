@@ -57,18 +57,6 @@ public class TestArtifactGeneratorToscaParser {
     private static final String TEST_UUID = "1234";
 
     /**
-     * Initialize the Generator with an invalid artifact generator properties file path.
-     *
-     * @throws IOException
-     *             if an error occurs reading the configuration properties
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void testMissingPropertiesFile() throws IOException {
-        System.setProperty(ArtifactGeneratorToscaParser.PROPERTY_ARTIFACT_GENERATOR_CONFIG_FILE, "non-existent.file");
-        ArtifactGeneratorToscaParser.initWidgetConfiguration();
-    }
-
-    /**
      * Initialize the Generator with an invalid mappings file path.
      *
      * @throws IOException
@@ -176,7 +164,6 @@ public class TestArtifactGeneratorToscaParser {
     public void testAddWidgetToService() throws IOException, XmlArtifactGenerationException {
         ArtifactTestUtils testUtils = new ArtifactTestUtils();
         testUtils.loadWidgetMappings();
-        testUtils.loadWidgetToUuidMappings();
 
         Model serviceModel = new Service();
         Resource resourceModel = new Resource(WidgetType.valueOf("VF"), false);

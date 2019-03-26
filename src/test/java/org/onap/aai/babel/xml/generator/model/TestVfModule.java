@@ -41,16 +41,14 @@ import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 public class TestVfModule {
 
     /**
-     * Load the Widget Configuration, including the type mappings and the UUID mappings.
+     * Load the Widget mappings configuration.
      *
      * @throws IOException
      *             if the mappings configuration cannot be loaded
      */
     @BeforeClass
     public static void setup() throws IOException {
-        ArtifactTestUtils util = new ArtifactTestUtils();
-        util.loadWidgetToUuidMappings();
-        util.loadWidgetMappings();
+        new ArtifactTestUtils().loadWidgetMappings();
     }
 
     /**

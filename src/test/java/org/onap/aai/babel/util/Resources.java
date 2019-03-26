@@ -26,7 +26,6 @@ package org.onap.aai.babel.util;
  */
 public class Resources {
 
-    public static final String ARTIFACT_GENERATOR_CONFIG = "artifact-generator.properties";
     public static final String TOSCA_MAPPING_CONFIG = "tosca-mappings.json";
     public static final String EMPTY_TOSCA_MAPPING_CONFIG = "empty-tosca-mappings.json";
     public static final String INVALID_TOSCA_MAPPING_CONFIG = "invalid-tosca-mappings.json";
