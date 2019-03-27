@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -189,21 +190,18 @@ public class TestArtifactGeneratorToscaParser {
         final String instanceGroupType = "org.openecomp.groups.ResourceInstanceGroup";
         WidgetConfigurationUtil.setSupportedInstanceGroups(Collections.singletonList(instanceGroupType));
 
-        ISdcCsarHelper helper = Mockito.mock(ISdcCsarHelper.class);
         SubstitutionMappings sm = Mockito.mock(SubstitutionMappings.class);
+
+        List<Group> groups = Arrays.asList(buildGroup("group", instanceGroupType));
+        Mockito.when(sm.getGroups()).thenReturn(new ArrayList<Group>(groups));
 
         NodeTemplate serviceNodeTemplate =
                 buildNodeTemplate("service", "org.openecomp.resource.cr.a-collection-resource");
         serviceNodeTemplate.setSubMappingToscaTemplate(sm);
-        Mockito.when(helper.getNodeTemplateByName(serviceNodeTemplate.getName())).thenReturn(serviceNodeTemplate);
 
-        ArrayList<Group> groups = new ArrayList<>();
-        groups.add(buildGroup("group", instanceGroupType));
-        Mockito.when(helper.getGroupsOfOriginOfNodeTemplate(serviceNodeTemplate)).thenReturn(groups);
-
-        ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(helper);
         Resource groupResource = new Resource(WidgetType.valueOf("INSTANCE_GROUP"), true);
-        List<Resource> resources = parser.processInstanceGroups(groupResource, serviceNodeTemplate);
+        List<Resource> resources = new ArtifactGeneratorToscaParser(Mockito.mock(ISdcCsarHelper.class))
+                .processInstanceGroups(groupResource, serviceNodeTemplate);
 
         assertThat(resources.size(), is(1));
         Resource resource = resources.get(0);

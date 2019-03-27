@@ -25,14 +25,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
+import org.onap.aai.babel.parser.ToscaParser;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.data.AdditionalParams;
 import org.onap.aai.babel.xml.generator.data.Artifact;
@@ -49,6 +52,7 @@ import org.onap.aai.babel.xml.generator.model.WidgetType;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 import org.onap.aai.cl.api.Logger;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.onap.sdc.toscaparser.api.Group;
@@ -127,7 +131,8 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      */
     public GenerationData generateAllArtifacts(final String serviceVersion, ISdcCsarHelper csarHelper)
             throws XmlArtifactGenerationException {
-        List<NodeTemplate> serviceNodeTemplates = csarHelper.getServiceNodeTemplates();
+        List<NodeTemplate> serviceNodeTemplates =
+                ToscaParser.getServiceNodeTemplates(csarHelper).collect(Collectors.toList());
         if (serviceNodeTemplates == null) {
             throw new IllegalArgumentException(GENERATOR_AAI_ERROR_MISSING_SERVICE_TOSCA);
         }
@@ -186,11 +191,11 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      */
     private List<Resource> generateResourceModels(ISdcCsarHelper csarHelper, List<NodeTemplate> serviceNodeTemplates,
             Service serviceModel) throws XmlArtifactGenerationException {
-        final List<Group> serviceGroups = csarHelper.getGroupsOfTopologyTemplate();
         final ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(csarHelper);
 
         List<Resource> resources = new ArrayList<>();
 
+        final List<Group> serviceGroups = ToscaParser.getServiceLevelGroups(csarHelper);
         for (NodeTemplate nodeTemplate : serviceNodeTemplates) {
             if (nodeTemplate.getMetaData() != null) {
                 generateModelFromNodeTemplate(csarHelper, serviceModel, resources, serviceGroups, parser, nodeTemplate);
@@ -265,33 +270,57 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      * @param csarHelper
      * @param resources
      * @param parser
-     * @param nodeTemplate
+     * @param serviceVfNode
+     *            a VF resource Node Template
      * @throws XmlArtifactGenerationException
      *             if the configured widget mappings do not support processed widget type(s)
      */
     private void generateResourceModel(ISdcCsarHelper csarHelper, List<Resource> resources,
-            ArtifactGeneratorToscaParser parser, NodeTemplate nodeTemplate) throws XmlArtifactGenerationException {
-        Resource resourceModel = getModelFor(parser, nodeTemplate);
+            ArtifactGeneratorToscaParser parser, NodeTemplate serviceVfNode) throws XmlArtifactGenerationException {
+        Resource resourceModel = getModelFor(parser, serviceVfNode);
         if (resourceModel == null) {
             log.info(ApplicationMsgs.DISTRIBUTION_EVENT, "Could not generate resource model");
             return;
         }
 
-        Map<String, String> serviceMetadata = nodeTemplate.getMetaData().getAllProperties();
+        Map<String, String> serviceMetadata = serviceVfNode.getMetaData().getAllProperties();
         resourceModel.populateModelIdentificationInformation(serviceMetadata);
 
-        parser.processResourceModels(resourceModel, csarHelper.getNodeTemplateChildren(nodeTemplate));
+        parser.processResourceModels(resourceModel, getNonVnfChildren(serviceVfNode));
 
-        if (csarHelper.getServiceVfList() != null) {
-            parser.processVfModules(resources, resourceModel, nodeTemplate);
+        List<NodeTemplate> serviceVfList = ToscaParser.getServiceNodeTemplates(csarHelper)
+                .filter(ToscaParser.filterOnType(SdcTypes.VF)).collect(Collectors.toList());
+
+        if (serviceVfList != null) {
+            parser.processVfModules(resources, resourceModel, serviceVfNode);
         }
 
         if (parser.hasSubCategoryTunnelXConnect(serviceMetadata) && parser.hasAllottedResource(serviceMetadata)) {
             resourceModel.addWidget(Widget.createWidget("TUNNEL_XCONNECT"));
         }
 
-        resources.addAll(parser.processInstanceGroups(resourceModel, nodeTemplate));
+        resources.addAll(parser.processInstanceGroups(resourceModel, serviceVfNode));
         resources.add(resourceModel);
+    }
+
+    /**
+     * Return all child Node Templates (via Substitution Mappings) that do not have a type ending VnfConfiguration.
+     *
+     * @param nodeTemplate
+     *            the parent Node Template
+     * @return the child Node Templates which are not a VNF Configuration type
+     */
+    private List<NodeTemplate> getNonVnfChildren(NodeTemplate nodeTemplate) {
+        return Optional.ofNullable(nodeTemplate.getSubMappingToscaTemplate()) //
+                .map(sm -> Optional.ofNullable(sm.getNodeTemplates())
+                        .map(nts -> nts.stream().filter(nt -> !isVNFType(nt)) //
+                                .collect(Collectors.toList()))
+                        .orElse(Collections.emptyList()))
+                .orElse(Collections.emptyList());
+    }
+
+    private boolean isVNFType(NodeTemplate nt) {
+        return nt.getType().endsWith("VnfConfiguration");
     }
 
     /**

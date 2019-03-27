@@ -30,18 +30,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
+import org.onap.aai.babel.parser.ToscaParser;
 import org.onap.aai.babel.service.data.BabelArtifact;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
-import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 
@@ -195,12 +194,12 @@ public class VnfVendorImageExtractor {
             throws SdcToscaParserException, InvalidNumberOfNodesException {
         ISdcCsarHelper csarHelper = SdcToscaParserFactory.getInstance().getSdcCsarHelper(csarFilepath);
 
-        List<NodeTemplate> serviceVfList = csarHelper.getServiceNodeTemplates().stream()
-                .filter(filterOnType(SdcTypes.VF)).collect(Collectors.toList());
+        List<NodeTemplate> serviceVfList = ToscaParser.getServiceNodeTemplates(csarHelper)
+                .filter(ToscaParser.filterOnType(SdcTypes.VF)).collect(Collectors.toList());
 
         List<NodeTemplate> vnfConfigs = serviceVfList.stream()
                 .flatMap(vf -> vf.getSubMappingToscaTemplate().getNodeTemplates().stream()
-                        .filter(filterOnType(SdcTypes.VFC)) //
+                        .filter(ToscaParser.filterOnType(SdcTypes.VFC)) //
                         .filter(vfc -> vfc.getType().endsWith("VnfConfiguration")))
                 .filter(Objects::nonNull) //
                 .collect(Collectors.toList());
@@ -253,11 +252,6 @@ public class VnfVendorImageExtractor {
         }
 
         return vendorImageConfigurations;
-    }
-
-    private Predicate<? super NodeTemplate> filterOnType(SdcTypes sdcType) {
-        return node -> (node.getMetaData() != null
-                && sdcType.getValue().equals(node.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_TYPE)));
     }
 
     /**

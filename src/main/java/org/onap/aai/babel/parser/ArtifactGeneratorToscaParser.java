@@ -28,10 +28,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.onap.aai.babel.logging.LogHelper;
@@ -45,9 +47,12 @@ import org.onap.aai.babel.xml.generator.model.WidgetType;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 import org.onap.aai.cl.api.Logger;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.onap.sdc.tosca.parser.utils.SdcToscaUtility;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Property;
+import org.onap.sdc.toscaparser.api.SubstitutionMappings;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 
 /**
@@ -135,7 +140,7 @@ public class ArtifactGeneratorToscaParser {
             throws XmlArtifactGenerationException {
         List<Resource> resources = new ArrayList<>();
         if (serviceNodeTemplate.getSubMappingToscaTemplate() != null) {
-            List<Group> serviceGroups = csarHelper.getGroupsOfOriginOfNodeTemplate(serviceNodeTemplate);
+            List<Group> serviceGroups = serviceNodeTemplate.getSubMappingToscaTemplate().getGroups();
             for (Group group : serviceGroups) {
                 if (WidgetConfigurationUtil.isSupportedInstanceGroup(group.getType())) {
                     resources.addAll(processInstanceGroup(resourceModel, group.getMemberNodes(),
@@ -199,23 +204,36 @@ public class ArtifactGeneratorToscaParser {
      *
      * @param resources
      * @param model
-     * @param serviceNode
+     * @param serviceVfNode
+     *            a VF resource Node Template
      * @throws XmlArtifactGenerationException
      *             if the configured widget mappings do not support the widget type of a VF Module
      */
-    public void processVfModules(List<Resource> resources, Model resourceModel, NodeTemplate serviceNode)
+    public void processVfModules(List<Resource> resources, Model resourceModel, NodeTemplate serviceVfNode)
             throws XmlArtifactGenerationException {
-        // Get the customization UUID for each VF node and use it to get its Groups
-        String uuid = csarHelper.getNodeTemplateCustomizationUuid(serviceNode);
-        List<Group> serviceGroups = csarHelper.getVfModulesByVf(uuid);
-
         // Process each VF Group
-        for (Group serviceGroup : serviceGroups) {
+        for (Group serviceGroup : getVfModuleGroups(serviceVfNode)) {
             Model groupModel = Model.getModelFor(serviceGroup.getType());
             if (groupModel.hasWidgetType("VFMODULE")) {
-                processVfModule(resources, resourceModel, serviceGroup, serviceNode, (Resource) groupModel);
+                processVfModule(resources, resourceModel, serviceGroup, serviceVfNode, (Resource) groupModel);
             }
         }
+    }
+
+    /**
+     * Implementation taken from the sdc-tosca parser (deprecated method).
+     *
+     * @param serviceVfNode
+     *            a VF resource Node Template
+     * @return all service level VfModule groups with a name matching that of the supplied VF node template
+     */
+    private List<Group> getVfModuleGroups(NodeTemplate serviceVfNode) {
+        String instanceName = SdcToscaUtility.normaliseComponentInstanceName(serviceVfNode.getName());
+
+        return ToscaParser.getServiceLevelGroups(csarHelper).stream()
+                .filter(group -> "org.openecomp.groups.VfModule".equals(group.getTypeDefinition().getType())
+                        && group.getName().startsWith(instanceName))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -329,13 +347,41 @@ public class ArtifactGeneratorToscaParser {
         groupModel.populateModelIdentificationInformation(
                 mergeProperties(groupDefinition.getMetadata().getAllProperties(), groupDefinition.getProperties()));
 
-        processVfModuleGroup(groupModel, csarHelper.getMembersOfVfModule(serviceNode, groupDefinition));
+
+        SubstitutionMappings substitutionMappings = serviceNode.getSubMappingToscaTemplate();
+        if (substitutionMappings != null) {
+            processVfModuleGroup(groupModel, getVfModuleMembers(substitutionMappings,
+                    groupDefinition.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELINVARIANTUUID)));
+        }
 
         vfModel.addResource(groupModel); // Add group (VfModule) to the (VF) model
         // Check if we have already encountered the same VfModule across all the artifacts
         if (!resources.contains(groupModel)) {
             resources.add(groupModel);
         }
+    }
+
+    /**
+     * @param substitutionMappings
+     * @param vfModuleInvariantUuid
+     * @return all serviceNode child Node Templates which are members of the first VF Module Group
+     */
+    private List<NodeTemplate> getVfModuleMembers(SubstitutionMappings substitutionMappings,
+            String vfModuleInvariantUuid) {
+        return Optional.ofNullable(substitutionMappings.getGroups()) //
+                .map(groups -> groups.stream() //
+                        .filter(filterByVfModuleInvariantUuid(vfModuleInvariantUuid)) //
+                        .findFirst().map(module -> Optional.ofNullable(module.getMembers()).orElse(new ArrayList<>()))
+                        .orElse(new ArrayList<>()))
+                .map(members -> substitutionMappings.getNodeTemplates().stream()
+                        .filter(nt -> members.contains(nt.getName())) //
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+    }
+
+    private Predicate<? super Group> filterByVfModuleInvariantUuid(String vfModuleInvariantUuid) {
+        return nt -> (nt.getMetadata() != null && vfModuleInvariantUuid
+                .equals(nt.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELINVARIANTUUID)));
     }
 
     /**
