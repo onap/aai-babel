@@ -59,7 +59,7 @@ public class TestWidget {
         widget = Widget.createWidget("VF");
         assertThat(widget.getType(), is(ModelType.WIDGET));
         assertThat(widget.getName(), is("generic-vnf"));
-        assertThat(widget.getDeleteFlag(), is(false));
+        assertThat(widget.getDeleteFlag(), is(true));
 
         widget = Widget.createWidget("VFC");
         assertThat(widget.getType(), is(ModelType.WIDGET));
