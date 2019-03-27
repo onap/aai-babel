@@ -15,7 +15,7 @@
 		{
 			"type": "VF",
 			"name": "generic-vnf",
-			"deleteFlag": false,
+			"deleteFlag": true,
             "modelInvariantId": "generic-vnf-invariant-id",
             "modelVersionId": "generic-vnf-version-id"
 		},
