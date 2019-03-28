@@ -59,7 +59,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Generator with an invalid mappings file path.
-     *
+     * 
      * @throws IOException
      *             if the file content could not be read successfully
      */
@@ -70,19 +70,19 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Generator with no Widget Mappings content.
-     *
+     * 
      * @throws IOException
      *             if the file content could not be read successfully
      */
     @Test(expected = IOException.class)
     public void testMissingMappingsContent() throws IOException {
-        String invalidJson = new ArtifactTestUtils().getResourcePath(Resources.EMPTY_TOSCA_MAPPING_CONFIG);
-        ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(invalidJson);
+        String emptyJson = new ArtifactTestUtils().getResourcePath(Resources.EMPTY_TOSCA_MAPPING_CONFIG);
+        ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(emptyJson);
     }
 
     /**
      * Initialize the Generator with invalid Widget Mappings content.
-     *
+     * 
      * @throws IOException
      *             if the file content could not be read successfully
      */
@@ -94,9 +94,12 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Process an Allotted Resource that does not have a Providing Service.
+     *
+     * @throws XmlArtifactGenerationException
+     *             because the ALLOTTED_RESOURCE lacks a Providing Service
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testMissingProvidingService() {
+    @Test(expected = XmlArtifactGenerationException.class)
+    public void testMissingProvidingService() throws XmlArtifactGenerationException {
         List<NodeTemplate> nodeTemplateList = Collections.singletonList(buildNodeTemplate("name", "BlockStorage"));
         new ArtifactGeneratorToscaParser(null)
                 .processResourceModels(new Resource(WidgetType.valueOf("ALLOTTED_RESOURCE"), true), nodeTemplateList);
@@ -104,10 +107,17 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Add a CR (a type of Resource which is not a Providing Service) to a Resource Model.
+     *
+     * @throws XmlArtifactGenerationException
+     *             because the ALLOTTED_RESOURCE lacks a Providing Service
+     * @throws IOException
+     *             if the test mappings cannot be loaded
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testAddResourceNotProvidingService() {
+    @Test(expected = XmlArtifactGenerationException.class)
+    public void testAddResourceNotProvidingService() throws XmlArtifactGenerationException, IOException {
+        new ArtifactTestUtils().loadWidgetMappings();
         List<NodeTemplate> nodeTemplateList = Collections.singletonList(buildNodeTemplate("testCR", "CR"));
+
         // Create any Resource to which the CR can be added
         final Resource dummyResource = new Resource(WidgetType.valueOf("ALLOTTED_RESOURCE"), true);
         new ArtifactGeneratorToscaParser(null).processResourceModels(dummyResource, nodeTemplateList);
@@ -115,7 +125,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Artifact Generator Widget Mapping config with incomplete data (no type).
-     *
+     * 
      * @throws IOException
      *             if a WidgetMapping is invalid
      */
@@ -128,7 +138,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Artifact Generator Widget Mapping config with invalid data (type value).
-     *
+     * 
      * @throws IOException
      *             if a WidgetMapping is invalid
      */
@@ -141,7 +151,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Artifact Generator Widget Mapping config with incomplete data (no widget name).
-     *
+     * 
      * @throws IOException
      *             if a WidgetMapping is invalid
      */
@@ -177,7 +187,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Process a dummy Group object for a Service Resource.
-     *
+     * 
      * @throws XmlArtifactGenerationException
      *             if there is no configuration defined for a member Widget of an instance group
      * @throws IOException

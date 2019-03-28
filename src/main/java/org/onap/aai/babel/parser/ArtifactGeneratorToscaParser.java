@@ -237,10 +237,18 @@ public class ArtifactGeneratorToscaParser {
     }
 
     /**
+     * Add each of the resources to the specified resourceModel. If the resourceModel type is Allotted Resource then
+     * validate that one of the resources is a Providing Service.
+     *
      * @param resourceModel
+     *            parent Resource model
      * @param resourceNodeTemplates
+     *            the child node templates of the resourceModel
+     * @throws XmlArtifactGenerationException
+     *             if the resourceModel is an ALLOTTED_RESOURCE with no Providing Service
      */
-    public void processResourceModels(Model resourceModel, List<NodeTemplate> resourceNodeTemplates) {
+    public void processResourceModels(Resource resourceModel, List<NodeTemplate> resourceNodeTemplates)
+            throws XmlArtifactGenerationException {
         boolean foundProvidingService = false;
 
         for (NodeTemplate resourceNodeTemplate : resourceNodeTemplates) {
@@ -261,9 +269,8 @@ public class ArtifactGeneratorToscaParser {
         }
 
         if (resourceModel.hasWidgetType("ALLOTTED_RESOURCE") && !foundProvidingService) {
-            final String modelInvariantId = resourceModel.getModelId();
-            throw new IllegalArgumentException(String.format(GENERATOR_AAI_PROVIDING_SERVICE_MISSING,
-                    modelInvariantId == null ? "<null ID>" : modelInvariantId));
+            throw new XmlArtifactGenerationException(String.format(GENERATOR_AAI_PROVIDING_SERVICE_MISSING,
+                    Optional.ofNullable(resourceModel.getModelId()).orElse("<null ID>")));
         }
     }
 
