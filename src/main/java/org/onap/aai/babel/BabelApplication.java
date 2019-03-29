@@ -21,7 +21,7 @@
 
 package org.onap.aai.babel;
 
-import java.util.HashMap;
+import com.google.common.collect.ImmutableMap;
 import org.eclipse.jetty.util.security.Password;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -38,26 +38,21 @@ public class BabelApplication extends SpringBootServletInitializer {
 
     /**
      * Spring Boot Initialization.
-     * 
+     *
      * @param args
-     *            main args
+     *            main args (expected to be null)
      */
     public static void main(String[] args) {
         String keyStorePassword = System.getProperty("KEY_STORE_PASSWORD");
         if (keyStorePassword == null || keyStorePassword.isEmpty()) {
-            throw new IllegalArgumentException("Env property KEY_STORE_PASSWORD not set");
+            throw new IllegalArgumentException("Mandatory property KEY_STORE_PASSWORD not set");
         }
-        HashMap<String, Object> props = new HashMap<>();
-        String decryptedValue = keyStorePassword.startsWith(Password.__OBFUSCATE) ? //
-                Password.deobfuscate(keyStorePassword) : keyStorePassword;
-        props.put("server.ssl.key-store-password", decryptedValue);
+        ImmutableMap<String, Object> defaults =
+                ImmutableMap.of("server.ssl.key-store-password", new Password(keyStorePassword).toString());
 
-        String requireClientAuth = System.getenv("REQUIRE_CLIENT_AUTH");
-        props.put("server.ssl.client-auth",
-                Boolean.FALSE.toString().equalsIgnoreCase(requireClientAuth) ? "want" : "need");
-
-        context = new BabelApplication()
-                .configure(new SpringApplicationBuilder(BabelApplication.class).properties(props)).run(args);
+        context = new BabelApplication() //
+                .configure(new SpringApplicationBuilder(BabelApplication.class).properties(defaults)) //
+                .run(args);
     }
 
     public static void exit() {

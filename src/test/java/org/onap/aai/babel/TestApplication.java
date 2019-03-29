@@ -93,6 +93,20 @@ public class TestApplication {
         BabelApplication.main(new String[] {});
     }
 
+    /**
+     * This test asserts that if the KEY_STORE_PASSWORD System Property is set (and is not empty) then the value is
+     * passed to Jetty, debobfuscated, and used to open the key store, even if the resulting password value is actually
+     * an empty string.
+     */
+    @Test
+    public void testApplicationWithBlankObfuscatedKeyStorePassword() {
+        // Note that "OBF:" is correctly deobfuscated and results in an empty string.
+        System.setProperty("KEY_STORE_PASSWORD", "OBF:");
+        final CauseMatcher expectedCause = new CauseMatcher(IOException.class, "password was incorrect");
+        expectedEx.expectCause(expectedCause);
+        BabelApplication.main(new String[] {});
+    }
+
     private static class CauseMatcher extends TypeSafeMatcher<Throwable> {
 
         private final Class<? extends Throwable> type;
