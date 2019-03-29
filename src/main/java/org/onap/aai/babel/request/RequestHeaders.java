@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.aai.babel.request;
 
 import java.util.Optional;
@@ -62,7 +63,7 @@ public class RequestHeaders {
      * If the correlation ID contains the symbol : then this character and any trailing characters are removed. This
      * allows for an incrementing numeric sequence where there are multiple HTTP requests for a single transaction.
      *
-     * @return the normalsed UUID used for correlating transactions across components, or else null (if no ID is set)
+     * @return the normalized UUID used for correlating transactions across components, or else null (if no ID is set)
      */
     public String getCorrelationId() {
         // If the request ID is missing, use the transaction ID (if present)
