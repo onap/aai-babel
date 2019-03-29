@@ -91,19 +91,8 @@ public class AAIMicroServiceAuthCore {
         }
         AAIMicroServiceAuthCore.reloadUsers();
 
-        TimerTask task = new FileWatcher(new File(policyAuthFileName)) {
-            @Override
-            protected void onChange(File file) {
-                // here we implement the onChange
-                applicationLogger.debug("File " + file.getName() + " has been changed!");
-                try {
-                    AAIMicroServiceAuthCore.reloadUsers();
-                } catch (AAIAuthException e) {
-                    applicationLogger.error(ApplicationMsgs.PROCESS_REQUEST_ERROR, e);
-                }
-                applicationLogger.debug("File " + file.getName() + " has been reloaded!");
-            }
-        };
+
+        TimerTask task = new AuthFileWatcher(new File(policyAuthFileName));
 
         if (!timerSet) {
             timerSet = true;
@@ -130,7 +119,7 @@ public class AAIMicroServiceAuthCore {
      * <li>If this fails, try resolving the path relative to the configuration home location (either
      * <code>$CONFIG_HOME</code> or <code>$APP_HOME/appconfig</code>).</li>
      * <li>If this fails try resolving relative to the <code>auth</code> folder under configuration home.</li>
-     * 
+     *
      * @param authPolicyFile
      *            filename or path
      * @return the Optional canonical path to the located policy file
