@@ -22,6 +22,9 @@
 package org.onap.aai.babel;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.Map;
 import org.eclipse.jetty.util.security.Password;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
@@ -57,6 +60,22 @@ public class TestApplication {
     @Test
     public void testApplicationStartsWithObfuscatedPassword() {
         System.setProperty("KEY_STORE_PASSWORD", Password.obfuscate("password"));
+        BabelApplication.main(new String[] {});
+        BabelApplication.exit();
+    }
+
+    @Test
+    public void testApplicationWithAuthEnvVar() throws Exception {
+        setEnv(Collections.singletonMap("REQUIRE_CLIENT_AUTH", "TRUE"));
+        System.setProperty("KEY_STORE_PASSWORD", "password");
+        BabelApplication.main(new String[] {});
+        BabelApplication.exit();
+
+        setEnv(Collections.singletonMap("REQUIRE_CLIENT_AUTH", "False"));
+        BabelApplication.main(new String[] {});
+        BabelApplication.exit();
+
+        setEnv(Collections.singletonMap("REQUIRE_CLIENT_AUTH", "other"));
         BabelApplication.main(new String[] {});
         BabelApplication.exit();
     }
@@ -114,4 +133,49 @@ public class TestApplication {
         }
     }
 
+    /**
+     * In commit 132d44f a change was made to read from the System environment with
+     * <code>System.getenv("REQUIRE_CLIENT_AUTH")</code>
+     * <p>
+     * Given that the environment is set by the Operating System and is unmodifiable, the following is needed to alter
+     * the Map values for the running process.
+     * </p>
+     *
+     * @param newenv
+     *            the new Environment key/value pairs
+     * @throws ClassNotFoundException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws NoSuchFieldException
+     * @throws SecurityException
+     */
+    @SuppressWarnings("unchecked")
+    protected static void setEnv(Map<String, String> newenv) throws ClassNotFoundException, IllegalArgumentException,
+            IllegalAccessException, NoSuchFieldException, SecurityException {
+        try {
+            Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
+            Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
+            theEnvironmentField.setAccessible(true);
+            Map<String, String> env = (Map<String, String>) theEnvironmentField.get(null);
+            env.putAll(newenv);
+            Field theCaseInsensitiveEnvironmentField =
+                    processEnvironmentClass.getDeclaredField("theCaseInsensitiveEnvironment");
+            theCaseInsensitiveEnvironmentField.setAccessible(true);
+            Map<String, String> cienv = (Map<String, String>) theCaseInsensitiveEnvironmentField.get(null);
+            cienv.putAll(newenv);
+        } catch (NoSuchFieldException e) {
+            Class<?>[] classes = Collections.class.getDeclaredClasses();
+            Map<String, String> env = System.getenv();
+            for (Class<?> cl : classes) {
+                if ("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
+                    Field field = cl.getDeclaredField("m");
+                    field.setAccessible(true);
+                    Object obj = field.get(env);
+                    Map<String, String> map = (Map<String, String>) obj;
+                    map.clear();
+                    map.putAll(newenv);
+                }
+            }
+        }
+    }
 }

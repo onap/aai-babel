@@ -22,10 +22,12 @@
 package org.onap.aai.babel;
 
 import java.util.HashMap;
+import java.util.Optional;
 import org.eclipse.jetty.util.security.Password;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.embedded.Ssl.ClientAuth;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ImportResource;
@@ -38,23 +40,25 @@ public class BabelApplication extends SpringBootServletInitializer {
 
     /**
      * Spring Boot Initialization.
-     * 
+     *
      * @param args
-     *            main args
+     *            main args (expected to be null)
      */
     public static void main(String[] args) {
         String keyStorePassword = System.getProperty("KEY_STORE_PASSWORD");
         if (keyStorePassword == null || keyStorePassword.isEmpty()) {
-            throw new IllegalArgumentException("Env property KEY_STORE_PASSWORD not set");
+            throw new IllegalArgumentException("Mandatory property KEY_STORE_PASSWORD not set");
         }
         HashMap<String, Object> props = new HashMap<>();
         String decryptedValue = keyStorePassword.startsWith(Password.__OBFUSCATE) ? //
                 Password.deobfuscate(keyStorePassword) : keyStorePassword;
         props.put("server.ssl.key-store-password", decryptedValue);
 
-        String requireClientAuth = System.getenv("REQUIRE_CLIENT_AUTH");
-        props.put("server.ssl.client-auth",
-                Boolean.FALSE.toString().equalsIgnoreCase(requireClientAuth) ? "want" : "need");
+        Optional<String> requireClientAuth = Optional.ofNullable(System.getenv("REQUIRE_CLIENT_AUTH"));
+        if (requireClientAuth.isPresent()) {
+            props.put("server.ssl.client-auth",
+                    Boolean.valueOf(requireClientAuth.get()) ? ClientAuth.NEED : ClientAuth.WANT);
+        }
 
         context = new BabelApplication()
                 .configure(new SpringApplicationBuilder(BabelApplication.class).properties(props)).run(args);
