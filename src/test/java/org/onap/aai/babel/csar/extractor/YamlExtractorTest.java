@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ public class YamlExtractorTest {
     @Test
     public void testInvalidContentSupplied() {
         invalidArgumentsTest("This is a piece of nonsense and not a zip file".getBytes(), FOO, FOO,
-                "An error occurred trying to create a ZipFile. Is the content being converted really a csar file?");
+                "An error occurred trying to create a ZipFile. Is the content being converted really a CSAR file?");
     }
 
     @Test
@@ -102,7 +102,7 @@ public class YamlExtractorTest {
         } catch (Exception e) {
             assertTrue("An instance of InvalidArchiveException should have been thrown.",
                     e instanceof InvalidArchiveException);
-            assertEquals("Incorrect message was returned", "No valid YAML files were found in the csar file.",
+            assertEquals("Incorrect message was returned", "No valid YAML files were found in the CSAR file.",
                     e.getMessage());
         }
     }

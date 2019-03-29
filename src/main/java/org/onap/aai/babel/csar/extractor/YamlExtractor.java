@@ -75,11 +75,11 @@ public class YamlExtractor {
                 }
             }
             if (ymlFiles.isEmpty()) {
-                throw new InvalidArchiveException("No valid YAML files were found in the csar file.");
+                throw new InvalidArchiveException("No valid YAML files were found in the CSAR file.");
             }
         } catch (IOException e) {
             throw new InvalidArchiveException(
-                    "An error occurred trying to create a ZipFile. Is the content being converted really a csar file?",
+                    "An error occurred trying to create a ZipFile. Is the content being converted really a CSAR file?",
                     e);
         }
 
@@ -90,7 +90,7 @@ public class YamlExtractor {
 
     /**
      * Throw an error if the supplied parameters are not valid.
-     * 
+     *
      * @param archive
      * @param name
      * @param version

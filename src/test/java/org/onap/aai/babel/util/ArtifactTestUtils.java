@@ -65,7 +65,7 @@ public class ArtifactTestUtils {
 
     /**
      * Load the Widget type mappings (resource).
-     *
+     * 
      * @throws IOException
      *             if the configuration file is not loaded
      */
@@ -127,7 +127,11 @@ public class ArtifactTestUtils {
     }
 
     public String loadResourceAsString(String resourceName) throws IOException {
+        try {
         return IOUtils.toString(getResource(resourceName), Charset.defaultCharset());
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("No such resource " + resourceName);
+        }
     }
 
     public String getRequestJson(String resource) throws IOException {
@@ -144,7 +148,7 @@ public class ArtifactTestUtils {
 
     /**
      * Create Properties from the content of the named resource (e.g. a file on the classpath).
-     *
+     * 
      * @param resourceName
      *            the resource name
      * @return Properties loaded from the named resource

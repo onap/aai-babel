@@ -105,7 +105,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
             ISdcCsarHelper csarHelper =
                     SdcToscaParserFactory.getInstance().getSdcCsarHelper(csarPath.toAbsolutePath().toString());
             return generateAllArtifacts(validateServiceVersion(additionalParams), csarHelper);
-        } catch (SdcToscaParserException | XmlArtifactGenerationException e) {
+        } catch (SdcToscaParserException | ClassCastException | XmlArtifactGenerationException e) {
             log.error(ApplicationMsgs.INVALID_CSAR_FILE, e);
             return createErrorData(e);
         } finally {
@@ -131,17 +131,11 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
      */
     public GenerationData generateAllArtifacts(final String serviceVersion, ISdcCsarHelper csarHelper)
             throws XmlArtifactGenerationException {
-        List<NodeTemplate> serviceNodeTemplates =
-                ToscaParser.getServiceNodeTemplates(csarHelper).collect(Collectors.toList());
-        if (serviceNodeTemplates == null) {
-            throw new IllegalArgumentException(GENERATOR_AAI_ERROR_MISSING_SERVICE_TOSCA);
-        }
-
         Service serviceModel = createServiceModel(serviceVersion, csarHelper.getServiceMetadataAllProperties());
 
         MDC.put(MDC_PARAM_MODEL_INFO, serviceModel.getModelName() + "," + getArtifactLabel(serviceModel));
 
-        List<Resource> resources = generateResourceModels(csarHelper, serviceNodeTemplates, serviceModel);
+        List<Resource> resources = generateResourceModels(csarHelper, serviceModel);
 
         // Generate the A&AI XML model for the Service.
         final String serviceArtifact = modelGenerator.generateModelFor(serviceModel);
@@ -183,18 +177,21 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
     /**
      * @param csarHelper
-     * @param serviceNodeTemplates
      * @param serviceModel
      * @return the generated Models
      * @throws XmlArtifactGenerationException
      *             if the configured widget mappings do not support processed widget type(s)
      */
-    private List<Resource> generateResourceModels(ISdcCsarHelper csarHelper, List<NodeTemplate> serviceNodeTemplates,
-            Service serviceModel) throws XmlArtifactGenerationException {
+    private List<Resource> generateResourceModels(ISdcCsarHelper csarHelper, Service serviceModel)
+            throws XmlArtifactGenerationException {
+        List<NodeTemplate> serviceNodeTemplates =
+                ToscaParser.getServiceNodeTemplates(csarHelper).collect(Collectors.toList());
+        if (serviceNodeTemplates == null) {
+            throw new IllegalArgumentException(GENERATOR_AAI_ERROR_MISSING_SERVICE_TOSCA);
+        }
+
         final ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(csarHelper);
-
         List<Resource> resources = new ArrayList<>();
-
         final List<Group> serviceGroups = ToscaParser.getServiceLevelGroups(csarHelper);
         for (NodeTemplate nodeTemplate : serviceNodeTemplates) {
             if (nodeTemplate.getMetaData() != null) {
@@ -436,15 +433,17 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
     private int hashCodeUuId(String uuId) {
         int hashcode = 0;
-        for (int i = 0; i < uuId.length(); i++) {
-            hashcode = 31 * hashcode + uuId.charAt(i);
+        if (uuId != null) {
+            for (int i = 0; i < uuId.length(); i++) {
+                hashcode = 31 * hashcode + uuId.charAt(i);
+            }
         }
         return hashcode;
     }
 
     private String truncateName(String name) {
         String truncatedName = name;
-        if (name.length() >= 200) {
+        if (name != null && name.length() >= 200) {
             truncatedName = name.substring(0, 199);
         }
         return truncatedName;

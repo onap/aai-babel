@@ -351,10 +351,13 @@ public class ArtifactGeneratorToscaParser {
      */
     private void processVfModule(List<Resource> resources, Model vfModel, Group groupDefinition,
             NodeTemplate serviceNode, Resource groupModel) throws XmlArtifactGenerationException {
-        groupModel.populateModelIdentificationInformation(
-                mergeProperties(groupDefinition.getMetadata().getAllProperties(), groupDefinition.getProperties()));
+        Metadata metadata = groupDefinition.getMetadata();
 
+        Map<String, String> mergedProperties =
+                mergeProperties(metadata == null ? Collections.emptyMap() : metadata.getAllProperties(),
+                        groupDefinition.getProperties());
 
+        groupModel.populateModelIdentificationInformation(mergedProperties);
         SubstitutionMappings substitutionMappings = serviceNode.getSubMappingToscaTemplate();
         if (substitutionMappings != null) {
             processVfModuleGroup(groupModel, getVfModuleMembers(substitutionMappings,
@@ -457,29 +460,34 @@ public class ArtifactGeneratorToscaParser {
      *            parent Resource
      * @param metaData
      *            for populating the Resource IDs
-     * @param resourceNode
-     *            any Model (will be ignored if not a Resource)
+     * @param childResource
+     *            a child Resource (will be ignored if this is a Widget type)
      * @param nodeProperties
      *            the node properties
      * @return whether or not a ProvidingService was processed
      */
-    private boolean processModel(Model resourceModel, Metadata metaData, Resource resourceNode,
+    private boolean processModel(Model resourceModel, Metadata metaData, Resource childResource,
             Map<String, Property> nodeProperties) {
-        boolean foundProvidingService = resourceNode != null
-                && (boolean) Optional.ofNullable(resourceNode.getProperties().get("providingService")).orElse(false);
+        boolean isProvidingService = childResource != null
+                && (boolean) Optional.ofNullable(childResource.getProperties().get("providingService")).orElse(false);
 
-        if (foundProvidingService) {
-            processProvidingService(resourceModel, resourceNode, nodeProperties);
-        } else if (resourceNode != null && resourceNode.getModelType() == ModelType.RESOURCE
-                && !resourceNode.hasWidgetType("L3_NET")) {
+        if (isProvidingService) {
+            processProvidingService(resourceModel, childResource, nodeProperties);
+        } else if (childResource != null && childResource.getModelType() == ModelType.RESOURCE
+                && !childResource.hasWidgetType("L3_NET")) {
             if (metaData != null) {
-                resourceNode.populateModelIdentificationInformation(metaData.getAllProperties());
+                childResource.populateModelIdentificationInformation(metaData.getAllProperties());
             }
-            resourceModel.addResource(resourceNode);
+            resourceModel.addResource(childResource);
         }
-        return foundProvidingService;
+        return isProvidingService;
     }
 
+    /**
+     * @param resourceModel
+     * @param resourceNode
+     * @param nodeProperties
+     */
     private void processProvidingService(Model resourceModel, Resource resourceNode,
             Map<String, Property> nodeProperties) {
         if (nodeProperties == null || nodeProperties.get("providing_service_uuid") == null

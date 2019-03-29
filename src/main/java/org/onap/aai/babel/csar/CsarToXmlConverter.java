@@ -75,7 +75,7 @@ public class CsarToXmlConverter {
             logger.debug(xmlArtifacts.size() + " XML artifact(s) have been generated");
         } catch (InvalidArchiveException e) {
             throw new CsarConverterException(
-                    "An error occurred trying to extract the YMAL files from the csar file : " + e);
+                    "An error occurred trying to extract the YAML files from the CSAR file : " + e);
         } catch (XmlArtifactGenerationException e) {
             throw new CsarConverterException(
                     "An error occurred trying to generate XML files from a collection of YAML files : " + e);

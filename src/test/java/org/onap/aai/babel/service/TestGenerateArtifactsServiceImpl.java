@@ -152,8 +152,7 @@ public class TestGenerateArtifactsServiceImpl {
      *             if the resource cannot be loaded
      */
     private Response processJsonRequest(CsarTest csar) throws IOException, URISyntaxException {
-        String jsonString = csar.getJsonRequest();
-        return invokeService(jsonString);
+        return invokeService(csar.getJsonRequest());
     }
 
     /**

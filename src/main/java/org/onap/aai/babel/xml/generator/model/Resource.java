@@ -21,9 +21,12 @@
 
 package org.onap.aai.babel.xml.generator.model;
 
+import com.google.common.collect.ImmutableMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 
@@ -135,9 +138,19 @@ public class Resource extends Model {
 
     @Override
     public String toString() {
-        return "Resource [widget type=" + getWidgetType() + ", deleteFlag=" + deleteFlag + ", modelType=" + modelType
-                + ", properties=" + properties + ", vserver=" + vserver + ", addlintf=" + addlintf + ", addvolume="
-                + addvolume + ", members=" + members + "]";
+        return ImmutableMap.<String, String>builder() //
+                .put("Resource", Optional.ofNullable(getModelId()).orElse("null")) //
+                .put("widget type", getWidgetType().toString()) //
+                .put("deleteFlag", Boolean.toString(deleteFlag)) //
+                .put("modelType", modelType.toString()) //
+                .put("properties", properties.toString()) //
+                .put("vserver", Optional.ofNullable(vserver).map(Widget::toString).orElse("null")) //
+                .put("addlintf", Boolean.toString(addlintf)) //
+                .put("addvolume", Boolean.toString(addvolume)) //
+                .put("members", Optional.ofNullable(members).map(List::toString).orElse("null")) //
+                .build().entrySet().stream() //
+                .map(e -> e.getKey() + "=" + e.getValue()) //
+                .collect(Collectors.joining(", "));
     }
 
     private void addVolumeWidget(Widget widget) {
