@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,13 +26,17 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import com.att.eelf.configuration.EELFLogger.Level;
+import com.att.eelf.configuration.EELFManager;
 import java.io.IOException;
 import java.util.Arrays;
+import javax.servlet.ServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.onap.aai.babel.logging.LogHelper.MdcParameter;
 import org.onap.aai.babel.logging.LogHelper.TriConsumer;
 import org.onap.aai.cl.api.LogFields;
 import org.onap.aai.cl.api.Logger;
@@ -61,6 +65,7 @@ public class TestApplicationLogger {
     @Test
     public void logAllMessages() throws IOException {
         Logger logger = LogHelper.INSTANCE;
+        LogHelper.INSTANCE.clearContext();
         LogReader errorReader = new LogReader(LogHelper.getLogDirectory(), "error");
         LogReader debugReader = new LogReader(LogHelper.getLogDirectory(), "debug");
         String[] args = {"1", "2", "3", "4"};
@@ -81,9 +86,6 @@ public class TestApplicationLogger {
 
             logger.debug(msg, args);
             validateLoggedMessage(msg, debugReader, "DEBUG");
-
-            // The trace level is not enabled
-            logger.trace(msg, args);
         }
     }
 
@@ -100,6 +102,28 @@ public class TestApplicationLogger {
         LogHelper.INSTANCE.debug("a message");
         String str = reader.getNewLines();
         assertThat(str, is(notNullValue()));
+    }
+
+    @Test
+    public void logTraceMessage() throws IOException {
+        LogReader reader = new LogReader(LogHelper.getLogDirectory(), "debug");
+        EELFManager.getInstance().getDebugLogger().setLevel(Level.TRACE);
+        LogHelper.INSTANCE.trace(ApplicationMsgs.LOAD_PROPERTIES, "a message");
+        String str = reader.getNewLines();
+        assertThat(str, is(notNullValue()));
+        EELFManager.getInstance().getAuditLogger().setLevel(Level.INFO);
+        LogHelper.INSTANCE.trace(ApplicationMsgs.LOAD_PROPERTIES, "message not written");
+    }
+
+    /**
+     * Call logAuditError() for code coverage stats.
+     */
+    @Test
+    public void logAuditError() {
+        LogHelper.INSTANCE.logAuditError(new Exception("test"));
+        EELFManager.getInstance().getAuditLogger().setLevel(Level.OFF);
+        LogHelper.INSTANCE.logAuditError(new Exception("test"));
+        EELFManager.getInstance().getAuditLogger().setLevel(Level.INFO);
     }
 
     /**
@@ -151,6 +175,32 @@ public class TestApplicationLogger {
         assertThat(str, is(notNullValue()));
         assertThat("audit message log level", str, containsString("INFO"));
         assertThat("audit message content", str, containsString("foo"));
+    }
+
+    /**
+     * Check logAudit with mocked Servlet request.
+     *
+     * @throws IOException
+     *             if the log file cannot be read
+     */
+    @Test
+    public void logAuditMessageWithServletRequest() throws IOException {
+        ServletRequest servletRequest = Mockito.mock(ServletRequest.class);
+        LogHelper logger = LogHelper.INSTANCE;
+        LogReader reader = new LogReader(LogHelper.getLogDirectory(), "audit");
+        logger.startAudit(null, servletRequest);
+        logger.logAuditSuccess("foo");
+        String str = reader.getNewLines();
+        assertThat(str, is(notNullValue()));
+        assertThat("audit message log level", str, containsString("INFO"));
+        assertThat("audit message content", str, containsString("foo"));
+    }
+
+    @Test
+    public void setDefaultContextValue() {
+        LogHelper logger = LogHelper.INSTANCE;
+        logger.setDefaultContextValue("key", "value");
+        logger.setDefaultContextValue(MdcParameter.USER, null);
     }
 
     /**
