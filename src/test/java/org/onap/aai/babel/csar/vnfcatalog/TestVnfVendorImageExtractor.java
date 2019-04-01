@@ -28,6 +28,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,11 +38,13 @@ import org.onap.aai.babel.service.data.BabelArtifact;
 import org.onap.aai.babel.service.data.BabelArtifact.ArtifactType;
 import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
+import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.toscaparser.api.elements.Metadata;
 
 /**
  * Tests {@link VnfVendorImageExtractor}.
  */
-public class VnfVendorImageExtractorTest {
+public class TestVnfVendorImageExtractor {
 
     @Test(expected = NullPointerException.class)
     public void createVendorImageMappingsNullCsarSupplied() throws ToscaToCatalogException, IOException {
@@ -87,6 +90,18 @@ public class VnfVendorImageExtractorTest {
         assertThat(artifact.getType(), is(equalTo(ArtifactType.VNFCATALOG)));
         assertThat(artifact.getPayload(),
                 is(equalTo(new ArtifactTestUtils().getRequestJson("vnfVendorImageConfigurations.json"))));
+    }
+
+    /**
+     * Test that an Exception is created when there are no software versions defined for a VF.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testBuildVendorImageConfigurations() {
+        SdcToscaHelper helper = new SdcToscaHelper();
+        NodeTemplate vf = helper.addNodeTemplate();
+        vf.setMetaData(new Metadata(ImmutableMap.of("resourceVendor", "vendor")));
+        vf.setSubMappingToscaTemplate(helper.buildMappings());
+        new VnfVendorImageExtractor().buildVendorImageConfigurations(null, vf);
     }
 
     @Test

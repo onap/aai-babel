@@ -187,11 +187,14 @@ public class VnfVendorImageExtractor {
      *            the path to the CSAR file
      * @return a List of Vendor Image Configurations
      * @throws SdcToscaParserException
+     *             if the SDC TOSCA parser determines that the CSAR is invalid
      * @throws ToscaToCatalogException
+     *             if there are no software versions defined for an image
      * @throws InvalidNumberOfNodesException
+     *             if multiple VNF configuration nodes are found in the CSAR
      */
     private List<VendorImageConfiguration> createVendorImageConfigurations(String csarFilepath)
-            throws SdcToscaParserException, InvalidNumberOfNodesException {
+            throws SdcToscaParserException, ToscaToCatalogException, InvalidNumberOfNodesException {
         ISdcCsarHelper csarHelper = SdcToscaParserFactory.getInstance().getSdcCsarHelper(csarFilepath);
 
         List<NodeTemplate> serviceVfList = ToscaParser.getServiceNodeTemplates(csarHelper)
@@ -215,7 +218,11 @@ public class VnfVendorImageExtractor {
                         + vnfConfigs.size() + " nodes were found in the CSAR.");
             }
 
-            return createVendorImageConfigurations(serviceVfList, vnfConfigurationNode);
+            try {
+                return createVendorImageConfigurations(serviceVfList, vnfConfigurationNode);
+            } catch (IllegalArgumentException e) {
+                throw new ToscaToCatalogException(e.getMessage());
+            }
         }
 
         return Collections.emptyList();
@@ -263,8 +270,11 @@ public class VnfVendorImageExtractor {
      *            the node template for the VF
      *
      * @return a stream of VendorImageConfiguration objects
+     * @throws IllegalArgumentException
+     *             if the VF has no child node templates which contain images (complex properties) that have software
+     *             version strings
      */
-    private Stream<VendorImageConfiguration> buildVendorImageConfigurations(
+    Stream<VendorImageConfiguration> buildVendorImageConfigurations(
             Collection<Map<String, Map<String, String>>> flavorMaps, NodeTemplate vfNodeTemplate) {
         String resourceVendor = vfNodeTemplate.getMetaData().getValue("resourceVendor");
         applicationLogger.debug("Resource Vendor " + resourceVendor);
@@ -272,6 +282,10 @@ public class VnfVendorImageExtractor {
         List<String> softwareVersions =
                 extractSoftwareVersions(vfNodeTemplate.getSubMappingToscaTemplate().getNodeTemplates());
         applicationLogger.debug("Software Versions: " + softwareVersions);
+
+        if (softwareVersions.isEmpty()) {
+            throw new IllegalArgumentException("No software versions could be found for this CSAR file");
+        }
 
         return flavorMaps.stream() //
                 .map(value -> value.entrySet().stream() //

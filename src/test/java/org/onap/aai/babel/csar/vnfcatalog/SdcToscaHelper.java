@@ -32,7 +32,7 @@ public class SdcToscaHelper {
 
     /**
      * Create the test SubstitutionMappings.
-     * 
+     *
      * @return the new Substitution Mappings
      */
     public SubstitutionMappings buildMappings() {
@@ -81,28 +81,32 @@ public class SdcToscaHelper {
 
     /**
      * Create a new NodeTemplate and add it to the list (for populating the Substitution Mappings).
+     *
+     * @return the new NodeTemplate
      */
-    public void addNodeTemplate() {
+    public NodeTemplate addNodeTemplate() {
         String name = "node name";
         String type = "tosca.nodes.custom";
 
-        LinkedHashMap<String, Object> nodeTemplate = new LinkedHashMap<>();
-        nodeTemplate.put("type", type);
-        nodeTemplate.put("properties", null);
+        LinkedHashMap<String, Object> ntMap = new LinkedHashMap<>();
+        ntMap.put("type", type);
+        ntMap.put("properties", null);
 
-        LinkedHashMap<String, Object> ntnodeTemplates = buildCustomTypeDefinitions(name, nodeTemplate);
+        LinkedHashMap<String, Object> ntnodeTemplates = buildCustomTypeDefinitions(name, ntMap);
         ntnodeTemplates.put("derived_from", null);
         ntnodeTemplates.put("properties", getImagesDefProps());
 
         LinkedHashMap<String, Object> typeInfo = buildNodeTemplateTypeInfo(getImagesDefProps());
         LinkedHashMap<String, Object> customDefs = buildCustomTypeDefinitions(type, typeInfo);
-        smnodetemplates.add(new NodeTemplate(name, ntnodeTemplates, customDefs, null, null));
+        NodeTemplate nodeTemplate = new NodeTemplate(name, ntnodeTemplates, customDefs, null, null);
+        smnodetemplates.add(nodeTemplate);
+        return nodeTemplate;
     }
 
     /**
      * Simulate the creation of a NodeTemplate by the SDC TOSCA parser. Populate the properties of the NodeTemplate with
      * the supplied images.
-     * 
+     *
      * @param images
      *            the value of the images property
      */
