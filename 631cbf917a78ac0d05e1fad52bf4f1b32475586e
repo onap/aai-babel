@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7eccab26_248d93b5",
+        "filename": "src/main/java/org/onap/aai/babel/BabelApplication.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 703
+      },
+      "writtenOn": "2019-04-02T16:36:54Z",
+      "side": 1,
+      "message": "With the addition of server.ssl.client-auth\u003dneed in application.properties, this block of code (and its accompanying tests) becomes redundant, since they will not override the value set in the properties file.",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 9
+      },
+      "revId": "631cbf917a78ac0d05e1fad52bf4f1b32475586e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
