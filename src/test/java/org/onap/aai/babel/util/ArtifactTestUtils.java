@@ -128,7 +128,7 @@ public class ArtifactTestUtils {
 
     public String loadResourceAsString(String resourceName) throws IOException {
         try {
-        return IOUtils.toString(getResource(resourceName), Charset.defaultCharset());
+            return IOUtils.toString(getResource(resourceName), Charset.defaultCharset());
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("No such resource " + resourceName);
         }
