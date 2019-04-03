@@ -74,6 +74,7 @@ public class TestAuthFileWatcher {
         } catch (AAIAuthException e) {
             assertThat(e.getMessage(), containsString("Error processing Auth policy file"));
         }
+        file.deleteOnExit();
         Mockito.when(mockFile.lastModified()).thenReturn(1000L);
         task.run();
     }
