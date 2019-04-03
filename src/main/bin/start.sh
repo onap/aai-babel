@@ -35,6 +35,10 @@ PROPS="-DAPP_HOME=${APP_HOME}"
 PROPS="${PROPS} -DCONFIG_HOME=${CONFIG_HOME}"
 PROPS="${PROPS} -Dtosca.mappings.config=${CONFIG_HOME}/tosca-mappings.json"
 PROPS="${PROPS} -DKEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}"
+if [ ! -z "$REQUIRE_CLIENT_AUTH" ]; then
+   PROPS="$PROPS -Dserver.ssl.client-auth=${REQUIRE_CLIENT_AUTH}"
+fi
+
 JVM_MAX_HEAP=${MAX_HEAP:-1024}
 
 exec java -Xmx${JVM_MAX_HEAP}m ${PROPS} -jar ${APP_HOME}/babel.jar
