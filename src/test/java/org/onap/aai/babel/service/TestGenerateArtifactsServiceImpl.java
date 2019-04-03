@@ -21,6 +21,7 @@
 
 package org.onap.aai.babel.service;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -32,6 +33,7 @@ import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.security.auth.x500.X500Principal;
 import javax.ws.rs.core.HttpHeaders;
@@ -42,6 +44,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.onap.aai.auth.AAIAuthException;
 import org.onap.aai.auth.AAIMicroServiceAuth;
 import org.onap.aai.babel.service.data.BabelRequest;
 import org.onap.aai.babel.testdata.CsarTest;
@@ -70,16 +73,40 @@ public class TestGenerateArtifactsServiceImpl {
         new ArtifactTestUtils().setGeneratorSystemProperties();
     }
 
+    /**
+     * Test with a valid request (and valid CSAR content) by calling the Service implementation directly using a mocked
+     * HTTPS request.
+     *
+     * @throws URISyntaxException
+     *             if the URI cannot be created
+     * @throws IOException
+     *             if the resource cannot be loaded
+     */
     @Test
-    public void testGenerateArtifacts() throws Exception {
-        Response response = processJsonRequest(CsarTest.VNF_VENDOR_CSAR);
+    public void testGenerateArtifacts() throws URISyntaxException, IOException {
+        Response response = processJsonRequest(CsarTest.VNF_VENDOR_CSAR, auth);
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
 
     /**
-     * No VNF Configuration exists.
-     * 
+     * Test with a valid request that has no Transaction ID header value.
+     *
+     * @throws URISyntaxException
+     *             if the URI cannot be created
+     * @throws IOException
+     *             if the resource cannot be loaded
+     */
+    @Test
+    public void testGenerateArtifactsWithoutRequestId() throws URISyntaxException, IOException {
+        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getJsonRequest(), Optional.empty(), auth);
+        assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(response.getEntity(), is(getResponseJson("response.json")));
+    }
+
+    /**
+     * Test with a valid request, using a CSAR file that has no VNF configuration present.
+     *
      * @throws URISyntaxException
      *             if the URI cannot be created
      * @throws IOException
@@ -87,9 +114,44 @@ public class TestGenerateArtifactsServiceImpl {
      */
     @Test
     public void testGenerateArtifactsWithoutVnfConfiguration() throws IOException, URISyntaxException {
-        Response response = processJsonRequest(CsarTest.NO_VNF_CONFIG_CSAR);
+        Response response = processJsonRequest(CsarTest.NO_VNF_CONFIG_CSAR, auth);
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("validNoVnfConfigurationResponse.json")));
+    }
+
+    /**
+     * Test for a valid request with invalid CSAR file content.
+     *
+     * @throws URISyntaxException
+     *             if the URI cannot be created
+     * @throws IOException
+     *             if the resource cannot be loaded
+     */
+    @Test
+    public void testGenerateArtifactsInvalidCsar() throws IOException, URISyntaxException {
+        Response response = processJsonRequest(CsarTest.MULTIPLE_VNF_CSAR, auth);
+        assertThat(response.getStatus(), is(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
+        assertThat(response.getEntity().toString(), containsString("VNF catalog"));
+    }
+
+    @Test
+    public void testUninitializedService() throws IOException, URISyntaxException, AAIAuthException {
+        AAIMicroServiceAuth uninitializedAuth = Mockito.mock(AAIMicroServiceAuth.class);
+        Mockito.when(uninitializedAuth.validateRequest(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenThrow(new AAIAuthException("test"));
+        Response response = processJsonRequest(CsarTest.NO_VNF_CONFIG_CSAR, uninitializedAuth);
+        assertThat(response.getStatus(), is(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
+        assertThat(response.getEntity().toString(), containsString("check the Babel service logs"));
+    }
+
+    @Test
+    public void testUnauthorizedRequest() throws IOException, URISyntaxException, AAIAuthException {
+        AAIMicroServiceAuth uninitializedAuth = Mockito.mock(AAIMicroServiceAuth.class);
+        Mockito.when(uninitializedAuth.validateRequest(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(false);
+        Response response = processJsonRequest(CsarTest.NO_VNF_CONFIG_CSAR, uninitializedAuth);
+        assertThat(response.getStatus(), is(Response.Status.UNAUTHORIZED.getStatusCode()));
+        assertThat(response.getEntity().toString(), containsString("User not authorized"));
     }
 
     @Test
@@ -145,14 +207,17 @@ public class TestGenerateArtifactsServiceImpl {
      *
      * @param csar
      *            test CSAR file
+     * @param auth
+     *            the auth module
      * @return the Response from the HTTP API
      * @throws URISyntaxException
      *             if the URI cannot be created
      * @throws IOException
      *             if the resource cannot be loaded
      */
-    private Response processJsonRequest(CsarTest csar) throws IOException, URISyntaxException {
-        return invokeService(csar.getJsonRequest());
+    private Response processJsonRequest(CsarTest csar, AAIMicroServiceAuth auth)
+            throws URISyntaxException, IOException {
+        return invokeService(csar.getJsonRequest(), Optional.of("transaction-id"), auth);
     }
 
     /**
@@ -164,7 +229,25 @@ public class TestGenerateArtifactsServiceImpl {
      * @throws URISyntaxException
      *             if the URI cannot be created
      */
-    private Response invokeService(String jsonString) throws URISyntaxException {
+    private Response invokeService(String jsonRequest) throws URISyntaxException {
+        return invokeService(jsonRequest, Optional.of("transaction-id"), auth);
+    }
+
+    /**
+     * Create a (mocked) HTTPS request and invoke the Babel generate artifacts API.
+     *
+     * @param jsonString
+     *            the JSON request
+     * @param transactionId
+     *            optional X-TransactionId value for the HTTP request
+     * @param auth
+     *            the auth module
+     * @return the Response from the HTTP API
+     * @throws URISyntaxException
+     *             if the URI cannot be created
+     */
+    private Response invokeService(String jsonString, Optional<String> transactionId, AAIMicroServiceAuth auth)
+            throws URISyntaxException {
         UriInfo mockUriInfo = Mockito.mock(UriInfo.class);
         Mockito.when(mockUriInfo.getRequestUri()).thenReturn(new URI("/validate")); // NOSONAR (mocked)
         Mockito.when(mockUriInfo.getPath(false)).thenReturn("validate"); // URI prefix is stripped by AJSC routing
@@ -172,13 +255,16 @@ public class TestGenerateArtifactsServiceImpl {
 
         // Create mocked request headers map
         MultivaluedHashMap<String, String> headersMap = new MultivaluedHashMap<>();
-        headersMap.put("X-TransactionId", createSingletonList("transaction-id"));
+        if (transactionId.isPresent()) {
+            headersMap.put("X-TransactionId", createSingletonList(transactionId.get()));
+        }
         headersMap.put("X-FromAppId", createSingletonList("app-id"));
         headersMap.put("Host", createSingletonList("hostname"));
 
         HttpHeaders headers = Mockito.mock(HttpHeaders.class);
         for (Entry<String, List<String>> entry : headersMap.entrySet()) {
             Mockito.when(headers.getRequestHeader(entry.getKey())).thenReturn(entry.getValue());
+            Mockito.when(headers.getHeaderString(entry.getKey())).thenReturn(entry.getValue().get(0));
         }
         Mockito.when(headers.getRequestHeaders()).thenReturn(headersMap);
 

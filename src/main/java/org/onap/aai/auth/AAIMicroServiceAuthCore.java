@@ -89,8 +89,8 @@ public class AAIMicroServiceAuthCore {
         if (policyAuthFileName == null) {
             throw new AAIAuthException("Auth policy file could not be found");
         }
-        AAIMicroServiceAuthCore.reloadUsers();
 
+        AAIMicroServiceAuthCore.reloadUsers();
 
         TimerTask task = new AuthFileWatcher(new File(policyAuthFileName));
 

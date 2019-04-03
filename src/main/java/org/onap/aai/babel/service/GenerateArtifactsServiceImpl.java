@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2017-2019 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang3.time.StopWatch;
+import org.onap.aai.auth.AAIAuthException;
 import org.onap.aai.auth.AAIMicroServiceAuth;
 import org.onap.aai.auth.AAIMicroServiceAuthCore;
 import org.onap.aai.babel.csar.CsarConverterException;
@@ -53,7 +54,10 @@ import org.onap.aai.babel.util.RequestValidationException;
 import org.onap.aai.babel.util.RequestValidator;
 import org.springframework.stereotype.Service;
 
-/** Generate SDC Artifacts by passing in a CSAR payload, Artifact Name and Artifact version */
+/**
+ * Generate SDC Artifacts by passing in a CSAR payload, Artifact Name and Artifact version.
+ *
+ */
 @Service
 public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
     private static final LogHelper applicationLogger = LogHelper.INSTANCE;
@@ -62,6 +66,7 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
 
     /**
      * @param authorization
+     *            the auth module
      */
     @Inject
     public GenerateArtifactsServiceImpl(final AAIMicroServiceAuth authorization) {
@@ -111,11 +116,11 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
 
             response = authorized ? generateArtifacts(requestBody)
                     : buildResponse(Status.UNAUTHORIZED, "User not authorized to perform the operation.");
-        } catch (Exception e) {
+        } catch (AAIAuthException e) {
             applicationLogger.error(ApplicationMsgs.PROCESS_REQUEST_ERROR, e);
             applicationLogger.logAuditError(e);
             return buildResponse(Status.INTERNAL_SERVER_ERROR,
-                    "Error while processing request. Please check the babel service logs for more details.\n");
+                    "Error while processing request. Please check the Babel service logs for more details.\n");
         }
 
         StatusCode statusDescription;
@@ -134,7 +139,8 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
     /**
      * Generate XML model artifacts from request body.
      *
-     * @param requestBody the request body in JSON format
+     * @param requestBody
+     *            the request body in JSON format
      * @return response object containing the generated XML models
      */
     protected Response generateArtifacts(String requestBody) {
@@ -168,11 +174,8 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
             response = processError(ApplicationMsgs.PROCESSING_VNF_CATALOG_ERROR, Status.INTERNAL_SERVER_ERROR, e,
                     "Error converting CSAR artifact to VNF catalog.");
         } catch (RequestValidationException e) {
-            response =
-                    processError(ApplicationMsgs.PROCESS_REQUEST_ERROR, Status.BAD_REQUEST, e, e.getLocalizedMessage());
-        } catch (Exception e) {
-            response = processError(ApplicationMsgs.PROCESS_REQUEST_ERROR, Status.INTERNAL_SERVER_ERROR, e,
-                    "Error while processing request. Please check the babel service logs for more details.\n");
+            response = processError(ApplicationMsgs.PROCESS_REQUEST_ERROR, Status.BAD_REQUEST, //
+                    e, e.getLocalizedMessage());
         } finally {
             applicationLogger.logMetrics(stopwatch, LogHelper.getCallerMethodName(0));
         }
@@ -189,13 +192,13 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
     /**
      * Helper method to create a REST response object.
      *
-     * @param status response status code
-     * @param entity response payload
+     * @param status
+     *            response status code
+     * @param entity
+     *            response payload
      * @return
      */
     private Response buildResponse(Status status, String entity) {
-    // @formatter:off
-    return Response.status(status).entity(entity).type(MediaType.TEXT_PLAIN).build();
-    // @formatter:on
+        return Response.status(status).entity(entity).type(MediaType.TEXT_PLAIN).build();
     }
 }
