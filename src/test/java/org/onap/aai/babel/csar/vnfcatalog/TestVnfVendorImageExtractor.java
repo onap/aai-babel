@@ -109,8 +109,7 @@ public class TestVnfVendorImageExtractor {
         VnfVendorImageExtractor extractor = new VnfVendorImageExtractor();
         SdcToscaHelper helper = new SdcToscaHelper();
 
-        List<String> versions;
-        versions = extractor.extractSoftwareVersions(helper.buildMappings().getNodeTemplates());
+        List<String> versions = extractor.extractSoftwareVersions(helper.buildMappings().getNodeTemplates());
         assertThat(versions.size(), is(0));
 
         helper.addNodeTemplate();

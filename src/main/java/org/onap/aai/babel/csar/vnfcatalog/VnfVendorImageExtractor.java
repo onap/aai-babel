@@ -221,6 +221,7 @@ public class VnfVendorImageExtractor {
             try {
                 return createVendorImageConfigurations(serviceVfList, vnfConfigurationNode);
             } catch (IllegalArgumentException e) {
+                applicationLogger.error(ApplicationMsgs.INVALID_CSAR_FILE, e);
                 throw new ToscaToCatalogException(e.getMessage());
             }
         }
