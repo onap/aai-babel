@@ -103,6 +103,56 @@ public class TestGenerateArtifactsServiceImpl {
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
+    
+    /**
+     * Test with a valid request without Minor Artifact version.
+     *
+     * @throws URISyntaxException
+     *             if the URI cannot be created
+     * @throws IOException
+     *             if the resource cannot be loaded
+     */
+    @Test
+    public void testGenerateArtifactsWithoutMinorArtifactVersion() throws URISyntaxException, IOException {
+        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getJsonRequestWithArtifactVersion("1"),
+        		Optional.of("transaction-id"), auth);
+        assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(response.getEntity(), is(getResponseJson("response.json")));
+    }
+    
+    /**
+     * Test with a valid request without Minor Artifact version.
+     *
+     * @throws URISyntaxException
+     *             if the URI cannot be created
+     * @throws IOException
+     *             if the resource cannot be loaded
+     */
+    @Test
+    public void testGenerateArtifactsWithInvalidArtifactVersion() throws URISyntaxException, IOException {
+        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getJsonRequestWithArtifactVersion("a"),
+        		Optional.of("transaction-id"), auth);
+        assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(response.getEntity(), is(getResponseJson("response.json")));
+    }
+    
+    
+    /**
+     * Test with a valid request with Artifact version less than 1.
+     *
+     * @throws URISyntaxException
+     *             if the URI cannot be created
+     * @throws IOException
+     *             if the resource cannot be loaded
+     */
+    @Test
+    public void testGenerateArtifactsWithArtifactVerLessThan1() throws URISyntaxException, IOException {
+        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getJsonRequestWithArtifactVersion("0.1"),
+        		Optional.of("transaction-id"), auth);
+        assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(response.getEntity(), is(getResponseJson("responseWithVersionLessThan1.json")));
+    }
+
 
     /**
      * Test with a valid request, using a CSAR file that has no VNF configuration present.
