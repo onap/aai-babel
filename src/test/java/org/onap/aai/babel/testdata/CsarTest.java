@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2019 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2019 European Software Marketing Ltd.
+ * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2017-2018 European Software Marketing Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,12 +39,18 @@ public enum CsarTest {
     VNF_VENDOR_CSAR("catalog_csar.csar"),
     NO_VNF_CONFIG_CSAR("noVnfConfiguration.csar"),
     SD_WAN_CSAR_FILE("service-SdWanServiceTest-csar.csar"),
+    COS_AVPN_CSAR_FILE("service_CosAvpn_csar.csar"),
     MISSING_METADATA_CSAR("service-MissingMetadataTest.csar"),
     NO_YAML_FILES("noYmlFilesArchive.zip"),
     PORT_MIRROR_CSAR("service_PortMirror.csar"),
     MULTIPLE_VNF_CSAR("catalog_csar_too_many_vnfConfigurations.csar"),
     NETWORK_COLLECTION_CSAR_FILE("service_NetworkCollection.csar"),
+    RG_COLLECTOR_615_CSAR_FILE("service-RgCollector615-csar.csar"),
+    VDBE_SERVICE_CSAR_FILE("service-VdbeSrv-csar.csar"),
+    VNFOD_SERVICE("service-Dev2devnfodservice17July-csar.csar"),
+    CHILD_RESOURCE_CSAR_FILE("service-NetworkCloudVnfServiceMock-csar.csar"),
     SERVICE_PROXY_CSAR_FILE("service-S1-csar.csar");
+
     // @formatter:on
 
     private String filename;
@@ -99,6 +105,21 @@ public enum CsarTest {
         BabelRequest request = new BabelRequest();
         request.setArtifactName(getName());
         request.setArtifactVersion("1.0");
+        request.setCsar(new String(GeneratorUtil.encode(getContent())));
+        return new Gson().toJson(request);
+    }
+    
+    /**
+     * Create a BabelRequest containing the encoded CSAR content by passing in the artifact version.
+     * 
+     * @return a new Babel request for this CSAR
+     * @throws IOException
+     *             if an I/O exception occurs
+     */
+    public String getJsonRequestWithArtifactVersion(String artifactVersion) throws IOException {
+        BabelRequest request = new BabelRequest();
+        request.setArtifactName(getName());
+        request.setArtifactVersion(artifactVersion);
         request.setCsar(new String(GeneratorUtil.encode(getContent())));
         return new Gson().toJson(request);
     }
