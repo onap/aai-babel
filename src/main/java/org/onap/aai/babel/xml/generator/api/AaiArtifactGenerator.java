@@ -454,7 +454,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         if (serviceVersion == null) {
             throw new IllegalArgumentException(GENERATOR_AAI_ERROR_MISSING_SERVICE_VERSION);
         } else {
-            String versionRegex = "^[1-9]\\d*(\\.0)$";
+            String versionRegex = "^\\d*\\.\\d*$";
             if (!(serviceVersion.matches(versionRegex))) {
                 throw new IllegalArgumentException(String.format(GENERATOR_AAI_INVALID_SERVICE_VERSION));
             }
