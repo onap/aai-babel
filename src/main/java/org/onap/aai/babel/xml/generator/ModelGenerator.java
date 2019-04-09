@@ -45,8 +45,6 @@ public class ModelGenerator implements ArtifactGenerator {
 
     private static final Logger logger = LogHelper.INSTANCE;
 
-    private static final String VERSION_DELIMITER = ".";
-    private static final String VERSION_DELIMITER_REGEXP = "\\" + VERSION_DELIMITER;
     private static final String DEFAULT_SERVICE_VERSION = "1.0";
 
     /**
@@ -115,12 +113,9 @@ public class ModelGenerator implements ArtifactGenerator {
     }
 
     private static String getServiceVersion(String artifactVersion) {
-        logger.debug("Artifact version=" + artifactVersion );
-        
-        // As of 1902, AAI-16260, we no longer edit the passed in artifact/service version.
+        logger.debug("Artifact version=" + artifactVersion);
         try {
-        	// just make sure it's an integer 
-            Integer.parseInt(artifactVersion.split(VERSION_DELIMITER_REGEXP)[0]);
+            return String.valueOf(Float.parseFloat(artifactVersion));
         } catch (Exception e) {
             logger.warn(ApplicationMsgs.DISTRIBUTION_EVENT,
                     "Error generating service version from artifact version: " + artifactVersion
@@ -128,8 +123,5 @@ public class ModelGenerator implements ArtifactGenerator {
                             + e);
             return DEFAULT_SERVICE_VERSION;
         }
-
-        logger.debug("Use Artifact version as the serviceVersion=" + artifactVersion );
-        return artifactVersion;
     }
 }
