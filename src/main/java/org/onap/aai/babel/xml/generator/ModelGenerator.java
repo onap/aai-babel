@@ -115,21 +115,19 @@ public class ModelGenerator implements ArtifactGenerator {
     }
 
     private static String getServiceVersion(String artifactVersion) {
-        logger.debug("Artifact version=" + artifactVersion );
-        
-        // As of 1902, AAI-16260, we no longer edit the passed in artifact/service version.
-        try {
-        	// just make sure it's an integer 
-            Integer.parseInt(artifactVersion.split(VERSION_DELIMITER_REGEXP)[0]);
-        } catch (Exception e) {
-            logger.warn(ApplicationMsgs.DISTRIBUTION_EVENT,
-                    "Error generating service version from artifact version: " + artifactVersion
-                            + ". Using default service version of: " + DEFAULT_SERVICE_VERSION + ". Error details: "
-                            + e);
-            return DEFAULT_SERVICE_VERSION;
+        logger.debug("Artifact version=" + artifactVersion);
+        if (artifactVersion != null && !artifactVersion.isEmpty()) {
+	        try {
+	            return String.valueOf(Float.parseFloat(artifactVersion));
+	        } catch (NumberFormatException e) {
+	            logger.warn(ApplicationMsgs.DISTRIBUTION_EVENT,
+	                    "Error generating service version from artifact version: " + artifactVersion
+	                            + ". Using default service version of: " + DEFAULT_SERVICE_VERSION + ". Error details: "
+	                            + e);
+	            return DEFAULT_SERVICE_VERSION;
+	        }
+        } else {
+        	return DEFAULT_SERVICE_VERSION;
         }
-
-        logger.debug("Use Artifact version as the serviceVersion=" + artifactVersion );
-        return artifactVersion;
     }
 }
