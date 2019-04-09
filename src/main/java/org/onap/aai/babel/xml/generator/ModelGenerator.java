@@ -116,11 +116,11 @@ public class ModelGenerator implements ArtifactGenerator {
 
     private static String getServiceVersion(String artifactVersion) {
         logger.debug("Artifact version=" + artifactVersion );
-        
-        // As of 1902, AAI-16260, we no longer edit the passed in artifact/service version.
+        int majorVer = 1;
+        // We no longer edit the passed in artifact/service version.
         try {
-        	// just make sure it's an integer 
-            Integer.parseInt(artifactVersion.split(VERSION_DELIMITER_REGEXP)[0]);
+        	// make sure major version number is an integer 
+            majorVer = Integer.parseInt(artifactVersion.split(VERSION_DELIMITER_REGEXP)[0]);
         } catch (Exception e) {
             logger.warn(ApplicationMsgs.DISTRIBUTION_EVENT,
                     "Error generating service version from artifact version: " + artifactVersion
@@ -129,6 +129,20 @@ public class ModelGenerator implements ArtifactGenerator {
             return DEFAULT_SERVICE_VERSION;
         }
 
+        try {
+        	// make sure minor version number is an integer 
+        	Integer.parseInt(artifactVersion.split(VERSION_DELIMITER_REGEXP)[1]);
+         } catch (Exception e) {
+        	// in test env. data coming in from model-loader may have its minor version 
+        	// truncated.  So for now, just append ".0".  This needs to be fixed in 1906.
+        	String updSvcVer = majorVer + ".0";
+        	logger.warn(ApplicationMsgs.DISTRIBUTION_EVENT,
+                    "Error generating service version from artifact version: " + artifactVersion
+                            + ". Using updated service version of: " + updSvcVer + ". Error details: "
+                            + e);
+            return updSvcVer;
+        }
+        
         logger.debug("Use Artifact version as the serviceVersion=" + artifactVersion );
         return artifactVersion;
     }
