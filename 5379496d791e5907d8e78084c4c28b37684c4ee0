@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "95a17a41_d120ad7d",
+        "filename": "src/main/java/org/onap/aai/babel/xml/generator/ModelGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1313
+      },
+      "writtenOn": "2019-04-10T13:38:46Z",
+      "side": 1,
+      "message": "We are missing a test case for an Exception parsing the Integer value (i.e. for the new code where a WARNING message is logged).\nWe should either create a new test CSAR file (perhaps modify an existing file) or simply make getServiceVersion() a package-private method and test it directly.",
+      "range": {
+        "startLine": 136,
+        "startChar": 4,
+        "endLine": 143,
+        "endChar": 29
+      },
+      "revId": "5379496d791e5907d8e78084c4c28b37684c4ee0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
