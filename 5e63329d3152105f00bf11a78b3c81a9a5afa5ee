@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a25ee158_7f434a3d",
+        "filename": "src/main/java/org/onap/aai/babel/xml/generator/ModelGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 703
+      },
+      "writtenOn": "2019-04-11T09:32:27Z",
+      "side": 1,
+      "message": "I think this whole block can be simplified. Do we really need to check both parts of the version separately?\n\nI suggest that we use parseFloat to validate the version number, and if a NumberFormatException is generated, revert to using the default version. E.g.\n\n    private static String getServiceVersion(String artifactVersion) {\n        logger.debug(\"Artifact version\u003d\" + artifactVersion);\n        try {\n            return String.valueOf(Float.parseFloat(artifactVersion));\n        } catch (NumberFormatException e) {\n            logger.warn(ApplicationMsgs.DISTRIBUTION_EVENT,\n                    \"Error generating service version from artifact version: \" + artifactVersion\n                            + \". Using default service version of: \" + DEFAULT_SERVICE_VERSION + \". Error details: \"\n                            + e);\n            return DEFAULT_SERVICE_VERSION;\n        }\n    }",
+      "range": {
+        "startLine": 119,
+        "startChar": 0,
+        "endLine": 145,
+        "endChar": 8
+      },
+      "revId": "5e63329d3152105f00bf11a78b3c81a9a5afa5ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
