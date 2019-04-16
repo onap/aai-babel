@@ -19,6 +19,13 @@
 # limitations under the License.
 # ============LICENSE_END=========================================================
 
+# jre-alpine image has $JAVA_HOME set and added to $PATH
+# ubuntu image requires to set $JAVA_HOME and add java to $PATH manually
+if ( uname -v | grep -i "ubuntu" ); then
+    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-`dpkg --print-architecture | awk -F- '{ print $NF }'`
+    export PATH=${JAVA_HOME}:$PATH
+fi
+
 APP_HOME="${APP_HOME:-/opt/app/babel}"
 
 if [ -z "${CONFIG_HOME}" ]; then
@@ -41,4 +48,6 @@ fi
 
 JVM_MAX_HEAP=${MAX_HEAP:-1024}
 
-exec java -Xmx${JVM_MAX_HEAP}m ${PROPS} -jar ${APP_HOME}/babel.jar
+JARFILE=$(ls ./babel*.jar);
+
+exec java -Xmx${JVM_MAX_HEAP}m ${PROPS} -jar ${APP_HOME}/${JARFILE}
