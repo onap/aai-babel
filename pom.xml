@@ -48,9 +48,15 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<docker.location>${basedir}/target</docker.location>
 		<aai.schema.source.folder>onap/aai_schema</aai.schema.source.folder>
 		<aai.schema.target.folder>${project.build.directory}/aai-schema</aai.schema.target.folder>
+
+		<!-- docker related properties -->
+		<docker.fabric.version>0.28.0</docker.fabric.version>
+		<aai.docker.version>1.0.0</aai.docker.version>
+		<aai.build.directory>${project.build.directory}/${project.artifactId}-${project.version}-build/</aai.build.directory>
+		<aai.docker.namespace>onap</aai.docker.namespace>
+		<aai.base.image>alpine</aai.base.image>
 
 		<!-- Dependency Versions -->
 		<common.logging.version>1.2.2</common.logging.version>
@@ -81,6 +87,101 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<profiles>
+		<!-- Docker profile to be used for building docker image and pushing to nexus -->
+		<profile>
+			<id>docker</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.groovy.maven</groupId>
+						<artifactId>gmaven-plugin</artifactId>
+						<version>1.0</version>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<source>
+										def userAaiBaseImage = session.userProperties['aai.base.image'];
+										def userAaiDockerVersion = session.userProperties['aai.docker.version'];
+										if (userAaiDockerVersion != null) {
+											project.properties['aai.docker.version'] = userAaiDockerVersion;
+										}
+										if (userAaiBaseImage != null) {
+											project.properties['aai.base.image'] = userAaiBaseImage;
+										}
+										log.info 'Base image flavour: ' + project.properties['aai.base.image'];
+										log.info 'Base image version: ' + project.properties['aai.docker.version'];
+									</source>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>${docker.fabric.version}</version>
+						<configuration>
+							<verbose>true</verbose>
+							<apiVersion>1.23</apiVersion>
+							<images>
+								<image>
+									<name>${docker.push.registry}/${aai.docker.namespace}/${project.artifactId}:%l</name>
+									<build>
+										<filter>@</filter>
+										<tags>
+											<tag>latest</tag>
+										</tags>
+										<cleanup>try</cleanup>
+										<dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
+										<assembly>
+											<inline>
+												<fileSets>
+													<fileSet>
+														<directory>${aai.build.directory}</directory>
+														<outputDirectory>/${project.artifactId}</outputDirectory>
+													</fileSet>
+												</fileSets>
+											</inline>
+										</assembly>
+									</build>
+								</image>
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+								<id>clean-images</id>
+								<phase>pre-clean</phase>
+								<goals>
+									<goal>remove</goal>
+								</goals>
+								<configuration>
+									<removeAll>true</removeAll>
+								</configuration>
+							</execution>
+							<execution>
+								<id>generate-images</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>push-images</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>push</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -165,7 +266,6 @@
 	</dependencies>
 
 	<build>
-		<finalName>babel</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -293,6 +393,23 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/descriptor.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
 				<version>3.0</version>
@@ -329,34 +446,6 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.0.2</version>
-				<executions>
-					<execution>
-						<id>copy-docker-file</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>target</outputDirectory>
-							<overwrite>true</overwrite>
-							<resources>
-								<resource>
-									<directory>${basedir}/src/main/docker</directory>
-									<filtering>true</filtering>
-								</resource>
-								<resource>
-									<directory>${basedir}/src/main/bin/</directory>
-									<filtering>true</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.0.2</version>
 				<executions>
@@ -379,21 +468,6 @@
 				<artifactId>maven-deploy-plugin</artifactId>
 				<configuration>
 					<classifier>client</classifier>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.4.11</version>
-				<configuration>
-					<verbose>true</verbose>
-					<serverId>docker-hub</serverId>
-					<imageName>${docker.push.registry}/onap/${project.artifactId}</imageName>
-					<dockerDirectory>${docker.location}</dockerDirectory>
-					<imageTags>
-						<imageTag>latest</imageTag>
-					</imageTags>
-					<forceTags>true</forceTags>
 				</configuration>
 			</plugin>
 		</plugins>
