@@ -22,6 +22,30 @@
       "revId": "627ce8769b2bd65179dc5d04a18adc8044173666",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c03513b_31f6e76b",
+        "filename": "src/main/docker/Dockerfile",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2019-05-02T14:11:47Z",
+      "side": 0,
+      "message": "It is portable - one just need to build two images. I did it following way: build original image from ubuntu, run/check it, then retag it to keep it locally, build alpine based image, run/check it.",
+      "parentUuid": "e8fccce6_8c54257e",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 20
+      },
+      "revId": "627ce8769b2bd65179dc5d04a18adc8044173666",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
