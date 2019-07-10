@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "40ed7e72_acb76aa4",
+        "filename": "src/main/resources/logback.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 703
+      },
+      "writtenOn": "2019-07-10T12:11:51Z",
+      "side": 1,
+      "message": "There should be no references to AJSC in ONAP.",
+      "range": {
+        "startLine": 7,
+        "startChar": 34,
+        "endLine": 7,
+        "endChar": 43
+      },
+      "revId": "b9634ea092416f68c5de4cc583d42f5a2ef26f71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1fd9fead_6aea97d7",
+        "filename": "src/main/resources/logback.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 703
+      },
+      "writtenOn": "2019-07-10T12:11:51Z",
+      "side": 1,
+      "message": "This logback.xml seems to have been copied from Model Loader. I recommend referencing the Babel version instead: https://gerrit.onap.org/r/gitweb?p\u003daai/oom.git;a\u003dblob;f\u003dcharts/aai-babel/resources/config/logback.xml;h\u003d878d8c05d09efcf0d36d9d9340272292b8c17a5d;hb\u003drefs/heads/master",
+      "range": {
+        "startLine": 8,
+        "startChar": 32,
+        "endLine": 8,
+        "endChar": 46
+      },
+      "revId": "b9634ea092416f68c5de4cc583d42f5a2ef26f71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
