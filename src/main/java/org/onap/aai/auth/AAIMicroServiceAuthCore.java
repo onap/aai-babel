@@ -165,7 +165,7 @@ public class AAIMicroServiceAuthCore {
             }
         } catch (FileNotFoundException e) {
             throw new AAIAuthException("Auth policy file could not be found", e);
-        } catch (JsonProcessingException e) {
+        } catch (JsonProcessingException | NullPointerException e) {
             throw new AAIAuthException("Error processing Auth policy file ", e);
         } catch (IOException e) {
             throw new AAIAuthException("Error reading Auth policy file", e);
