@@ -1,4 +1,4 @@
-FROM aaionap/aai-common:@aai.docker.version@-@aai.base.image@
+FROM @aai.docker.namespace@/aai-common-@aai.base.image@:@aai.base.image.version@
 
 ARG MICRO_HOME=/opt/app/babel
 
