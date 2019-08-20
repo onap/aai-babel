@@ -14,12 +14,24 @@ RUN sudo -E add-apt-repository ppa:openjdk-r/ppa && apt-get update && apt-get in
 ENV JAVA_HOME usr/lib/jvm/java-8-openjdk-amd64
 RUN export JAVA_HOME
 
+
+#Install and update gosu.
+RUN set -x \
+    && add-apt-repository -y ppa:tianon/gosu
+RUN sudo apt-get update
+RUN sudo apt-get install gosu
+
+
+
+
+
 # Build up the deployment folder structure
 RUN mkdir -p $MICRO_HOME
 COPY ${JAR_FILE} $MICRO_HOME
 RUN mkdir -p $BIN_HOME
 COPY *.sh $BIN_HOME
 RUN chmod 755 $BIN_HOME/*
-RUN ln -s /logs $MICRO_HOME/logs
 
-CMD ["/opt/app/babel/bin/start.sh"]
+#RUN ln -s /logs $MICRO_HOME/logs
+
+ENTRYPOINT ["/opt/app/babel/bin/start.sh"]
