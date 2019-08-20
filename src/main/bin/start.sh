@@ -41,4 +41,8 @@ fi
 
 JVM_MAX_HEAP=${MAX_HEAP:-1024}
 
+if [ -z "$RUN_MS_AS_ROOT" ] ; then
 exec java -Xmx${JVM_MAX_HEAP}m ${PROPS} -jar ${APP_HOME}/babel.jar
+else
+exec sudo -E java -Xmx${JVM_MAX_HEAP}m ${PROPS} -jar ${APP_HOME}/babel.jar
+fi
