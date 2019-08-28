@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ffde8cd_f62e692b",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2019-08-28T15:07:08Z",
+      "side": 1,
+      "message": "Need to add two more tags: \n\n\u003ctag\u003e${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest\u003c/tag\u003e\n\u003ctag\u003e${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-${maven.build.timestamp}\u003c/tag\u003e",
+      "revId": "1af22930f6c1423530d070a234b89c4b3faa9157",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
