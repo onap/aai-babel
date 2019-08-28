@@ -19,16 +19,23 @@
 # limitations under the License.
 # ============LICENSE_END=========================================================
 
+# jre-alpine image has $JAVA_HOME set and added to $PATH
+# ubuntu image requires to set $JAVA_HOME and add java to $PATH manually
+if ( uname -v | grep -i "ubuntu" ); then
+    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-`dpkg --print-architecture | awk -F- '{ print $NF }'`
+    export PATH=${JAVA_HOME}:$PATH
+fi
+
 APP_HOME="${APP_HOME:-/opt/app/babel}"
 
 if [ -z "${CONFIG_HOME}" ]; then
-	echo "CONFIG_HOME must be set in order to start the process"
-	exit 1
+    echo "CONFIG_HOME must be set in order to start the process"
+    exit 1
 fi
 
 if [ -z "${KEY_STORE_PASSWORD}" ]; then
-	echo "KEY_STORE_PASSWORD must be set in order to start the process"
-	exit 1
+    echo "KEY_STORE_PASSWORD must be set in order to start the process"
+    exit 1
 fi
 
 PROPS="-DAPP_HOME=${APP_HOME}"
@@ -36,9 +43,11 @@ PROPS="${PROPS} -DCONFIG_HOME=${CONFIG_HOME}"
 PROPS="${PROPS} -Dtosca.mappings.config=${CONFIG_HOME}/tosca-mappings.json"
 PROPS="${PROPS} -DKEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}"
 if [ ! -z "$REQUIRE_CLIENT_AUTH" ]; then
-   PROPS="$PROPS -Dserver.ssl.client-auth=${REQUIRE_CLIENT_AUTH}"
+    PROPS="$PROPS -Dserver.ssl.client-auth=${REQUIRE_CLIENT_AUTH}"
 fi
 
 JVM_MAX_HEAP=${MAX_HEAP:-1024}
 
-exec java -Xmx${JVM_MAX_HEAP}m ${PROPS} -jar ${APP_HOME}/babel.jar
+JARFILE=$(ls ./babel*.jar);
+
+exec java -Xmx${JVM_MAX_HEAP}m ${PROPS} -jar ${APP_HOME}/${JARFILE}
