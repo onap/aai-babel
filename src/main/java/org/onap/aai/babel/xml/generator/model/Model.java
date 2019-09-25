@@ -67,6 +67,12 @@ public abstract class Model {
                 model.modelDescription = value;
             }
         },
+        ORCHESTRATION_TYPE("instantiationType"){
+            @Override
+            public void populate(Model model, String value) {
+                model.instantiationType = value;
+            }
+        },
         NAME_AND_DESCRIPTION("providing_service_name") {
             @Override
             public void populate(Model model, String value) {
@@ -103,7 +109,7 @@ public abstract class Model {
     private String modelNameVersionId; // model-version-id
     private String modelVersion;
     private String modelDescription;
-
+    private String instantiationType;
     protected Set<Resource> resources = new HashSet<>();
     protected Set<Widget> widgets = new HashSet<>();
 
@@ -206,6 +212,10 @@ public abstract class Model {
 
     public String getModelNameVersionId() {
         return modelNameVersionId;
+    }
+
+    public String getInstantiationType() {
+        return instantiationType;
     }
 
     /**
