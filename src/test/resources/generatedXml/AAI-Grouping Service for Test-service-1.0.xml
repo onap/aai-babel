@@ -7,6 +7,7 @@
             <model-name>Grouping Service for Test</model-name>
             <model-version>1.0</model-version>
             <model-description>xxx</model-description>
+            <orchestration-type>A-la-carte</orchestration-type>
             <model-elements>
                 <model-element>
                     <new-data-del-flag>T</new-data-del-flag>

@@ -101,6 +101,7 @@ public class AaiModelGenerator {
         modelVer.setModelVersion(model.getModelVersion());
         modelVer.setModelVersionId(model.getModelNameVersionId());
         modelVer.setModelElements(new ModelElements());
+        modelVer.setOrchestrationType(model.getInstantiationType());
         return modelVer;
     }
 
