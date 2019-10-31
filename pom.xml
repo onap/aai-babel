@@ -27,9 +27,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.onap.oparent</groupId>
-        <artifactId>oparent</artifactId>
-        <version>2.0.0</version>
+        <groupId>org.onap.aai.aai-common</groupId>
+        <artifactId>aai-parent</artifactId>
+        <version>1.6.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
@@ -42,8 +42,10 @@
     <description>ONAP AAI Babel Microservice</description>
 
     <properties>
-        <!-- Spring boot version -->
-        <spring.boot.version>2.1.6.RELEASE</spring.boot.version>
+        <!-- Spring boot version, now inherited from aai-parent pom -->
+	<!-- <spring.boot.version>2.1.9.RELEASE</spring.boot.version> -->
+        <!-- Set in pluginManagement by aai-parent -->
+	<!-- <docker.fabric.version>0.28.0</docker.fabric.version> -->
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -52,7 +54,7 @@
         <aai.schema.target.folder>${project.build.directory}/aai-schema</aai.schema.target.folder>
 
         <!-- docker related properties -->
-        <docker.fabric.version>0.28.0</docker.fabric.version>
+
         <aai.docker.version>1.0.0</aai.docker.version>
         <aai.build.directory>${project.build.directory}/${project.artifactId}-${project.version}-build/
         </aai.build.directory>
@@ -67,7 +69,7 @@
         <javax.ws.rs.version>2.1</javax.ws.rs.version>
         <mvn.jaxb2.version>0.13.2</mvn.jaxb2.version>
         <aai-schema.group.id>org.onap.aai.schema-service</aai-schema.group.id>
-        <aai-schema.version>1.5.0</aai-schema.version>
+        <aai-schema.version>1.6.0</aai-schema.version>
         <apache.lang3.version>3.7</apache.lang3.version>
         <aai.rest.client.version>1.2.1</aai.rest.client.version>
         <sdc.distribution.client.version>1.3.0</sdc.distribution.client.version>
@@ -77,19 +79,6 @@
         <!-- This will be used for the docker images as the default format of maven build has issues -->
         <maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <!-- Import dependency management from Spring Boot -->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring.boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <profiles>
         <!-- Docker profile to be used for building docker image and pushing to nexus -->
@@ -141,7 +130,6 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>${docker.fabric.version}</version>
                         <configuration>
                             <verbose>true</verbose>
                             <apiVersion>1.23</apiVersion>
@@ -291,7 +279,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring.boot.version}</version>
                 <configuration>
                     <jvmArguments>
                         -DCONFIG_HOME=./appconfig-local
