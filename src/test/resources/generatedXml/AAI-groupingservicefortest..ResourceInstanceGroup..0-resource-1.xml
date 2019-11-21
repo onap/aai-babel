@@ -1,4 +1,4 @@
-<model xmlns="http://org.onap.aai.inventory/v16">
+<model xmlns="http://org.onap.aai.inventory/v19">
     <model-invariant-id>instance-group-0-invariant-id</model-invariant-id>
     <model-type>resource</model-type>
     <model-vers>
