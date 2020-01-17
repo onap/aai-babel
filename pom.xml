@@ -26,15 +26,15 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.onap.oparent</groupId>
-		<artifactId>oparent</artifactId>
-		<version>2.0.0</version>
+		<groupId>org.onap.aai.aai-common</groupId>
+		<artifactId>aai-parent</artifactId>
+		<version>1.6.1-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
 	<groupId>org.onap.aai</groupId>
 	<artifactId>babel</artifactId>
-	<version>1.6.0-SNAPSHOT</version>
+	<version>1.6.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>aai-babel</name>
@@ -62,6 +62,8 @@
 		<aai.base.image.version>1.6.0</aai.base.image.version>
 
 		<!-- Dependency Versions -->
+
+		<!--
 		<common.logging.version>1.2.2</common.logging.version>
 		<sdc.tosca.version>1.5.1</sdc.tosca.version>
 		<commons.compress.version>1.18</commons.compress.version>
@@ -74,22 +76,10 @@
 		<xmlunit.version>1.6</xmlunit.version>
 		<logback.version>1.2.3</logback.version>
 		<antrun.version>1.8</antrun.version>
+		-->
         <!-- This will be used for the docker images as the default format of maven build has issues -->
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
 	</properties>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<!-- Import dependency management from Spring Boot -->
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring.boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<profiles>
         <!-- Docker profile to be used for building docker image and pushing to nexus -->
@@ -221,17 +211,14 @@
 		<dependency>
 			<groupId>org.onap.aai.logging-service</groupId>
 			<artifactId>common-logging</artifactId>
-			<version>${common.logging.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version><!--$NO-MVN-MAN-VER$-->
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
-			<version>${logback.version}</version><!--$NO-MVN-MAN-VER$-->
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -240,7 +227,6 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>
-			<version>${commons.compress.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -249,7 +235,6 @@
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
-			<version>${javax.ws.rs.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
@@ -258,12 +243,10 @@
 		<dependency>
 			<groupId>org.onap.sdc.sdc-tosca</groupId>
 			<artifactId>sdc-tosca</artifactId>
-			<version>${sdc.tosca.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.onap.aai</groupId>
 			<artifactId>rest-client</artifactId>
-			<version>${aai.rest.client.version}</version>
 		</dependency>
 		
 		<!-- Testing -->
@@ -275,13 +258,11 @@
 		<dependency>
 			<groupId>org.onap.sdc.sdc-distribution-client</groupId>
 			<artifactId>sdc-distribution-client</artifactId>
-			<version>${sdc.distribution.client.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>xmlunit</groupId>
 			<artifactId>xmlunit</artifactId>
-			<version>${xmlunit.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -323,7 +304,6 @@
 								<artifactItem>
 									<groupId>${aai-schema.group.id}</groupId>
 									<artifactId>aai-schema</artifactId>
-									<version>${aai-schema.version}</version>
 									<type>jar</type>
 									<includes>${aai.schema.source.folder}/aai_schema_v**.xsd</includes>
 									<outputDirectory>${project.build.directory}/tmp</outputDirectory>
