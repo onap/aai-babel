@@ -1,0 +1,4 @@
+distribution_type: maven
+log_dir: aai-babel-maven-stage-master/287/
+project: aai-babel
+version: 1.6.2
