@@ -85,6 +85,8 @@
 		<xmlunit.version>1.6</xmlunit.version>
 		<logback.version>1.2.3</logback.version>
 		<antrun.version>1.8</antrun.version>
+		<jaxb.version>2.2.11</jaxb.version>
+		<javax.activation.version>1.1.1</javax.activation.version>
         <!-- This will be used for the docker images as the default format of maven build has issues -->
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
 	</properties>
@@ -294,6 +296,26 @@
 			<artifactId>xmlunit</artifactId>
 			<version>${xmlunit.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>${jaxb.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+			<version>${jaxb.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>${jaxb.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<version>${javax.activation.version}</version>
 		</dependency>
 	</dependencies>
 
