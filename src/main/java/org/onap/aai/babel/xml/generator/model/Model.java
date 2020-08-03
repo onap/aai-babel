@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
  * Copyright (c) 2017-2019 European Software Marketing Ltd.
+ * Copyright (C) 2019-2020 Wipro Limited.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +62,12 @@ public abstract class Model {
                 model.modelName = value;
             }
         },
+        CATEGORY("category") {
+        	@Override
+            public void populate(Model model, String value) {
+                model.category = value;
+            }
+        },
         DESCRIPTION("serviceDescription", "resourceDescription", "vf_module_description", "description") {
             @Override
             public void populate(Model model, String value) {
@@ -110,6 +117,7 @@ public abstract class Model {
     private String modelVersion;
     private String modelDescription;
     private String instantiationType;
+    private String category;
     protected Set<Resource> resources = new HashSet<>();
     protected Set<Widget> widgets = new HashSet<>();
 
@@ -218,6 +226,9 @@ public abstract class Model {
         return instantiationType;
     }
 
+    public String getCategory() {
+    	return category;
+    }
     /**
      * Gets widget version id.
      *

@@ -1,13 +1,13 @@
-<model xmlns="http://org.onap.aai.inventory/v19">
+<model xmlns="http://org.onap.aai.inventory/v20">
     <model-invariant-id>service-invariant-uuid</model-invariant-id>
     <model-type>service</model-type>
+    <model-role>Network L4+</model-role>
     <model-vers>
         <model-ver>
             <model-version-id>service-uuid</model-version-id>
             <model-name>Grouping Service for Test</model-name>
             <model-version>1.0</model-version>
             <model-description>xxx</model-description>
-            <orchestration-type>A-la-carte</orchestration-type>
             <model-elements>
                 <model-element>
                     <new-data-del-flag>T</new-data-del-flag>

@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
  * Copyright (c) 2017-2019 European Software Marketing Ltd.
+ * Copyright (C) 2019-2020 Wipro Limited.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +80,9 @@ public class AaiModelGenerator {
         org.onap.aai.babel.xml.generator.xsd.Model aaiModel = new org.onap.aai.babel.xml.generator.xsd.Model();
         aaiModel.setModelInvariantId(model.getModelId());
         aaiModel.setModelType(model.getModelTypeName());
-
+        if (model.getModelTypeName() == "service"){
+        		aaiModel.setModelRole(model.getCategory());
+        }
         aaiModel.setModelVers(new ModelVers());
         aaiModel.getModelVers().getModelVer().add(createModelVersion(model));
 
@@ -101,7 +104,6 @@ public class AaiModelGenerator {
         modelVer.setModelVersion(model.getModelVersion());
         modelVer.setModelVersionId(model.getModelNameVersionId());
         modelVer.setModelElements(new ModelElements());
-        modelVer.setOrchestrationType(model.getInstantiationType());
         return modelVer;
     }
 

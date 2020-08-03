@@ -37,16 +37,14 @@ public class AaiModelGeneratorTest {
     private AaiModelGenerator generator = new AaiModelGenerator();
 
     @Test
-    public void shouldGenerateModelWithInstantiationType() throws XmlArtifactGenerationException, IOException {
+    public void shouldGenerateModelWithCategory() throws XmlArtifactGenerationException, IOException {
         new ArtifactTestUtils().loadWidgetMappings();
         Model model = new Service();
-        model.populateModelIdentificationInformation(Maps.of("instantiationType", "macro"));
+        model.populateModelIdentificationInformation(Maps.of("category", "NST"));
 
 
         String generatedXml = generator.generateModelFor(model);
 
-        assertThat(generatedXml).containsSubsequence("   <model-vers>\n" +
-                "        <model-ver>\n" +
-                "            <orchestration-type>macro</orchestration-type>");
+        assertThat(generatedXml).containsSubsequence("    <model-role>NST</model-role>");
     }
 }
