@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e1d54f8e_604d645d",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 2979
+      },
+      "writtenOn": "2020-08-05T20:23:04Z",
+      "side": 1,
+      "message": "upgrade this to 1.7.3 not 1.7.3-SNAPSHOT, and it should work",
+      "range": {
+        "startLine": 82,
+        "startChar": 3,
+        "endLine": 82,
+        "endChar": 6
+      },
+      "revId": "b91a49b4edc9b81f61600ffa29bda78ef607cf87",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
