@@ -1,4 +1,5 @@
 # UUID                                                                    	Group Name
 #
+a3a967bd2ce447f3a8a02b085cd923001df91f66                                  	saml/onap-gerrit-aai-babel-committers
 daebbf523be390041a1a9c0e340a6d833aae5043                                  	GitHub Replication
 ldap:cn=onap-gerrit-aai-babel-committers,ou=Groups,dc=freestandards,dc=org	ldap/onap-gerrit-aai-babel-committers
