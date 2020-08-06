@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "531b53ed_20fa13b0",
+        "filename": "src/test/java/org/onap/aai/babel/xml/generator/api/AaiModelGeneratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2979
+      },
+      "writtenOn": "2020-08-06T13:00:48Z",
+      "side": 1,
+      "message": "why was this test changed instead of adding a new test?",
+      "revId": "65f8ce45775881824ba56f72b0be06fd9577f22b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

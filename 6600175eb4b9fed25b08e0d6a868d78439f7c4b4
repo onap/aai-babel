@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b0cbc92e_38abc714",
+        "filename": "src/main/java/org/onap/aai/babel/xml/generator/api/AaiModelGenerator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 2979
+      },
+      "writtenOn": "2020-08-06T13:00:48Z",
+      "side": 0,
+      "message": "was this not needed?",
+      "revId": "6600175eb4b9fed25b08e0d6a868d78439f7c4b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e69cca19_ef39d3d8",
+        "filename": "src/test/resources/generatedXml/AAI-Grouping Service for Test-service-1.0.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 2979
+      },
+      "writtenOn": "2020-08-06T13:00:48Z",
+      "side": 0,
+      "message": "is this no longer needed here?",
+      "range": {
+        "startLine": 10,
+        "startChar": 63,
+        "endLine": 10,
+        "endChar": 0
+      },
+      "revId": "6600175eb4b9fed25b08e0d6a868d78439f7c4b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
