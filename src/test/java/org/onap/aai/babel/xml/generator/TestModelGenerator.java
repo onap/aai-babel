@@ -21,10 +21,14 @@
 
 package org.onap.aai.babel.xml.generator;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.aai.babel.service.data.BabelArtifact;
 import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.data.Artifact;
@@ -51,5 +55,12 @@ public class TestModelGenerator {
                 Collections.singletonList(ymlFile));
     }
 
+    @Test
+    public void testSdncPropsParsed() throws XmlArtifactGenerationException, IOException {
+        Artifact ymlFile = new Artifact(null, null, null, null);
+        List<BabelArtifact> babelArtifactList = new ModelGenerator().generateArtifacts(CsarTest.PNF_VENDOR_CSAR.getContent(),
+            Collections.singletonList(ymlFile));
+        assertTrue(babelArtifactList.get(1).getPayload().contains("sdnc-model-name"));
+    }
 
 }

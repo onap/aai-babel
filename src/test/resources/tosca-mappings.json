@@ -121,15 +121,22 @@
 			"type": "CR",
 			"name": "cr",
 			"deleteFlag": true,
-            "modelInvariantId": "collection-resource-invariant-id",
-            "modelVersionId": "collection-resource-version-id"
+			"modelInvariantId": "collection-resource-invariant-id",
+			"modelVersionId": "collection-resource-version-id"
 		},
 		{
 			"type": "INSTANCE_GROUP",
 			"name": "instance-group",
 			"deleteFlag": true,
-            "modelInvariantId": "instance-group-invariant-id",
-            "modelVersionId": "instance-group-version-id"
+			"modelInvariantId": "instance-group-invariant-id",
+			"modelVersionId": "instance-group-version-id"
+		},
+		{
+			"type": "PNF",
+			"name": "pnf",
+			"deleteFlag": true,
+			"modelInvariantId": "pnf-instance-invariant-id",
+			"modelVersionId": "pnf-instance-version-id"
 		}
 	],
 	"widgetMappings": [
@@ -175,6 +182,11 @@
 			"prefix": "org.openecomp.resource.vfc.nodes.heat.cinder",
 			"type": "widget",
 			"widget": "VOLUME",
+			"deleteFlag": true
+		},
+		{
+			"prefix": "org.openecomp.resource.pnf",
+			"widget": "PNF",
 			"deleteFlag": true
 		}
 	]

@@ -85,6 +85,18 @@ public abstract class Model {
             public void populate(Model model, String value) {
                 model.modelName = model.modelDescription = value;
             }
+        },
+        SDNC_MODEL_NAME("sdnc_model_name") {
+            @Override
+            public void populate(Model model, String value) {
+                model.sdncModelName = value;
+            }
+        },
+        SDNC_MODEL_VERSION("sdnc_model_version") {
+            @Override
+            public void populate(Model model, String value) {
+                model.sdncModelVersion = value;
+            }
         };
 
         private static final Map<String, ModelIdentification> propertyToModelIdent;
@@ -118,6 +130,8 @@ public abstract class Model {
     private String modelDescription;
     private String instantiationType;
     private String category;
+    private String sdncModelVersion;
+    private String sdncModelName;
     protected Set<Resource> resources = new HashSet<>();
     protected Set<Widget> widgets = new HashSet<>();
 
@@ -229,6 +243,15 @@ public abstract class Model {
     public String getCategory() {
     	return category;
     }
+
+    public String getSdncModelName() {
+        return sdncModelName;
+    }
+
+    public String getSdncModelVersion() {
+        return sdncModelVersion;
+    }
+
     /**
      * Gets widget version id.
      *
