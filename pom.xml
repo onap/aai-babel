@@ -79,7 +79,7 @@
 		<javax.ws.rs.version>2.1</javax.ws.rs.version>
 		<mvn.jaxb2.version>0.13.2</mvn.jaxb2.version>
 		<aai-schema.group.id>org.onap.aai.schema-service</aai-schema.group.id>
-		<aai-schema.version>1.7.3</aai-schema.version>
+		<aai-schema.version>1.7.6</aai-schema.version>
 		<aai.rest.client.version>1.2.1</aai.rest.client.version>
 		<sdc.distribution.client.version>1.3.0</sdc.distribution.client.version>
 		<xmlunit.version>1.6</xmlunit.version>

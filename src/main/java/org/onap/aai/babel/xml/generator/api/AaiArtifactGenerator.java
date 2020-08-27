@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -51,17 +52,23 @@ import org.onap.aai.babel.xml.generator.model.Widget;
 import org.onap.aai.babel.xml.generator.model.WidgetType;
 import org.onap.aai.babel.xml.generator.types.ModelType;
 import org.onap.aai.cl.api.Logger;
+import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
+import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.slf4j.MDC;
 
 public class AaiArtifactGenerator implements ArtifactGenerator {
 
+    private static final String SDNC_MODEL_VERSION = "sdnc_model_version";
+    private static final String SDNC_MODEL_NAME = "sdnc_model_name";
     private static Logger log = LogHelper.INSTANCE;
 
     private static final String MDC_PARAM_MODEL_INFO = "ARTIFACT_MODEL_INFO";
@@ -283,6 +290,12 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         Map<String, String> serviceMetadata = serviceVfNode.getMetaData().getAllProperties();
         resourceModel.populateModelIdentificationInformation(serviceMetadata);
 
+        Map<String, String> pnfProps = getResourceProperties(csarHelper, SdcTypes.PNF);
+        resourceModel.populateModelIdentificationInformation(pnfProps);
+
+        Map<String, String> vfProps = getResourceProperties(csarHelper, SdcTypes.VF);
+        resourceModel.populateModelIdentificationInformation(vfProps);
+
         parser.processResourceModels(resourceModel, getNonVnfChildren(serviceVfNode));
 
         List<NodeTemplate> serviceVfList = ToscaParser.getServiceNodeTemplates(csarHelper)
@@ -298,6 +311,21 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
         resources.addAll(parser.processInstanceGroups(resourceModel, serviceVfNode));
         resources.add(resourceModel);
+    }
+
+    private Map<String, String> getResourceProperties(ISdcCsarHelper csarHelper, SdcTypes type) {
+        EntityQuery entityQuery = EntityQuery.newBuilder(type).build();
+        TopologyTemplateQuery topologyTemplateQuery = TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE).build();
+        List<IEntityDetails> entityDetailsList = csarHelper.getEntity(entityQuery, topologyTemplateQuery, false);
+        Map<String, String> props = new HashMap<>();
+        for (IEntityDetails entityDetails : entityDetailsList) {
+            Map<String, Property> properties = entityDetails.getProperties();
+            if (properties.get(SDNC_MODEL_VERSION) != null && properties.get(SDNC_MODEL_NAME) != null) {
+                props.put(SDNC_MODEL_VERSION, String.valueOf(properties.get(SDNC_MODEL_VERSION).getValue()));
+                props.put(SDNC_MODEL_NAME, String.valueOf(properties.get(SDNC_MODEL_NAME).getValue()));
+            }
+        }
+        return props;
     }
 
     /**

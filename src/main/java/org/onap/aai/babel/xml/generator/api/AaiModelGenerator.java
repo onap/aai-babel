@@ -103,6 +103,8 @@ public class AaiModelGenerator {
         modelVer.setModelName(model.getModelName());
         modelVer.setModelVersion(model.getModelVersion());
         modelVer.setModelVersionId(model.getModelNameVersionId());
+        modelVer.setSdncModelName(model.getSdncModelName());
+        modelVer.setSdncModelVersion(model.getSdncModelVersion());
         modelVer.setModelElements(new ModelElements());
         return modelVer;
     }

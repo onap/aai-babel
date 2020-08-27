@@ -37,6 +37,7 @@ import org.onap.aai.babel.xml.generator.data.GeneratorUtil;
 public enum CsarTest {
     // @formatter:off
     VNF_VENDOR_CSAR("catalog_csar.csar"),
+    PNF_VENDOR_CSAR("service-Testpnfsvc-csar.csar"),
     NO_VNF_CONFIG_CSAR("noVnfConfiguration.csar"),
     SD_WAN_CSAR_FILE("service-SdWanServiceTest-csar.csar"),
     COS_AVPN_CSAR_FILE("service_CosAvpn_csar.csar"),
