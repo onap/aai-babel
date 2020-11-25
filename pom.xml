@@ -75,7 +75,7 @@
 		<!-- Dependency Versions -->
 		<common.logging.version>1.2.2</common.logging.version>
 		<sdc.tosca.version>1.5.1</sdc.tosca.version>
-		<commons.compress.version>1.18</commons.compress.version>
+		<commons.compress.version>1.20</commons.compress.version>
 		<javax.ws.rs.version>2.1</javax.ws.rs.version>
 		<mvn.jaxb2.version>0.13.2</mvn.jaxb2.version>
 		<aai-schema.group.id>org.onap.aai.schema-service</aai-schema.group.id>
