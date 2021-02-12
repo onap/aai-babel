@@ -72,7 +72,7 @@ public class CsarToXmlConverter {
         try {
             List<Artifact> ymlFiles = yamlExtractor.extract(csarArchive, name, version);
             xmlArtifacts = new ModelGenerator().generateArtifacts(csarArchive, ymlFiles);
-            logger.debug(xmlArtifacts.size() + " XML artifact(s) have been generated");
+            logger.info(ApplicationMsgs.DISTRIBUTION_EVENT,xmlArtifacts.size() + " XML artifact(s) have been generated");
         } catch (InvalidArchiveException e) {
             throw new CsarConverterException(
                     "An error occurred trying to extract the YAML files from the CSAR file : " + e);
@@ -80,7 +80,7 @@ public class CsarToXmlConverter {
             throw new CsarConverterException(
                     "An error occurred trying to generate XML files from a collection of YAML files : " + e);
         } finally {
-            logger.logMetrics(stopwatch, LogHelper.getCallerMethodName(0));
+
         }
 
         return xmlArtifacts;

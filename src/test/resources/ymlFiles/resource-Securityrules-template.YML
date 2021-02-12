@@ -1,0 +1,48 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: dd31d2de-0a7f-4198-8966-3a04100fbfe3
+  UUID: d57e57d2-e3c6-470d-8d16-e6ea05f536c5
+  name: SecurityRules
+  description: Configuration of policy rules to be applied on ports.
+  type: VFC
+  category: Generic
+  subcategory: Rules
+  resourceVendor: ATT (Tosca)
+  resourceVendorRelease: 1.0.0.wd03
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+node_types:
+  org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules:
+    derived_from: tosca.nodes.Root
+    description: Configuration of policy rules to be applied on ports.
+    properties:
+      name:
+        type: string
+        description: A symbolic name for this security group, which is not required to be unique.
+      description:
+        type: string
+        description: Description of the security group
+      rules:
+        type: list
+        description: List of security group rules
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.neutron.SecurityRules.Rule
+    requirements:
+    - port:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Attachment
+        node: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+        relationship: org.openecomp.relationships.AttachesTo

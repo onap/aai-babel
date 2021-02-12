@@ -36,15 +36,17 @@ import org.onap.aai.babel.xml.generator.data.Artifact;
 import org.onap.aai.babel.xml.generator.data.GenerationData;
 import org.onap.aai.babel.xml.generator.data.GeneratorUtil;
 import org.onap.aai.babel.xml.generator.data.GroupType;
-import org.onap.aai.cl.api.Logger;
+import javax.ws.rs.core.Response;
 
 /**
  * This class is responsible for generating XML model artifacts from a collection of CSAR artifacts.
  */
 public class ModelGenerator implements ArtifactGenerator {
 
-    private static final Logger logger = LogHelper.INSTANCE;
+    private static final LogHelper logger = LogHelper.INSTANCE;
 
+    private static final String VERSION_DELIMITER = ".";
+    private static final String VERSION_DELIMITER_REGEXP = "\\" + VERSION_DELIMITER;
     private static final String DEFAULT_SERVICE_VERSION = "1.0";
 
     /**
@@ -117,6 +119,8 @@ public class ModelGenerator implements ArtifactGenerator {
         try {
             return String.valueOf(Float.parseFloat(artifactVersion));
         } catch (Exception e) {
+            logger.setContextValue(LogHelper.MdcParameter.RESPONSE_CODE, String.valueOf(Response.Status.BAD_REQUEST.getStatusCode()));
+            logger.setContextValue(LogHelper.MdcParameter.RESPONSE_DESCRIPTION, "Invalid Artifact version");
             logger.warn(ApplicationMsgs.DISTRIBUTION_EVENT,
                     "Error generating service version from artifact version: " + artifactVersion
                             + ". Using default service version of: " + DEFAULT_SERVICE_VERSION + ". Error details: "

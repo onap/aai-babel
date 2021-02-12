@@ -32,6 +32,8 @@ import org.onap.aai.babel.xml.generator.types.ModelType;
 
 public class Widget extends Model {
 
+    public static final String GENERATOR_AAI_CONFIGLPROP_NOT_FOUND = "Cannot generate artifacts. Widget configuration not found for %s";
+
     private Set<String> keys = new HashSet<>();
 
     protected String name;
