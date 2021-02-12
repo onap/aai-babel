@@ -45,7 +45,8 @@
     {
         "name": "nofuncauth",
         "functions": [{
-            "name": "nofuncutil"
+            "name": "nofuncutil",
+            "methods": [{"name": "GET"}]
         }],        
         "users": [{
             "user": "aai",
