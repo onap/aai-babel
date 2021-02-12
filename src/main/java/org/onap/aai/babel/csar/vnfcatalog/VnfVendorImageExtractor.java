@@ -44,6 +44,8 @@ import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 
+import javax.ws.rs.core.Response;
+
 /**
  * This class is responsible for extracting Virtual Network Function (VNF) information from a TOSCA 1.1 CSAR package.
  *
@@ -158,7 +160,6 @@ public class VnfVendorImageExtractor {
         }
 
         applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT, vendorImageConfigurations.toString());
-        applicationLogger.logMetrics(stopwatch, LogHelper.getCallerMethodName(0));
 
         return ConfigurationsToBabelArtifactConverter.convert(vendorImageConfigurations);
     }
@@ -221,6 +222,8 @@ public class VnfVendorImageExtractor {
             try {
                 return createVendorImageConfigurations(serviceVfList, vnfConfigurationNode);
             } catch (IllegalArgumentException e) {
+                applicationLogger.setContextValue(LogHelper.MdcParameter.RESPONSE_CODE, String.valueOf(Response.Status.BAD_REQUEST.getStatusCode()));
+                applicationLogger.setContextValue(LogHelper.MdcParameter.RESPONSE_DESCRIPTION, "Invalid Csar");
                 applicationLogger.error(ApplicationMsgs.INVALID_CSAR_FILE, e);
                 throw new ToscaToCatalogException(e.getMessage());
             }
@@ -240,7 +243,7 @@ public class VnfVendorImageExtractor {
      * @return a new List of Vendor Image Configurations
      */
     private List<VendorImageConfiguration> createVendorImageConfigurations(List<NodeTemplate> serviceVfList,
-            NodeTemplate vnfConfigurationNode) {
+            NodeTemplate vnfConfigurationNode) throws IllegalArgumentException{
         List<VendorImageConfiguration> vendorImageConfigurations = Collections.emptyList();
 
         Object allowedFlavorProperties =
@@ -276,7 +279,7 @@ public class VnfVendorImageExtractor {
      *             version strings
      */
     Stream<VendorImageConfiguration> buildVendorImageConfigurations(
-            Collection<Map<String, Map<String, String>>> flavorMaps, NodeTemplate vfNodeTemplate) {
+            Collection<Map<String, Map<String, String>>> flavorMaps, NodeTemplate vfNodeTemplate) throws IllegalArgumentException {
         String resourceVendor = vfNodeTemplate.getMetaData().getValue("resourceVendor");
         applicationLogger.debug("Resource Vendor " + resourceVendor);
 

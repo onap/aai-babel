@@ -94,7 +94,7 @@ public class ArtifactTestUtils {
 
         for (Artifact artifact : toscaFiles) {
             String fileName = artifact.getName().replaceFirst("Definitions/", "ymlFiles/");
-            String expectedYaml = ymlMap.get(fileName);
+            String expectedYaml = ymlMap.get(fileName).replaceAll("\\r\\n?", "\n");
             assertThat("Missing expected content for " + fileName, expectedYaml, is(not(nullValue())));
             assertThat("The content of " + fileName + " must match the expected content",
                     convertToString(artifact.getPayload()).replaceAll("\\r\\n?", "\n"), is(equalTo(expectedYaml)));

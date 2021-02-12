@@ -1,0 +1,32 @@
+<model xmlns="http://org.onap.aai.inventory/v23">
+    <model-invariant-id>379f816b-a7aa-422f-be30-17114ff50b7c</model-invariant-id>
+    <model-type>resource</model-type>
+    <model-vers>
+        <model-ver>
+            <model-version-id>3cbb1780-f204-4186-be6d-eb9caa52e1ab</model-version-id>
+            <model-name>ExtVL</model-name>
+            <model-version>48.0</model-version>
+            <model-description>ECOMP generic virtual link (network) base type for all other service-level and global networks</model-description>
+            <model-elements>
+                <model-element>
+                    <new-data-del-flag>F</new-data-del-flag>
+                    <cardinality>unbounded</cardinality>
+                    <model-elements/>
+                    <relationship-list>
+                        <relationship>
+                            <related-to>model-ver</related-to>
+                            <relationship-data>
+                                <relationship-key>model-ver.model-version-id</relationship-key>
+                                <relationship-value>l3-network-version-id</relationship-value>
+                            </relationship-data>
+                            <relationship-data>
+                                <relationship-key>model.model-invariant-id</relationship-key>
+                                <relationship-value>l3-network-invariant-id</relationship-value>
+                            </relationship-data>
+                        </relationship>
+                    </relationship-list>
+                </model-element>
+            </model-elements>
+        </model-ver>
+    </model-vers>
+</model>

@@ -149,6 +149,36 @@ public class TestCsarToXmlConverter {
     }
 
     @Test
+    public void generateXmlFromCosAvpnCsar() throws IOException, CsarConverterException {
+        List<String> filesToLoad = new ArrayList<>();
+        filesToLoad.add("AAI-COS_AVPN-service-1.0.xml");
+        filesToLoad.add("AAI-VLAN Network Receptor Configuration-resource-3.0.xml");
+        filesToLoad.add("AAI-VRF Entry Configuration-resource-3.0.xml");
+        assertThatGeneratedFilesMatchExpected(createExpectedXmlFiles(filesToLoad), CsarTest.COS_AVPN_CSAR_FILE);
+    }
+
+    @Test
+    public void generateXmlFromRgCollector615Csar() throws IOException, CsarConverterException {
+        List<String> filesToLoad = new ArrayList<>();
+        filesToLoad.add("AAI-RG_collector_6-15-service-1.0.xml");
+        filesToLoad.add("AAI-Network Res 1806-resource-4.0.xml");
+        filesToLoad.add("AAI-Network Res 1806..NetworkCollection..0-resource-1.xml");
+        filesToLoad.add("AAI-ExtVL-resource-48.0.xml");
+        assertThatGeneratedFilesMatchExpected(createExpectedXmlFiles(filesToLoad), CsarTest.RG_COLLECTOR_615_CSAR_FILE);
+    }
+
+    @Test
+    public void generateXmlFromVdbeServiceCsar() throws IOException, CsarConverterException {
+        List<String> filesToLoad = new ArrayList<>();
+        filesToLoad.add("AAI-vDBE_srv-service-1.0.xml");
+        filesToLoad.add("AAI-vDBE-resource-0.5.xml");
+        filesToLoad.add("AAI-vdbe0..Vdbe..main..module-0-resource-2.xml");
+        filesToLoad.add("AAI-oam_group-resource-3.xml");
+        filesToLoad.add("AAI-untr_group-resource-3.xml");
+        assertThatGeneratedFilesMatchExpected(createExpectedXmlFiles(filesToLoad), CsarTest.VDBE_SERVICE_CSAR_FILE);
+    }
+
+    @Test
     public void generatePortMirrorConfigurationModel()
             throws CsarConverterException, IOException, XmlArtifactGenerationException {
         List<String> filesToLoad = new ArrayList<>();
@@ -165,6 +195,18 @@ public class TestCsarToXmlConverter {
         filesToLoad.add("AAI-groupingservicefortest..ResourceInstanceGroup..0-resource-1.xml");
         filesToLoad.add("AAI-groupingservicefortest..ResourceInstanceGroup..1-resource-1.xml");
         assertThatGeneratedFilesMatchExpected(createExpectedXmlFiles(filesToLoad), CsarTest.SERVICE_PROXY_CSAR_FILE);
+    }
+
+
+    public void generateChildResourcesCsar()
+            throws CsarConverterException, IOException, XmlArtifactGenerationException {
+
+        List<String> filesToLoad = new ArrayList<>();
+        filesToLoad.add("AAI-Network Cloud VNF Service MOCK-service-1.0.xml");
+        filesToLoad.add("AAI-NetworkCloudVnfMock..NC1_Test_Heat_08152018_base..module-0-resource-1.xml");
+        filesToLoad.add("AAI-Network Cloud VNF MOCK-resource-1.0.xml");
+        filesToLoad.add("AAI-Fabric Configuration-resource-10.0.xml");
+        assertThatGeneratedFilesMatchExpected(createExpectedXmlFiles(filesToLoad), CsarTest.CHILD_RESOURCE_CSAR_FILE);
     }
 
     /**

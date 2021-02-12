@@ -21,17 +21,20 @@
 
 package org.onap.aai.babel;
 
-import com.google.common.collect.ImmutableMap;
-import org.eclipse.jetty.util.security.Password;
+import org.onap.aai.babel.config.PropertyPasswordConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
 
 @SpringBootApplication
 @ImportResource("classpath:babel-beans.xml")
+@ComponentScan(basePackages = {
+        "org.onap.aai.aaf",
+        "org.onap.aai.babel"
+})
 public class BabelApplication extends SpringBootServletInitializer {
 
     private static ConfigurableApplicationContext context;
@@ -47,12 +50,17 @@ public class BabelApplication extends SpringBootServletInitializer {
         if (keyStorePassword == null || keyStorePassword.isEmpty()) {
             throw new IllegalArgumentException("Mandatory property KEY_STORE_PASSWORD not set");
         }
-        ImmutableMap<String, Object> defaults =
-                ImmutableMap.of("server.ssl.key-store-password", new Password(keyStorePassword).toString());
-
-        context = new BabelApplication() //
-                .configure(new SpringApplicationBuilder(BabelApplication.class).properties(defaults)) //
-                .run(args);
+        try {
+            SpringApplication app = new SpringApplication(BabelApplication.class);
+            app.setLogStartupInfo(false);
+            app.setRegisterShutdownHook(true);
+            app.addInitializers(new PropertyPasswordConfiguration());
+            context = app.run(args);
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+            throw ex;
+        }
     }
 
     public static void exit() {

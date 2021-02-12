@@ -1,0 +1,22 @@
+[
+  {
+    "application": "ATT (Tosca)",
+    "applicationVendor": "3099380c0183430ca9d593d94adc7b08",
+    "applicationVersion": "3.16.1"
+  },
+  {
+    "application": "ATT (Tosca)",
+    "applicationVendor": "VM00",
+    "applicationVersion": "3.16.9"
+  },
+  {
+    "application": "ATT (Tosca)",
+    "applicationVendor": "VM01",
+    "applicationVersion": "3.16.1"
+  },
+  {
+    "application": "ATT (Tosca)",
+    "applicationVendor": "VM01",
+    "applicationVersion": "3.16.9"
+  }
+]
