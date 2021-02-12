@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: 74d861dd-2a41-4307-a48c-88a3756dd5f5
+  UUID: f8d48bbc-a9aa-4fa3-9137-3a686ecfd322
+  name: Nestedcomplexvf.nodes.heat.prx
+  description: Not reusable inner VFC
+  type: VFC
+  category: Generic
+  subcategory: Abstract
+  resourceVendor: vend
+  resourceVendorRelease: '2'
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+node_types:
+  org.openecomp.resource.vfc.Nestedcomplexvf.abstract.nodes.heat.prx:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    description: Not reusable inner VFC

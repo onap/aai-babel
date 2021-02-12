@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: 2c30ef06-f83a-4642-a85c-9cb8edd81d9a
+  UUID: 25e0a9ec-c803-4aec-bef8-af1dab636116
+  name: subInterface
+  description: VLAN sub-Interface is a logical port which must be binded to a port. Regular port may have 1N VLAN Interfaces.It can connect to its own network (regardless of the network the parent port can connect)
+  type: CP
+  category: Generic
+  subcategory: Network Elements
+  resourceVendor: ATT (Tosca)
+  resourceVendorRelease: 1.0.0.wd03
+  resourceVendorModelNumber: ''
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+node_types:
+  org.openecomp.resource.cp.nodes.network.SubInterface:
+    derived_from: tosca.nodes.network.Port
+    description: VLAN sub-Interface is a logical port which must be binded to a port. Regular port may have 1N VLAN Interfaces.It can connect to its own network (regardless of the network the parent port can connect)
