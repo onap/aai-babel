@@ -388,7 +388,7 @@ public enum LogHelper implements Logger {
     @Override
     public void info(@SuppressWarnings("rawtypes") Enum errorCode, String... args) {
         if (isInfoEnabled()) {
-            invokeErrorCodeLogger(errorLogger::info, (EELFResolvableErrorEnum) errorCode, args);
+            invokeErrorCodeLogger(debugLogger::info, (EELFResolvableErrorEnum) errorCode, args);
         }
     }
 

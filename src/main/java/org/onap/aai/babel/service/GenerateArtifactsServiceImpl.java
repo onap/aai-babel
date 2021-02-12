@@ -29,12 +29,9 @@ import java.util.List;
 import java.util.UUID;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.PathSegment;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
+
 import org.apache.commons.lang3.time.StopWatch;
 import org.onap.aai.auth.AAIAuthException;
 import org.onap.aai.auth.AAIMicroServiceAuth;
@@ -99,7 +96,7 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
         applicationLogger.info(ApplicationMsgs.BABEL_REQUEST_PAYLOAD, requestHeaders.toString());
 
         String requestId = requestHeaders.getCorrelationId();
-        if (requestId == null) {
+        if (requestId == null || !isRequestIDValid(requestId)) {
             requestId = UUID.randomUUID().toString();
             applicationLogger.info(ApplicationMsgs.MISSING_REQUEST_ID, requestId);
             applicationLogger.setContextValue(MdcParameter.REQUEST_ID, requestId);
@@ -136,6 +133,15 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
         return response;
     }
 
+    private boolean isRequestIDValid(String requestId) {
+        try {
+            UUID.fromString(requestId);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Generate XML model artifacts from request body.
      *
@@ -165,6 +171,7 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
             }
 
             response = buildResponse(Status.OK, gson.toJson(babelArtifacts));
+            applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT,LogHelper.getCallerMethodName(0));
         } catch (JsonSyntaxException e) {
             response = processError(ApplicationMsgs.INVALID_REQUEST_JSON, Status.BAD_REQUEST, e, "Malformed request.");
         } catch (CsarConverterException e) {
@@ -177,15 +184,16 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
             response = processError(ApplicationMsgs.PROCESS_REQUEST_ERROR, Status.BAD_REQUEST, //
                     e, e.getLocalizedMessage());
         } finally {
-            applicationLogger.logMetrics(stopwatch, LogHelper.getCallerMethodName(0));
+            applicationLogger.debug(stopwatch + LogHelper.getCallerMethodName(0));
         }
 
         return response;
     }
 
     private Response processError(ApplicationMsgs applicationMsgs, Status responseStatus, Exception e, String message) {
+        applicationLogger.setContextValue(MdcParameter.RESPONSE_CODE, String.valueOf(responseStatus.getStatusCode()));
+        applicationLogger.setContextValue(MdcParameter.RESPONSE_DESCRIPTION, responseStatus.getReasonPhrase());
         applicationLogger.error(applicationMsgs, e);
-
         return buildResponse(responseStatus, message);
     }
 

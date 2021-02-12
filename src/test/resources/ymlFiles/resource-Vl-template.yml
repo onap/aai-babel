@@ -1,0 +1,77 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: 1b76148a-81c1-4173-a16a-51a8f1f94bfa
+  UUID: af185035-ac2d-41e2-a410-f49c8b9f1de9
+  name: VL
+  description: ' Virtual link (VL) describes the basic topology of the connectivity
+    as well as other required parameters (e.g. bandwidth and QoS class). '
+  type: VL
+  category: Network Connectivity
+  subcategory: Virtual Links
+  resourceVendor: ATT (Tosca)
+  resourceVendorRelease: 1.0.0.wd03
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+node_types:
+  org.openecomp.resource.vl.VL:
+    derived_from: tosca.nodes.network.Network
+    description: ' Virtual link (VL) describes the basic topology of the connectivity
+      as well as other required parameters (e.g. bandwidth and QoS class). '
+    properties:
+      vendor:
+        type: string
+      vl_name:
+        type: string
+    capabilities:
+      virtual_linkable:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      end_point:
+        type: tosca.capabilities.Endpoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          port_name:
+            type: string
+            required: false
+          protocol:
+            type: string
+            default: tcp
+            required: false
+          port:
+            type: PortDef
+            required: false
+          initiator:
+            type: string
+            default: source
+            required: false
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          secure:
+            type: boolean
+            default: false
+            required: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          url_path:
+            type: string
+            required: false

@@ -19,36 +19,40 @@
 # limitations under the License.
 # ============LICENSE_END=========================================================
 
-# jre-alpine image has $JAVA_HOME set and added to $PATH
-# ubuntu image requires to set $JAVA_HOME and add java to $PATH manually
-if ( uname -v | grep -i "ubuntu" ); then
-    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-`dpkg --print-architecture | awk -F- '{ print $NF }'`
-    export PATH=${JAVA_HOME}:$PATH
-fi
-
 APP_HOME="${APP_HOME:-/opt/app/babel}"
+mkdir -p ${APP_HOME}/logs/gc
 
 if [ -z "${CONFIG_HOME}" ]; then
 	echo "CONFIG_HOME must be set in order to start the process"
 	exit 1
 fi
 
-if [ -z "${KEY_STORE_PASSWORD}" ]; then
-	echo "KEY_STORE_PASSWORD must be set in order to start the process"
+#Either keystore password or server certs location must be passed. Both cannot be null
+if [ -z "${KEY_STORE_PASSWORD}" -a -z "${SERVER_CERTS_LOCATION}" ]; then
+	echo "KEY_STORE_PASSWORD or SERVER_CERTS_LOCATION must be set in order to start the process"
 	exit 1
 fi
 
 PROPS="-DAPP_HOME=${APP_HOME}"
 PROPS="${PROPS} -DCONFIG_HOME=${CONFIG_HOME}"
 PROPS="${PROPS} -Dtosca.mappings.config=${CONFIG_HOME}/tosca-mappings.json"
-PROPS="${PROPS} -DKEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}"
+
+if [ ! -z "$KEY_STORE_PASSWORD" ]; then
+   PROPS="${PROPS} -DKEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}"
+fi
+
 PROPS="${PROPS} -Dlogging.config=${APP_HOME}/config/logback.xml"
+
 if [ ! -z "$REQUIRE_CLIENT_AUTH" ]; then
    PROPS="$PROPS -Dserver.ssl.client-auth=${REQUIRE_CLIENT_AUTH}"
 fi
+if [ ! -z "$SERVER_CERTS_LOCATION" ]; then
+   PROPS="$PROPS -Dserver.certs.location=${SERVER_CERTS_LOCATION}"
+   PROPS="$PROPS -Dserver.ssl.key-store=${SERVER_CERTS_LOCATION}/${SERVER_KEY_STORE}"
+   PROPS="$PROPS -Dserver.ssl.trust-store=${SERVER_CERTS_LOCATION}/${SERVER_TRUST_STORE}"
+fi
+PROPS="${PROPS} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}"
+PROPS="${PROPS} -Daaf.cadi.file=${CONFIG_HOME}/cadi.properties"
 
-JVM_MAX_HEAP=${MAX_HEAP:-1024}
+exec java ${JVM_OPTS} ${PROPS} -jar ${APP_HOME}/babel*.jar
 
-JARFILE=$(ls ./babel*.jar);
-
-exec java -Xmx${JVM_MAX_HEAP}m ${PROPS} -jar ${APP_HOME}/${JARFILE}

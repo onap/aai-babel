@@ -1,0 +1,813 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: dd97be59-be12-4749-b8ca-1bf0d7336573
+  UUID: 0a09e932-9fde-4e52-b7e3-2e542b61faa0
+  name: ScpTestVsp.nodes.smp
+  description: Not reusable inner VFC
+  type: VFC
+  category: Generic
+  subcategory: Abstract
+  resourceVendor: SCP-Test-VLM
+  resourceVendorRelease: '1.0'
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+node_types:
+  org.openecomp.resource.vfc.ScpTestVsp.abstract.nodes.smp:
+    derived_from: org.openecomp.resource.abstract.nodes.VFC
+    description: Not reusable inner VFC
+    properties:
+      port_port_smp_oam_ip_requirements:
+        type: list
+        entry_schema:
+          type: json
+      port_port_smp_cluster_replacement_policy:
+        type: list
+        entry_schema:
+          type: string
+      port_port_smp_oam_fixed_ips:
+        type: list
+        entry_schema:
+          type: json
+      compute_smp_name:
+        type: list
+        entry_schema:
+          type: string
+      port_port_smp_oam_security_groups:
+        type: list
+        entry_schema:
+          type: json
+      index_value:
+        type: integer
+        default: 0
+        description: Index value of this substitution service template runtime instance
+      compute_smp_availability_zone:
+        type: list
+        entry_schema:
+          type: string
+      port_port_smp_cluster_security_groups:
+        type: list
+        entry_schema:
+          type: json
+      port_port_smp_cluster_network:
+        type: list
+        entry_schema:
+          type: string
+      port_port_smp_oam_network_role_tag:
+        type: list
+        entry_schema:
+          type: string
+      compute_smp_user_data_format:
+        type: list
+        entry_schema:
+          type: string
+      port_port_smp_oam_network:
+        type: list
+        entry_schema:
+          type: string
+      port_port_smp_oam_mac_requirements:
+        type: list
+        entry_schema:
+          type: json
+      port_port_smp_cluster_ip_requirements:
+        type: list
+        entry_schema:
+          type: json
+      port_port_smp_cluster_mac_requirements:
+        type: list
+        entry_schema:
+          type: json
+      compute_smp_metadata:
+        type: list
+        entry_schema:
+          type: json
+      port_port_smp_oam_replacement_policy:
+        type: list
+        entry_schema:
+          type: string
+      compute_smp_scheduler_hints:
+        type: list
+        entry_schema:
+          type: json
+    capabilities:
+      feature_smp:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_smp:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          max_instances:
+            type: integer
+            default: 1
+            required: false
+          min_instances:
+            type: integer
+            default: 1
+            required: false
+          default_instances:
+            type: integer
+            required: false
+      memory.resident_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.outgoing.packets.rate_smp_port_smp_oam:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.outpoing.packets_smp_port_smp_oam:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      feature_smp_port_smp_oam:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.usage_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      binding_smp_port_smp_oam:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 0
+        - UNBOUNDED
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      disk.device.write.bytes_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      os_smp:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          distribution:
+            type: string
+            required: false
+          type:
+            type: string
+            required: false
+          version:
+            type: version
+            required: false
+          architecture:
+            type: string
+            required: false
+      network.outgoing.bytes_smp_port_smp_oam:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      binding_smp:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.allocation_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.outgoing.bytes_smp_port_smp_cluster:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.incoming.bytes.rate_smp_port_smp_cluster:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.incoming.packets_smp_port_smp_oam:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      attachment_smp_port_smp_oam:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      instance_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      host_smp:
+        type: tosca.capabilities.Container
+        occurrences:
+        - 1
+        - UNBOUNDED
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        properties:
+          num_cpus:
+            type: integer
+            required: false
+          disk_size:
+            type: scalar-unit.size
+            required: false
+          cpu_frequency:
+            type: scalar-unit.frequency
+            required: false
+          mem_size:
+            type: scalar-unit.size
+            required: false
+      disk.device.usage_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.incoming.packets.rate_smp_port_smp_cluster:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      feature_smp_port_smp_cluster:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.bytes_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.ephemeral.size_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.incoming.bytes_smp_port_smp_cluster:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.write.bytes.rate_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.device.write.bytes.rate_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.capacity_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      binding_smp_port_smp_cluster:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 0
+        - UNBOUNDED
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      disk.device.read.bytes.rate_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.incoming.bytes.rate_smp_port_smp_oam:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.device.latency_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.device.write.requests.rate_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.outgoing.packets.rate_smp_port_smp_cluster:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.root.size_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      attachment_smp_port_smp_cluster:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      cpu.delta_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.device.write.requests_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      memory_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.device.iops_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.outgoing.bytes.rate_smp_port_smp_cluster:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.device.allocation_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.device.read.requests.rate_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.device.read.bytes_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      vcpus_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.write.requests.rate_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.outgoing.bytes.rate_smp_port_smp_oam:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.latency_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.iops_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.read.bytes.rate_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.incoming.bytes_smp_port_smp_oam:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      cpu_util_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.incoming.packets_smp_port_smp_cluster:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.write.bytes_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      memory.usage_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.incoming.packets.rate_smp_port_smp_oam:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.read.requests_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      disk.device.capacity_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      cpu_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      network.outpoing.packets_smp_port_smp_cluster:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+      endpoint_smp:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          secure:
+            type: boolean
+            default: true
+            required: false
+      disk.device.read.requests_smp:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+    requirements:
+    - dependency_smp:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+    - dependency_smp_port_smp_oam:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+    - dependency_smp_port_smp_cluster:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+    - link_smp_port_smp_cluster:
+        occurrences:
+        - 1
+        - 1
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+    - link_smp_port_smp_oam:
+        occurrences:
+        - 1
+        - 1
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+    - local_storage_smp:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo

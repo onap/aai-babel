@@ -1,0 +1,84 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: b00d73b6-671e-41dc-9ce0-268600929ce7
+  UUID: 36652c43-0ee0-40a2-aa06-3f0ad68bf268
+  name: CinderVolume
+  description: 'Represents a server-local block storage device that provides persistent
+    storage to guest virtual machines. '
+  type: VFC
+  category: Generic
+  subcategory: Infrastructure
+  resourceVendor: ATT (Tosca)
+  resourceVendorRelease: 1.0.0.wd03
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.cinder.Volume:
+    derived_from: org.openecomp.resource.vfc.nodes.volume
+    description: 'Represents a server-local block storage device that provides persistent
+      storage to guest virtual machines. '
+    properties:
+      availability_zone:
+        type: string
+        description: The availability zone in which the volume will be created
+      image:
+        type: string
+        description: If specified, the name or ID of the image to create the volume from
+      metadata:
+        type: map
+        description: Key/value pairs to associate with the volume
+        entry_schema:
+          type: string
+      volume_type:
+        type: string
+        description: If specified, the type of volume to use, mapping to a specific backend
+      description:
+        type: string
+        description: A description of the volume
+      device_type:
+        type: string
+        description: Device type
+      disk_bus:
+        type: string
+        description: 'Bus of the device: hypervisor driver chooses a suitable default
+          if omitted'
+      backup_id:
+        type: string
+        description: If specified, the backup to create the volume from
+      source_volid:
+        type: string
+        description: If specified, the volume to use as source
+      boot_index:
+        type: integer
+        description: Integer used for ordering the boot disks
+      read_only:
+        type: boolean
+        description: Enables or disables read-only access mode of volume
+      name:
+        type: string
+        description: A name used to distinguish the volume
+      scheduler_hints:
+        type: map
+        description: Arbitrary key-value pairs specified by the client to help the Cinder scheduler creating a volume
+        entry_schema:
+          type: string
+      swap_size:
+        type: scalar-unit.size
+        description: The size of the swap, in MB
+      delete_on_termination:
+        type: boolean
+        description: Indicate whether the volume should be deleted when the server is terminated
+      multiattach:
+        type: boolean
+        description: Whether allow the volume to be attached more than once

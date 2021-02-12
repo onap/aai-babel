@@ -1,0 +1,60 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: 4ef3ec74-aa57-402b-881c-310037e4c042
+  UUID: b407610b-7520-46dc-a595-cb713bafe72e
+  name: ContrailVirtualNetwork
+  description: Represents a network service with optional subnets and advanced configurations.
+  type: VL
+  category: Generic
+  subcategory: Network Elements
+  resourceVendor: ATT (Tosca)
+  resourceVendorRelease: 1.0.0.wd03
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+node_types:
+  org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork:
+    derived_from: org.openecomp.resource.vl.nodes.network.Network
+    description: Represents a network service with optional subnets and advanced configurations.
+    properties:
+      shared:
+        type: string
+        description: Is virtual network shared
+      forwarding_mode:
+        type: string
+        description: forwarding mode of the virtual network
+      external:
+        type: string
+        description: Is virtual network external
+      allow_transit:
+        type: string
+        description: Whether this network should be transitive.
+      flood_unknown_unicast:
+        type: string
+        description: flood L2 packets on network
+      route_targets:
+        type: list
+        description: route targets associated with the virtual network
+        entry_schema:
+          type: string
+      subnets:
+        type: map
+        description: Network related subnets
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.neutron.Subnet
+    capabilities:
+      attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
