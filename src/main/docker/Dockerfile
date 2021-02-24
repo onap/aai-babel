@@ -1,4 +1,4 @@
-FROM @docker.push.registry@/@aai.docker.namespace@/aai-common-@aai.base.image@:@aai.base.image.version@
+FROM @aai.docker.namespace@/aai-common-@aai.base.image@:@aai.base.image.version@
 
 ARG MICRO_HOME=/opt/app/babel
 
@@ -18,6 +18,6 @@ RUN mkdir -p /opt/aaihome $MICRO_HOME /logs && \
 COPY --chown=aaiadmin:aaiadmin /maven/babel/ .
 # The start script is executable and can be run directly.
 
-ENTRYPOINT ["/sbin/tini", "--", "/bin/bash", "/opt/app/babel/bin/start.sh"]
+ENTRYPOINT ["/bin/bash", "/opt/app/babel/bin/start.sh"]
 
 USER aaiadmin
