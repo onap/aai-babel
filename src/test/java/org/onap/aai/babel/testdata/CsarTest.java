@@ -47,7 +47,6 @@ public enum CsarTest {
     MULTIPLE_VNF_CSAR("catalog_csar_too_many_vnfConfigurations.csar"),
     NETWORK_COLLECTION_CSAR_FILE("service_NetworkCollection.csar"),
     RG_COLLECTOR_615_CSAR_FILE("service-RgCollector615-csar.csar"),
-    VDBE_SERVICE_CSAR_FILE("service-VdbeSrv-csar.csar"),
     VNFOD_SERVICE("service-Dev2devnfodservice17July-csar.csar"),
     CHILD_RESOURCE_CSAR_FILE("service-NetworkCloudVnfServiceMock-csar.csar"),
     SERVICE_PROXY_CSAR_FILE("service-S1-csar.csar");

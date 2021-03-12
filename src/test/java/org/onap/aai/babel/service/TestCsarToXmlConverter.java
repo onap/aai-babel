@@ -168,17 +168,6 @@ public class TestCsarToXmlConverter {
     }
 
     @Test
-    public void generateXmlFromVdbeServiceCsar() throws IOException, CsarConverterException {
-        List<String> filesToLoad = new ArrayList<>();
-        filesToLoad.add("AAI-vDBE_srv-service-1.0.xml");
-        filesToLoad.add("AAI-vDBE-resource-0.5.xml");
-        filesToLoad.add("AAI-vdbe0..Vdbe..main..module-0-resource-2.xml");
-        filesToLoad.add("AAI-oam_group-resource-3.xml");
-        filesToLoad.add("AAI-untr_group-resource-3.xml");
-        assertThatGeneratedFilesMatchExpected(createExpectedXmlFiles(filesToLoad), CsarTest.VDBE_SERVICE_CSAR_FILE);
-    }
-
-    @Test
     public void generatePortMirrorConfigurationModel()
             throws CsarConverterException, IOException, XmlArtifactGenerationException {
         List<String> filesToLoad = new ArrayList<>();

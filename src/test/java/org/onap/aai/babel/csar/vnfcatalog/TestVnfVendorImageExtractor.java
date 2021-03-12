@@ -105,15 +105,6 @@ public class TestVnfVendorImageExtractor {
     }
 
     @Test
-    public void createVendorImageMappingsValidFileDifferentVnfNodeTypes() throws IOException, ToscaToCatalogException {
-        String expectedJson = new ArtifactTestUtils().getRequestJson("vnfodservice-vendorImageConfigurations.json");
-        BabelArtifact artifact = CsarTest.VNFOD_SERVICE.extractVnfVendorImages();
-        assertThat(artifact.getName(), is(equalTo("vnfVendorImageConfigurations")));
-        assertThat(artifact.getType(), is(equalTo(ArtifactType.VNFCATALOG)));
-        assertThat(artifact.getPayload(), is(equalTo(expectedJson)));
-    }
-
-    @Test
     public void testSoftwareVersions() throws ToscaToCatalogException {
         VnfVendorImageExtractor extractor = new VnfVendorImageExtractor();
         SdcToscaHelper helper = new SdcToscaHelper();
