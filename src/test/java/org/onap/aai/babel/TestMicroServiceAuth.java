@@ -23,6 +23,7 @@ package org.onap.aai.babel;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.aai.auth.AAIAuthException;
@@ -117,12 +119,17 @@ public class TestMicroServiceAuth {
      * @throws IOException
      *             for I/O failures, e.g. when creating the temporary auth policy file
      */
-    @Test(expected = AAIAuthException.class)
+    @Test
     public void testReloadDeletedFile() throws AAIAuthException, JSONException, IOException {
         File file = createTestPolicyFile();
         AAIMicroServiceAuthCore.init(file.getAbsolutePath());
         assertThat(file.delete(), is(true));
-        AAIMicroServiceAuthCore.reloadUsers();
+        try {
+            AAIMicroServiceAuthCore.reloadUsers();
+            Assert.fail("Expected an AAIAuthException to be thrown");
+        } catch (AAIAuthException e) {
+            assertTrue(true);
+        }
     }
 
     /**
@@ -172,7 +179,7 @@ public class TestMicroServiceAuth {
      * @throws InterruptedException
      *             if interrupted while sleeping
      */
-    @Test
+    @Test(expected = Test.None.class /* no exception expected */)
     public void createLocalAuthFileOnChange()
             throws JSONException, AAIAuthException, IOException, InterruptedException {
         File file = createTestPolicyFile();
@@ -212,7 +219,7 @@ public class TestMicroServiceAuth {
      * @throws AAIAuthException
      *             if the Auth Policy cannot be loaded
      */
-    @Test
+    @Test(expected = Test.None.class /* no exception expected */)
     public void createAuthFromDefaultFileAppHome() throws AAIAuthException {
         System.clearProperty("CONFIG_HOME");
         System.setProperty("APP_HOME", "src/test/resources");

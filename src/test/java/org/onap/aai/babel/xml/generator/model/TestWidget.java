@@ -190,19 +190,19 @@ public class TestWidget {
     @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
     public void testGetModelNameVersionIdIsUnsupported() throws XmlArtifactGenerationException {
         Widget widgetModel = Widget.createWidget("OAM_NETWORK");
-        assertThat(widgetModel.getModelNameVersionId(), is(nullValue()));
+        widgetModel.getModelNameVersionId();
     }
 
     @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
     public void testGetModelTypeNameIsUnsupported() throws XmlArtifactGenerationException {
         Widget widgetModel = Widget.createWidget("OAM_NETWORK");
-        assertThat(widgetModel.getModelTypeName(), is(nullValue()));
+        widgetModel.getModelTypeName();
     }
 
     @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
     public void testGetModelIdIsUnsupported() throws XmlArtifactGenerationException {
         Widget widgetModel = Widget.createWidget("OAM_NETWORK");
-        assertThat(widgetModel.getModelId(), is(nullValue()));
+        widgetModel.getModelId();
     }
 
 }

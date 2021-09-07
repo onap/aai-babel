@@ -79,8 +79,6 @@ public class CsarToXmlConverter {
         } catch (XmlArtifactGenerationException e) {
             throw new CsarConverterException(
                     "An error occurred trying to generate XML files from a collection of YAML files : " + e);
-        } finally {
-
         }
 
         return xmlArtifacts;

@@ -47,14 +47,14 @@ public class TestApplication {
         System.setProperty("server.ssl.key-store", "src/test/resources/auth/keystore.jks");
     }
 
-    @Test
+    @Test(expected = Test.None.class /* no exception expected */)
     public void testApplicationStarts() {
         System.setProperty("KEY_STORE_PASSWORD", "password");
         BabelApplication.main(new String[] {});
         BabelApplication.exit();
     }
 
-    @Test
+    @Test(expected = Test.None.class /* no exception expected */)
     public void testApplicationStartsWithObfuscatedPassword() {
         System.setProperty("KEY_STORE_PASSWORD", Password.obfuscate("password"));
         BabelApplication.main(new String[] {});

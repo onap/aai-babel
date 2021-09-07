@@ -50,12 +50,12 @@ public class TestAuthFileWatcher {
         task = new AuthFileWatcher(mockFile);
     }
 
-    @Test
+    @Test(expected = Test.None.class /* no exception expected */)
     public void testOnChangeDoesNotRun() {
         task.run();
     }
 
-    @Test
+    @Test(expected = Test.None.class /* no exception expected */)
     public void testOnChangeDoesRun() throws IOException, AAIAuthException {
         System.setProperty("CONFIG_HOME", "src/test/resources");
         BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
