@@ -97,7 +97,7 @@
 		<mvn.jaxb2.version>0.13.3</mvn.jaxb2.version>
 		<aai-schema.group.id>org.onap.aai.schema-service</aai-schema.group.id>
 
-		<aai-schema.version>1.9.0</aai-schema.version>
+		<aai-schema.version>1.9.1</aai-schema.version>
 		<apache.lang3.version>3.7</apache.lang3.version>
 		<aai.rest.client.version>1.2.1</aai.rest.client.version>
 
