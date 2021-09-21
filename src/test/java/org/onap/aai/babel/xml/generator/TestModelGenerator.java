@@ -48,7 +48,7 @@ public class TestModelGenerator {
         new ArtifactTestUtils().setGeneratorSystemProperties();
     }
 
-    @Test
+    @Test(expected = Test.None.class /* no exception expected */)
     public void testDefaultServiceVersion() throws XmlArtifactGenerationException, IOException {
         Artifact ymlFile = new Artifact(null, null, null, null);
         new ModelGenerator().generateArtifacts(CsarTest.SD_WAN_CSAR_FILE.getContent(),

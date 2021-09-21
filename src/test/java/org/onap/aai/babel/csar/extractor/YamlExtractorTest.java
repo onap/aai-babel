@@ -107,7 +107,7 @@ public class YamlExtractorTest {
         }
     }
 
-    @Test
+    @Test(expected = Test.None.class /* no exception expected */)
     public void testArchiveContainsOnlyTheExpectedYmlFilesFromSdWanService()
             throws IOException, InvalidArchiveException {
         final List<Artifact> ymlFiles = CsarTest.SD_WAN_CSAR_FILE.extractArtifacts();

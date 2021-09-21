@@ -171,7 +171,7 @@ public class TestArtifactGeneratorToscaParser {
      * @throws XmlArtifactGenerationException
      *             if there is no configuration defined for the test resource's widget type
      */
-    @Test
+    @Test(expected = Test.None.class /* no exception expected */)
     public void testAddWidgetToService() throws IOException, XmlArtifactGenerationException {
         ArtifactTestUtils testUtils = new ArtifactTestUtils();
         testUtils.loadWidgetMappings();

@@ -50,17 +50,11 @@ public class BabelApplication extends SpringBootServletInitializer {
         if (keyStorePassword == null || keyStorePassword.isEmpty()) {
             throw new IllegalArgumentException("Mandatory property KEY_STORE_PASSWORD not set");
         }
-        try {
-            SpringApplication app = new SpringApplication(BabelApplication.class);
-            app.setLogStartupInfo(false);
-            app.setRegisterShutdownHook(true);
-            app.addInitializers(new PropertyPasswordConfiguration());
-            context = app.run(args);
-        }
-        catch(Exception ex){
-            ex.printStackTrace();
-            throw ex;
-        }
+        SpringApplication app = new SpringApplication(BabelApplication.class);
+        app.setLogStartupInfo(false);
+        app.setRegisterShutdownHook(true);
+        app.addInitializers(new PropertyPasswordConfiguration());
+        context = app.run(args);
     }
 
     public static void exit() {

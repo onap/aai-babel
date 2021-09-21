@@ -45,8 +45,6 @@ public class ModelGenerator implements ArtifactGenerator {
 
     private static final LogHelper logger = LogHelper.INSTANCE;
 
-    private static final String VERSION_DELIMITER = ".";
-    private static final String VERSION_DELIMITER_REGEXP = "\\" + VERSION_DELIMITER;
     private static final String DEFAULT_SERVICE_VERSION = "1.0";
 
     /**

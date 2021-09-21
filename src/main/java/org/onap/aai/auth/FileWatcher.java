@@ -33,7 +33,7 @@ public abstract class FileWatcher extends TimerTask {
      *
      * @param file the file
      */
-    public FileWatcher(File file) {
+    protected FileWatcher(File file) {
         this.file = file;
         this.timeStamp = file.lastModified();
     }

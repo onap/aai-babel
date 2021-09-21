@@ -74,7 +74,7 @@ public class TestModel {
     /**
      * Test that there is no exception if processing a Model that has no metadata properties.
      */
-    @Test
+    @Test(expected = Test.None.class /* no exception expected */)
     public void testNullIdentProperties() {
         createTestModel().populateModelIdentificationInformation(null);
     }

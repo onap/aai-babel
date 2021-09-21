@@ -120,7 +120,7 @@ public class TestApplicationLogger {
     /**
      * Call logAuditError() for code coverage stats.
      */
-    @Test
+    @Test(expected = Test.None.class /* no exception expected */)
     public void logAuditError() {
         LogHelper.INSTANCE.logAuditError(new Exception("test"));
         EELFManager.getInstance().getAuditLogger().setLevel(Level.OFF);
@@ -198,7 +198,7 @@ public class TestApplicationLogger {
         assertThat("audit message content", str, containsString("foo"));
     }
 
-    @Test
+    @Test(expected = Test.None.class /* no exception expected */)
     public void setDefaultContextValue() {
         LogHelper logger = LogHelper.INSTANCE;
         logger.setDefaultContextValue("key", "value");
@@ -271,12 +271,8 @@ public class TestApplicationLogger {
      */
     private void callUnsupportedOperationMethod(TriConsumer<Enum<?>, LogFields, String[]> logMethod,
             ApplicationMsgs dummyMsg) {
-        try {
-            logMethod.accept(dummyMsg, new LogFields(), new String[] {""});
-            org.junit.Assert.fail("method should have thrown execption"); // NOSONAR as code not reached
-        } catch (UnsupportedOperationException e) {
-            // Expected to reach here
-        }
+        logMethod.accept(dummyMsg, new LogFields(), new String[] {""});
+        org.junit.Assert.fail("method should have thrown execption"); // NOSONAR as code not reached
     }
 
     /**

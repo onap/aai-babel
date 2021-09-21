@@ -80,8 +80,8 @@ public class AaiModelGenerator {
         org.onap.aai.babel.xml.generator.xsd.Model aaiModel = new org.onap.aai.babel.xml.generator.xsd.Model();
         aaiModel.setModelInvariantId(model.getModelId());
         aaiModel.setModelType(model.getModelTypeName());
-        if (model.getModelTypeName() == "service"){
-        		aaiModel.setModelRole(model.getCategory());
+        if ("service".equals(model.getModelTypeName())){
+            aaiModel.setModelRole(model.getCategory());
         }
         aaiModel.setModelVers(new ModelVers());
         aaiModel.getModelVers().getModelVer().add(createModelVersion(model));

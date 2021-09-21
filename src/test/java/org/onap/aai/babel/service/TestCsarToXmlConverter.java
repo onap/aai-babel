@@ -120,9 +120,9 @@ public class TestCsarToXmlConverter {
                 SERVICE_VERSION);
     }
 
-    @Test
+    @Test(expected = Test.None.class /* no exception expected */)
     public void testServiceMetadataMissing()
-            throws IOException, XmlArtifactGenerationException, CsarConverterException {
+            throws IOException, CsarConverterException {
         converter.generateXmlFromCsar(CsarTest.MISSING_METADATA_CSAR.getContent(),
                 CsarTest.MISSING_METADATA_CSAR.getName(), SERVICE_VERSION);
     }
