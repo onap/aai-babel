@@ -28,7 +28,7 @@
 	<parent>
 		<groupId>org.onap.aai.aai-common</groupId>
 		<artifactId>aai-parent</artifactId>
-		<version>1.9.0</version>
+		<version>1.9.2</version>
 	</parent>
 
 	<groupId>org.onap.aai</groupId>
@@ -87,7 +87,7 @@
 		<!-- Dependency Versions -->
 		<sdc.tosca.version>1.5.1</sdc.tosca.version>
 
-		<aai.common.version>1.9.0</aai.common.version>
+		<aai.common.version>1.9.2</aai.common.version>
 		<aaf.version>2.1.21</aaf.version>
 		<common.logging.version>1.2.2</common.logging.version>
 
