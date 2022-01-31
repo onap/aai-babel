@@ -1,0 +1,7 @@
+distribution_type: container
+container_release_tag: 1.9.2
+project: aai/babel
+ref: c62c5421ea8d7530a95b5730c1f5e88b9a7589a4
+containers:
+    - name: babel
+      version: 1.9-STAGING-20220131T062651Z
