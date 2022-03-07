@@ -90,6 +90,8 @@
 		<aai.common.version>1.9.3</aai.common.version>
 		<aaf.version>2.1.21</aaf.version>
 		<common.logging.version>1.2.2</common.logging.version>
+		<logback.core.version>1.2.7</logback.core.version>
+		<groovy.version>2.5.15</groovy.version>
 
 		<commons.compress.version>1.21</commons.compress.version>
 		<commons.codec.version>1.15</commons.codec.version>
@@ -282,6 +284,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
+			<version>${logback.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -305,6 +308,7 @@
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy</artifactId>
+			<version>${groovy.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.onap.sdc.sdc-tosca</groupId>
