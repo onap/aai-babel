@@ -69,10 +69,10 @@
 		<!-- java 11 related properties -->
 		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-		<maven-compiler-plugin.source>11</maven-compiler-plugin.source>
-		<maven-compiler-plugin.target>11</maven-compiler-plugin.target>
-		<maven-compiler-plugin.test.source>11</maven-compiler-plugin.test.source>
-		<maven-compiler-plugin.test.target>11</maven-compiler-plugin.test.target>
+		<maven-compiler-plugin.source>1.8</maven-compiler-plugin.source>
+		<maven-compiler-plugin.target>1.8</maven-compiler-plugin.target>
+		<maven-compiler-plugin.test.source>1.8</maven-compiler-plugin.test.source>
+		<maven-compiler-plugin.test.target>1.8</maven-compiler-plugin.test.target>
 		<sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
 
 		<!-- docker related properties -->
