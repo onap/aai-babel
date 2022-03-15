@@ -1,0 +1,7 @@
+distribution_type: container
+container_release_tag: 1.9.4
+project: aai/babel
+ref: c8c655a93a023e35f83974d4aea09234475f0d9d
+containers:
+    - name: babel
+      version: 1.9-STAGING-20220315T175557Z
