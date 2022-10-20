@@ -1,0 +1,7 @@
+distribution_type: container
+container_release_tag: 1.11.0
+project: aai/babel
+ref: ab64d5491d76308776eb26fa38493725f1b38c8f
+containers:
+    - name: babel
+      version: 1.11-STAGING-20221020T135757Z
