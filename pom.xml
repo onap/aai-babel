@@ -33,7 +33,7 @@
 
 	<groupId>org.onap.aai</groupId>
 	<artifactId>babel</artifactId>
-	<version>1.11.0-SNAPSHOT</version>
+	<version>1.11.0</version>
 	<packaging>jar</packaging>
 
 	<name>aai-babel</name>
