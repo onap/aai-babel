@@ -79,37 +79,36 @@
 		<docker.fabric.version>0.28.0</docker.fabric.version>
 		<aai.docker.version>1.0.0</aai.docker.version>
 		<aai.build.directory>${project.build.directory}/${project.artifactId}-${project.version}-build/
-		</aai.build.directory>
+        </aai.build.directory>
 		<aai.docker.namespace>onap</aai.docker.namespace>
 		<aai.base.image>alpine</aai.base.image>
 		<aai.base.image.version>1.9.0</aai.base.image.version>
 
 		<!-- Dependency Versions -->
-		<sdc.tosca.version>1.5.1</sdc.tosca.version>
+		<sdc.tosca.version>1.6.5</sdc.tosca.version>
 
 		<aai.common.version>1.9.4</aai.common.version>
-		<aaf.version>2.1.21</aaf.version>
-		<common.logging.version>1.2.2</common.logging.version>
-		<logback.core.version>1.2.7</logback.core.version>
-		<groovy.version>2.5.15</groovy.version>
+		<aaf.version>2.7.4</aaf.version>
+		<logback.core.version>1.2.11</logback.core.version>
+		<groovy.version>3.0.13</groovy.version>
 
-		<commons.compress.version>1.21</commons.compress.version>
+		<commons.compress.version>1.22</commons.compress.version>
 		<commons.codec.version>1.15</commons.codec.version>
 
-		<javax.ws.rs.version>2.1</javax.ws.rs.version>
-		<mvn.jaxb2.version>0.13.3</mvn.jaxb2.version>
+		<javax.ws.rs.version>2.1.1</javax.ws.rs.version>
+		<mvn.jaxb2.version>0.15.1</mvn.jaxb2.version>
 		<aai-schema.group.id>org.onap.aai.schema-service</aai-schema.group.id>
 
 		<aai-schema.version>1.9.7</aai-schema.version>
-		<apache.lang3.version>3.7</apache.lang3.version>
-		<aai.rest.client.version>1.2.1</aai.rest.client.version>
+		<commons.lang3.version>3.12.0</commons.lang3.version>
+		<aai.rest.client.version>1.6.4</aai.rest.client.version>
 
-		<sdc.distribution.client.version>1.4.1</sdc.distribution.client.version>
+		<sdc.distribution.client.version>1.4.5</sdc.distribution.client.version>
+		<!-- TODO: use xlm-legacy -->
 		<xmlunit.version>1.6</xmlunit.version>
 
-		<antrun.version>1.8</antrun.version>
-
-		<javax.activation.version>1.1.1</javax.activation.version>
+		<antrun.version>3.1.0</antrun.version>
+		<jakarta.activation.version>1.2.2</jakarta.activation.version>
 		<!-- This will be used for the docker images as the default format of maven build has issues -->
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
 
@@ -117,7 +116,6 @@
 
 	<profiles>
 		<!-- Docker profile to be used for building docker image and pushing to nexus -->
-
 		<profile>
 			<id>docker</id>
 			<build>
@@ -125,7 +123,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>3.0.0</version>
+						<version>3.3.0</version>
 						<executions>
 							<execution>
 								<phase>pre-clean</phase>
@@ -137,9 +135,9 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<groupId>org.codehaus.groovy.maven</groupId>
-						<artifactId>gmaven-plugin</artifactId>
-						<version>1.0</version>
+						<groupId>org.codehaus.gmavenplus</groupId>
+						<artifactId>gmavenplus-plugin</artifactId>
+						<version>1.13.1</version>
 						<executions>
 							<execution>
 								<phase>pre-clean</phase>
@@ -172,8 +170,7 @@
 							<apiVersion>1.23</apiVersion>
 							<images>
 								<image>
-									<name>${docker.push.registry}/${aai.docker.namespace}/${project.artifactId}:%l
-									</name>
+									<name>${docker.push.registry}/${aai.docker.namespace}/${project.artifactId}:%l</name>
 									<build>
 										<filter>@</filter>
 										<tags>
@@ -299,11 +296,12 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+			<version>${commons.lang3.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.1</version>
+			<version>${javax.ws.rs.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
@@ -405,9 +403,9 @@
 			<artifactId>jaxb-impl</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>activation</artifactId>
-			<version>${javax.activation.version}</version>
+			<groupId>jakarta.activation</groupId>
+			<artifactId>jakarta.activation-api</artifactId>
+			<version>${jakarta.activation.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -524,7 +522,8 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<version>1.5.0</version>
 				<executions>
-					<execution><!-- Run our script to get latest xsd version -->
+					<execution>
+						<!-- Run our script to get latest xsd version -->
 						<id>Get latest xsd version</id>
 						<phase>generate-sources</phase>
 						<goals>
@@ -619,7 +618,7 @@
 
 
 			<!-- once we connect aai-parent or oparent 3.0+ we can take out this
-			     whole section -->
+                 whole section -->
 
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -767,8 +766,7 @@
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>${sonar.scanner.version}</version>
 			</plugin>
-			<!-- end removable sonar config, note the additional exclusion for babel above
-			     -->
+			<!-- end removable sonar config, note the additional exclusion for babel above -->
 		</plugins>
 	</build>
 

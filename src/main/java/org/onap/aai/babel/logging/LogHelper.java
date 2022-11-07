@@ -22,11 +22,6 @@ package org.onap.aai.babel.logging;
 
 import static com.att.eelf.configuration.Configuration.MDC_SERVICE_NAME;
 
-import ch.qos.logback.classic.AsyncAppender;
-import ch.qos.logback.core.FileAppender;
-import com.att.eelf.configuration.EELFLogger;
-import com.att.eelf.configuration.EELFManager;
-import com.att.eelf.i18n.EELFResolvableErrorEnum;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -34,9 +29,11 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+
 import javax.servlet.ServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response.Status;
+
 import org.apache.commons.lang3.time.StopWatch;
 import org.onap.aai.babel.request.RequestHeaders;
 import org.onap.aai.cl.api.LogFields;
@@ -45,6 +42,13 @@ import org.onap.aai.cl.mdc.MdcContext;
 import org.onap.aai.cl.mdc.MdcOverride;
 import org.onap.aai.restclient.client.Headers;
 import org.slf4j.MDC;
+
+import com.att.eelf.configuration.EELFLogger;
+import com.att.eelf.configuration.EELFManager;
+import com.att.eelf.i18n.EELFResolvableErrorEnum;
+
+import ch.qos.logback.classic.AsyncAppender;
+import ch.qos.logback.core.FileAppender;
 
 /*-
  * This Log Helper mimics the interface of a Common Logging Logger
@@ -119,10 +123,10 @@ public enum LogHelper implements Logger {
     /** Our externally advertised service API */
     private static final String SERVICE_NAME_VALUE = "AAI-BAS";
 
-    private static final EELFLogger errorLogger = EELFManager.getInstance().getErrorLogger();
-    private static final EELFLogger debugLogger = EELFManager.getInstance().getDebugLogger();
-    private static final EELFLogger auditLogger = EELFManager.getInstance().getAuditLogger();
-    private static final EELFLogger metricsLogger = EELFManager.getInstance().getMetricsLogger();
+    private static final EELFLogger errorLogger = EELFManager.getErrorLogger();
+    private static final EELFLogger debugLogger = EELFManager.getDebugLogger();
+    private static final EELFLogger auditLogger = EELFManager.getAuditLogger();
+    private static final EELFLogger metricsLogger = EELFManager.getMetricsLogger();
 
     /** Formatting for timestamps logged as Strings (from the MDC) */
     private DateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
