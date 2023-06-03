@@ -1,0 +1,4 @@
+distribution_type: maven
+log_dir: aai-babel-maven-stage-master/1404/
+project: aai-babel
+version: 1.12.1
