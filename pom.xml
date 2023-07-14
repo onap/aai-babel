@@ -144,22 +144,24 @@
 								<goals>
 									<goal>execute</goal>
 								</goals>
-								<configuration>
-									<source>
-										def userAaiBaseImage = session.userProperties['aai.base.image'];
-										def userAaiCommonVersion = session.userProperties['aai.base.image.version'];
-										if (userAaiCommonVersion != null) {
-											project.properties['aai.base.image.version'] = userAaiCommonVersion;
-										}
-										if (userAaiBaseImage != null) {
-											project.properties['aai.base.image'] = userAaiBaseImage;
-										}
-										log.info 'Base image flavour: ' + project.properties['aai.base.image'];
-										log.info 'Base image version: ' + project.properties['aai.base.image.version'];
-									</source>
-								</configuration>
 							</execution>
 						</executions>
+						<configuration>
+							<scripts>
+								<script>
+									def userAaiBaseImage = session.userProperties['aai.base.image'];
+									def userAaiCommonVersion = session.userProperties['aai.base.image.version'];
+									if (userAaiCommonVersion != null) {
+										project.properties['aai.base.image.version'] = userAaiCommonVersion;
+									}
+									if (userAaiBaseImage != null) {
+										project.properties['aai.base.image'] = userAaiBaseImage;
+									}
+									log.info 'Base image flavour: ' + project.properties['aai.base.image'];
+									log.info 'Base image version: ' + project.properties['aai.base.image.version'];
+								</script>
+							</scripts>
+						</configuration>
 					</plugin>
 					<plugin>
 						<groupId>io.fabric8</groupId>
