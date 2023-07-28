@@ -109,11 +109,11 @@ public class TestApplicationLogger {
     @Test
     public void logTraceMessage() throws IOException {
         LogReader reader = new LogReader(LogHelper.getLogDirectory(), "debug");
-        EELFManager.getInstance().getDebugLogger().setLevel(Level.TRACE);
+        EELFManager.getDebugLogger().setLevel(Level.TRACE);
         LogHelper.INSTANCE.trace(ApplicationMsgs.LOAD_PROPERTIES, "a message");
         String str = reader.getNewLines();
         assertThat(str, is(notNullValue()));
-        EELFManager.getInstance().getAuditLogger().setLevel(Level.INFO);
+        EELFManager.getAuditLogger().setLevel(Level.INFO);
         LogHelper.INSTANCE.trace(ApplicationMsgs.LOAD_PROPERTIES, "message not written");
     }
 
@@ -123,9 +123,9 @@ public class TestApplicationLogger {
     @Test(expected = Test.None.class /* no exception expected */)
     public void logAuditError() {
         LogHelper.INSTANCE.logAuditError(new Exception("test"));
-        EELFManager.getInstance().getAuditLogger().setLevel(Level.OFF);
+        EELFManager.getAuditLogger().setLevel(Level.OFF);
         LogHelper.INSTANCE.logAuditError(new Exception("test"));
-        EELFManager.getInstance().getAuditLogger().setLevel(Level.INFO);
+        EELFManager.getAuditLogger().setLevel(Level.INFO);
     }
 
     /**
