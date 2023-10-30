@@ -1,3 +1,5 @@
-{"csar": "xxxx",
- "artifactVersion":"1.0",
- "artifactName":"hello"
+{
+ "csar": "xxxx",
+ "artifactVersion": "1.0",
+ "artifactName": "hello"
+}
