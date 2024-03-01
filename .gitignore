@@ -12,3 +12,4 @@ appconfig-local/
 */.idea
 *.iml
 .idea/
+.vscode/

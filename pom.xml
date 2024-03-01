@@ -88,7 +88,6 @@
 		<sdc.tosca.version>1.6.5</sdc.tosca.version>
 
 		<aai.common.version>1.9.4</aai.common.version>
-		<aaf.version>2.7.4</aaf.version>
 		<logback.core.version>1.2.11</logback.core.version>
 		<groovy.version>3.0.13</groovy.version>
 
@@ -318,49 +317,6 @@
 		<dependency>
 			<groupId>org.onap.aai</groupId>
 			<artifactId>rest-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.aai.aai-common</groupId>
-			<artifactId>aai-aaf-auth</artifactId>
-			<version>${aai.common.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-web</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.aaf.authz</groupId>
-			<artifactId>aaf-cadi-core</artifactId>
-			<version>${aaf.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.aaf.authz</groupId>
-			<artifactId>aaf-cadi-aaf</artifactId>
-			<version>${aaf.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.aaf.authz</groupId>
-			<artifactId>aaf-auth-client</artifactId>
-			<version>${aaf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.aaf.authz</groupId>
-			<artifactId>aaf-cadi-client</artifactId>
-			<version>${aaf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.aaf.authz</groupId>
-			<artifactId>aaf-misc-env</artifactId>
-			<version>${aaf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.aaf.authz</groupId>
-			<artifactId>aaf-misc-rosetta</artifactId>
-			<version>${aaf.version}</version>
 		</dependency>
 
 		<!-- Testing -->
