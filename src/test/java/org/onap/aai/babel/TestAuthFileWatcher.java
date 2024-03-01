@@ -22,13 +22,14 @@
 package org.onap.aai.babel;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.TimerTask;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.onap.aai.auth.AAIAuthException;
 import org.onap.aai.auth.AAIMicroServiceAuth;
@@ -45,25 +46,29 @@ public class TestAuthFileWatcher {
     private TimerTask task;
     private File mockFile = Mockito.mock(File.class);
 
-    @Before
+    @BeforeEach
     public void createTask() {
         task = new AuthFileWatcher(mockFile);
     }
 
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void testOnChangeDoesNotRun() {
-        task.run();
+        assertDoesNotThrow(() -> {
+            task.run();
+        });
     }
 
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void testOnChangeDoesRun() throws IOException, AAIAuthException {
-        System.setProperty("CONFIG_HOME", "src/test/resources");
-        BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
-        babelServiceAuthConfig.setAuthPolicyFile("auth_policy.json");
-        new AAIMicroServiceAuth(babelServiceAuthConfig);
+        assertDoesNotThrow(() -> {
+            System.setProperty("CONFIG_HOME", "src/test/resources");
+            BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
+            babelServiceAuthConfig.setAuthPolicyFile("auth_policy.json");
+            new AAIMicroServiceAuth(babelServiceAuthConfig);
 
-        Mockito.when(mockFile.lastModified()).thenReturn(1000L);
-        task.run();
+            Mockito.when(mockFile.lastModified()).thenReturn(1000L);
+            task.run();
+        });
     }
 
     @Test

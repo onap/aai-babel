@@ -22,8 +22,10 @@
 package org.onap.aai.babel;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -32,9 +34,9 @@ import java.util.concurrent.TimeUnit;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.onap.aai.auth.AAIAuthException;
 import org.onap.aai.auth.AAIMicroServiceAuth;
 import org.onap.aai.auth.AAIMicroServiceAuthCore;
@@ -50,7 +52,7 @@ public class TestMicroServiceAuth {
     private static final String VALID_ADMIN_USER = "cn=common-name, ou=org-unit, o=org, l=location, st=state, c=us";
     private static final String TEST_POLICY_FILE = "auth_policy.json";
 
-    @Before
+    @BeforeEach
     public void setup() {
         System.setProperty("CONFIG_HOME", "src/test/resources");
     }
@@ -76,17 +78,19 @@ public class TestMicroServiceAuth {
      * @throws AAIAuthException
      *             if the Auth policy file cannot be loaded
      */
-    @Test(expected = AAIAuthException.class)
+    @Test
     public void missingPolicyFile() throws AAIAuthException {
-        String defaultFile = AAIMicroServiceAuthCore.getDefaultAuthFileName();
-        try {
-            AAIMicroServiceAuthCore.setDefaultAuthFileName("invalid.default.file");
-            BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
-            babelServiceAuthConfig.setAuthPolicyFile("invalid.file.name");
-            new AAIMicroServiceAuth(babelServiceAuthConfig);
-        } finally {
-            AAIMicroServiceAuthCore.setDefaultAuthFileName(defaultFile);
-        }
+        assertThrows(AAIAuthException.class, () -> {
+            String defaultFile = AAIMicroServiceAuthCore.getDefaultAuthFileName();
+            try {
+                AAIMicroServiceAuthCore.setDefaultAuthFileName("invalid.default.file");
+                BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
+                babelServiceAuthConfig.setAuthPolicyFile("invalid.file.name");
+                new AAIMicroServiceAuth(babelServiceAuthConfig);
+            } finally {
+                AAIMicroServiceAuthCore.setDefaultAuthFileName(defaultFile);
+            }
+        });
     }
 
     /**
@@ -96,17 +100,19 @@ public class TestMicroServiceAuth {
      * @throws AAIAuthException
      *             if the Auth policy file cannot be loaded
      */
-    @Test(expected = AAIAuthException.class)
+    @Test
     public void testNullPolicyFile() throws AAIAuthException {
-        String defaultFile = AAIMicroServiceAuthCore.getDefaultAuthFileName();
-        try {
-            AAIMicroServiceAuthCore.setDefaultAuthFileName("invalid.default.file");
-            BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
-            babelServiceAuthConfig.setAuthPolicyFile(null);
-            new AAIMicroServiceAuth(babelServiceAuthConfig);
-        } finally {
-            AAIMicroServiceAuthCore.setDefaultAuthFileName(defaultFile);
-        }
+        assertThrows(AAIAuthException.class, () -> {
+            String defaultFile = AAIMicroServiceAuthCore.getDefaultAuthFileName();
+            try {
+                AAIMicroServiceAuthCore.setDefaultAuthFileName("invalid.default.file");
+                BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
+                babelServiceAuthConfig.setAuthPolicyFile(null);
+                new AAIMicroServiceAuth(babelServiceAuthConfig);
+            } finally {
+                AAIMicroServiceAuthCore.setDefaultAuthFileName(defaultFile);
+            }
+        });
     }
 
     /**
@@ -126,7 +132,7 @@ public class TestMicroServiceAuth {
         assertThat(file.delete(), is(true));
         try {
             AAIMicroServiceAuthCore.reloadUsers();
-            Assert.fail("Expected an AAIAuthException to be thrown");
+            Assertions.fail("Expected an AAIAuthException to be thrown");
         } catch (AAIAuthException e) {
             assertTrue(true);
         }
@@ -142,12 +148,14 @@ public class TestMicroServiceAuth {
      * @throws IOException
      *             for I/O failures, e.g. when creating the temporary auth policy file
      */
-    @Test(expected = AAIAuthException.class)
+    @Test
     public void testReloadInvalidFile() throws AAIAuthException, JSONException, IOException {
-        File file = createTestPolicyFile();
-        AAIMicroServiceAuthCore.init(file.getAbsolutePath());
-        writeToFile(file, "not valid JSON content");
-        AAIMicroServiceAuthCore.reloadUsers();
+        assertThrows(AAIAuthException.class, () -> {
+            File file = createTestPolicyFile();
+            AAIMicroServiceAuthCore.init(file.getAbsolutePath());
+            writeToFile(file, "not valid JSON content");
+            AAIMicroServiceAuthCore.reloadUsers();
+        });
     }
 
     /**
@@ -179,22 +187,24 @@ public class TestMicroServiceAuth {
      * @throws InterruptedException
      *             if interrupted while sleeping
      */
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void createLocalAuthFileOnChange()
             throws JSONException, AAIAuthException, IOException, InterruptedException {
-        File file = createTestPolicyFile();
+        assertDoesNotThrow(() -> {
+            File file = createTestPolicyFile();
 
-        BabelAuthConfig babelAuthConfig = new BabelAuthConfig();
-        babelAuthConfig.setAuthPolicyFile(file.getAbsolutePath());
-        new AAIMicroServiceAuth(babelAuthConfig);
+            BabelAuthConfig babelAuthConfig = new BabelAuthConfig();
+            babelAuthConfig.setAuthPolicyFile(file.getAbsolutePath());
+            new AAIMicroServiceAuth(babelAuthConfig);
 
-        // Make changes to the temp file
-        writeToFile(file, "");
+            // Make changes to the temp file
+            writeToFile(file, "");
 
-        // Wait for the file to be reloaded
-        TimeUnit.SECONDS.sleep(3);
+            // Wait for the file to be reloaded
+            TimeUnit.SECONDS.sleep(3);
 
-        AAIMicroServiceAuthCore.cleanup();
+            AAIMicroServiceAuthCore.cleanup();
+        });
     }
 
     /**
@@ -219,13 +229,16 @@ public class TestMicroServiceAuth {
      * @throws AAIAuthException
      *             if the Auth Policy cannot be loaded
      */
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void createAuthFromDefaultFileAppHome() throws AAIAuthException {
-        System.clearProperty("CONFIG_HOME");
-        System.setProperty("APP_HOME", "src/test/resources");
-        BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
-        babelServiceAuthConfig.setAuthPolicyFile("non-existent-file");
-        new AAIMicroServiceAuth(babelServiceAuthConfig);
+        assertDoesNotThrow(() -> {
+            System.clearProperty("CONFIG_HOME");
+            System.setProperty("APP_HOME", "src/test/resources");
+            BabelAuthConfig babelServiceAuthConfig = new BabelAuthConfig();
+            babelServiceAuthConfig.setAuthPolicyFile("non-existent-file");
+            new AAIMicroServiceAuth(babelServiceAuthConfig);
+            // The default policy will have been loaded from APP_HOME/appconfig
+        });
         // The default policy will have been loaded from APP_HOME/appconfig
     }
 

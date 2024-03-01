@@ -23,13 +23,14 @@ package org.onap.aai.babel.xml.generator;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.onap.aai.babel.csar.extractor.InvalidArchiveException;
 import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
 import org.onap.aai.babel.testdata.CsarTest;
@@ -50,7 +51,7 @@ public class TestAaiArtifactGenerator {
 
     private ArtifactTestUtils testUtils;
 
-    @Before
+    @BeforeEach
     public void setup() {
         testUtils = new ArtifactTestUtils();
         testUtils.setGeneratorSystemProperties();
@@ -84,19 +85,21 @@ public class TestAaiArtifactGenerator {
      * @throws XmlArtifactGenerationException
      *             if the configured widget mappings do not support processed widget type(s)
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParserWithIncompleteMappings()
             throws SdcToscaParserException, IOException, XmlArtifactGenerationException {
-        testUtils.loadWidgetMappings();
+        assertThrows(IllegalArgumentException.class, () -> {
+            testUtils.loadWidgetMappings();
 
-        AaiArtifactGenerator artifactGenerator = new AaiArtifactGenerator();
-        WidgetType.clearElements(); // Remove all WidgetTypes so that the generator fails
+            AaiArtifactGenerator artifactGenerator = new AaiArtifactGenerator();
+            WidgetType.clearElements(); // Remove all WidgetTypes so that the generator fails
 
-        ISdcCsarHelper csarHelper = SdcToscaParserFactory.getInstance()
-                .getSdcCsarHelper(TestAaiArtifactGenerator.class.getClassLoader()
-                        .getResource(ArtifactTestUtils.CSAR_INPUTS_FOLDER + CsarTest.VNF_VENDOR_CSAR.getName())
-                        .getFile().toString());
-        artifactGenerator.generateAllArtifacts("1.0", csarHelper);
+            ISdcCsarHelper csarHelper = SdcToscaParserFactory.getInstance()
+                    .getSdcCsarHelper(TestAaiArtifactGenerator.class.getClassLoader()
+                            .getResource(ArtifactTestUtils.CSAR_INPUTS_FOLDER + CsarTest.VNF_VENDOR_CSAR.getName())
+                            .getFile().toString());
+            artifactGenerator.generateAllArtifacts("1.0", csarHelper);
+        });
     }
 
     /**

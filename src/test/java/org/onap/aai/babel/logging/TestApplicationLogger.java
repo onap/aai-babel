@@ -25,6 +25,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.att.eelf.configuration.EELFLogger.Level;
 import com.att.eelf.configuration.EELFManager;
@@ -33,9 +34,10 @@ import java.util.Arrays;
 import javax.servlet.ServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.onap.aai.babel.logging.LogHelper.MdcParameter;
 import org.onap.aai.babel.logging.LogHelper.TriConsumer;
@@ -49,10 +51,10 @@ import org.onap.aai.cl.mdc.MdcOverride;
  * This version tests only the error logger at INFO level.
  *
  */
-@Ignore("Test consistently fails in centos and is not critical")
+@Disabled("Test consistently fails in centos and is not critical")
 public class TestApplicationLogger {
 
-    @BeforeClass
+    @BeforeAll
     public static void setupClass() {
         System.setProperty("APP_HOME", ".");
     }
@@ -120,12 +122,14 @@ public class TestApplicationLogger {
     /**
      * Call logAuditError() for code coverage stats.
      */
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void logAuditError() {
-        LogHelper.INSTANCE.logAuditError(new Exception("test"));
-        EELFManager.getInstance().getAuditLogger().setLevel(Level.OFF);
-        LogHelper.INSTANCE.logAuditError(new Exception("test"));
-        EELFManager.getInstance().getAuditLogger().setLevel(Level.INFO);
+        assertDoesNotThrow(() -> {
+            LogHelper.INSTANCE.logAuditError(new Exception("test"));
+            EELFManager.getInstance().getAuditLogger().setLevel(Level.OFF);
+            LogHelper.INSTANCE.logAuditError(new Exception("test"));
+            EELFManager.getInstance().getAuditLogger().setLevel(Level.INFO);
+        });
     }
 
     /**
@@ -198,11 +202,13 @@ public class TestApplicationLogger {
         assertThat("audit message content", str, containsString("foo"));
     }
 
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void setDefaultContextValue() {
-        LogHelper logger = LogHelper.INSTANCE;
-        logger.setDefaultContextValue("key", "value");
-        logger.setDefaultContextValue(MdcParameter.USER, null);
+        assertDoesNotThrow(() -> {
+            LogHelper logger = LogHelper.INSTANCE;
+            logger.setDefaultContextValue("key", "value");
+            logger.setDefaultContextValue(MdcParameter.USER, null);
+        });
     }
 
     /**
@@ -272,7 +278,7 @@ public class TestApplicationLogger {
     private void callUnsupportedOperationMethod(TriConsumer<Enum<?>, LogFields, String[]> logMethod,
             ApplicationMsgs dummyMsg) {
         logMethod.accept(dummyMsg, new LogFields(), new String[] {""});
-        org.junit.Assert.fail("method should have thrown execption"); // NOSONAR as code not reached
+        Assertions.fail("method should have thrown execption"); // NOSONAR as code not reached
     }
 
     /**

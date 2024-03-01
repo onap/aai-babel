@@ -21,12 +21,12 @@
 
 package org.onap.aai.babel.xml.generator.model;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Base64;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.onap.aai.babel.xml.generator.data.GeneratorUtil;
 
 public class TestGeneratorUtil {

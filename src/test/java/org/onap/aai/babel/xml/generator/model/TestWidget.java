@@ -23,12 +23,13 @@ package org.onap.aai.babel.xml.generator.model;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.util.Collections;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.types.ModelType;
@@ -44,7 +45,7 @@ public class TestWidget {
      * @throws IOException
      *             if the mappings configuration cannot be loaded
      */
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws IOException {
         new ArtifactTestUtils().loadWidgetMappings();
     }
@@ -164,9 +165,11 @@ public class TestWidget {
         assertThat(widgetModel.equals(Widget.createWidget("VSERVER")), is(false));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetUnknownWidget() throws XmlArtifactGenerationException {
-        WidgetType.valueOf("invalid-widget-name");
+        assertThrows(IllegalArgumentException.class, () -> {
+            WidgetType.valueOf("invalid-widget-name");
+        });
     }
 
     /**
@@ -175,34 +178,44 @@ public class TestWidget {
      * @throws XmlArtifactGenerationException
      *             if there is no configuration defined for the specified Widget type
      */
-    @Test(expected = XmlArtifactGenerationException.class)
+    @Test
     public void testGetDynamicWidget() throws XmlArtifactGenerationException {
-        Widget.createWidget(new WidgetType(null));
+        assertThrows(XmlArtifactGenerationException.class, () -> {
+            Widget.createWidget(new WidgetType(null));
+        });
     }
 
-    @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
+    @Test
     public void testAddResourceIsUnsupported() throws XmlArtifactGenerationException {
-        Widget.createWidget("OAM_NETWORK").addResource(null);
+        assertThrows(org.onap.aai.babel.xml.generator.error.IllegalAccessException.class, () -> {
+            Widget.createWidget("OAM_NETWORK").addResource(null);
+        });
     }
 
     // Call Widget methods which are not supported, purely for code coverage.
 
-    @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
+    @Test
     public void testGetModelNameVersionIdIsUnsupported() throws XmlArtifactGenerationException {
-        Widget widgetModel = Widget.createWidget("OAM_NETWORK");
-        widgetModel.getModelNameVersionId();
+        assertThrows(org.onap.aai.babel.xml.generator.error.IllegalAccessException.class, () -> {
+            Widget widgetModel = Widget.createWidget("OAM_NETWORK");
+            widgetModel.getModelNameVersionId();
+        });
     }
 
-    @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
+    @Test
     public void testGetModelTypeNameIsUnsupported() throws XmlArtifactGenerationException {
-        Widget widgetModel = Widget.createWidget("OAM_NETWORK");
-        widgetModel.getModelTypeName();
+        assertThrows(org.onap.aai.babel.xml.generator.error.IllegalAccessException.class, () -> {
+            Widget widgetModel = Widget.createWidget("OAM_NETWORK");
+            widgetModel.getModelTypeName();
+        });
     }
 
-    @Test(expected = org.onap.aai.babel.xml.generator.error.IllegalAccessException.class)
+    @Test
     public void testGetModelIdIsUnsupported() throws XmlArtifactGenerationException {
-        Widget widgetModel = Widget.createWidget("OAM_NETWORK");
-        widgetModel.getModelId();
+        assertThrows(org.onap.aai.babel.xml.generator.error.IllegalAccessException.class, () -> {
+            Widget widgetModel = Widget.createWidget("OAM_NETWORK");
+            widgetModel.getModelId();
+        });
     }
 
 }

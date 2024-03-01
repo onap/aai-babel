@@ -21,14 +21,15 @@
 
 package org.onap.aai.babel.csar.extractor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.data.Artifact;
@@ -100,33 +101,36 @@ public class YamlExtractorTest {
             CsarTest.NO_YAML_FILES.extractArtifacts();
             fail("An instance of InvalidArchiveException should have been thrown.");
         } catch (Exception e) {
-            assertTrue("An instance of InvalidArchiveException should have been thrown.",
-                    e instanceof InvalidArchiveException);
-            assertEquals("Incorrect message was returned", "No valid YAML files were found in the CSAR file.",
-                    e.getMessage());
+            assertTrue(e instanceof InvalidArchiveException,
+                    "An instance of InvalidArchiveException should have been thrown.");
+            assertEquals("No valid YAML files were found in the CSAR file.",
+                    e.getMessage(),
+                    "Incorrect message was returned");
         }
     }
 
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void testArchiveContainsOnlyTheExpectedYmlFilesFromSdWanService()
             throws IOException, InvalidArchiveException {
-        final List<Artifact> ymlFiles = CsarTest.SD_WAN_CSAR_FILE.extractArtifacts();
-        List<String> payloads = new ArrayList<>();
-        payloads.add("ymlFiles/resource-SdWanTestVsp-template.yml");
-        payloads.add("ymlFiles/resource-SdWanTestVsp-template-interface.yml");
-        payloads.add("ymlFiles/resource-TunnelXconntest-template.yml");
-        payloads.add("ymlFiles/resource-TunnelXconntest-template-interface.yml");
-        payloads.add("ymlFiles/service-SdWanServiceTest-template.yml");
-        payloads.add("ymlFiles/service-SdWanServiceTest-template-interface.yml");
-        payloads.add("ymlFiles/resource-Allotedresource-template.yml");
-        payloads.add("ymlFiles/resource-SdwantestvspNodesDummyServer-template.yml");
-        payloads.add("ymlFiles/nodes.yml");
-        payloads.add("ymlFiles/capabilities.yml");
-        payloads.add("ymlFiles/artifacts.yml");
-        payloads.add("ymlFiles/data.yml");
-        payloads.add("ymlFiles/groups.yml");
+        assertDoesNotThrow(() -> {
+            final List<Artifact> ymlFiles = CsarTest.SD_WAN_CSAR_FILE.extractArtifacts();
+            List<String> payloads = new ArrayList<>();
+            payloads.add("ymlFiles/resource-SdWanTestVsp-template.yml");
+            payloads.add("ymlFiles/resource-SdWanTestVsp-template-interface.yml");
+            payloads.add("ymlFiles/resource-TunnelXconntest-template.yml");
+            payloads.add("ymlFiles/resource-TunnelXconntest-template-interface.yml");
+            payloads.add("ymlFiles/service-SdWanServiceTest-template.yml");
+            payloads.add("ymlFiles/service-SdWanServiceTest-template-interface.yml");
+            payloads.add("ymlFiles/resource-Allotedresource-template.yml");
+            payloads.add("ymlFiles/resource-SdwantestvspNodesDummyServer-template.yml");
+            payloads.add("ymlFiles/nodes.yml");
+            payloads.add("ymlFiles/capabilities.yml");
+            payloads.add("ymlFiles/artifacts.yml");
+            payloads.add("ymlFiles/data.yml");
+            payloads.add("ymlFiles/groups.yml");
 
-        new ArtifactTestUtils().performYmlAsserts(ymlFiles, payloads);
+            new ArtifactTestUtils().performYmlAsserts(ymlFiles, payloads);
+        });
     }
 
     /**

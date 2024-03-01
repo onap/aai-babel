@@ -20,50 +20,51 @@
  */
 package org.onap.aai.babel.util;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 import org.onap.aai.babel.service.data.BabelRequest;
 
 public class TestRequestValidator {
 
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
     @Test
     public void testMissingArtifactNameExceptionThrown() throws Exception {
-        exception.expect(RequestValidationException.class);
-        exception.expectMessage("No artifact name attribute found in the request body.");
+        Throwable exception = assertThrows(RequestValidationException.class, () -> {
 
-        BabelRequest request = new BabelRequest();
-        request.setCsar("UEsDBBQACAgIAGsrz0oAAAAAAAAAAAAAAAAJAAAAY3Nhci5tZXRhC3Z");
-        request.setArtifactVersion("1.0");
-        request.setArtifactName(null);
-        new RequestValidator().validateRequest(request);
+            BabelRequest request = new BabelRequest();
+            request.setCsar("UEsDBBQACAgIAGsrz0oAAAAAAAAAAAAAAAAJAAAAY3Nhci5tZXRhC3Z");
+            request.setArtifactVersion("1.0");
+            request.setArtifactName(null);
+            new RequestValidator().validateRequest(request);
+        });
+        assertTrue(exception.getMessage().contains("No artifact name attribute found in the request body."));
     }
 
     @Test
     public void testMissingArtifactVersionExceptionThrown() throws Exception {
-        exception.expect(RequestValidationException.class);
-        exception.expectMessage("No artifact version attribute found in the request body.");
+        Throwable exception = assertThrows(RequestValidationException.class, () -> {
 
-        BabelRequest request = new BabelRequest();
-        request.setCsar("UEsDBBQACAgIAGsrz0oAAAAAAAAAAAAAAAAJAAAAY3Nhci5tZXRhC3Z");
-        request.setArtifactVersion(null);
-        request.setArtifactName("hello");
-        new RequestValidator().validateRequest(request);
+            BabelRequest request = new BabelRequest();
+            request.setCsar("UEsDBBQACAgIAGsrz0oAAAAAAAAAAAAAAAAJAAAAY3Nhci5tZXRhC3Z");
+            request.setArtifactVersion(null);
+            request.setArtifactName("hello");
+            new RequestValidator().validateRequest(request);
+        });
+        assertTrue(exception.getMessage().contains("No artifact version attribute found in the request body."));
     }
 
     @Test
     public void testMissingCsarFile() throws Exception {
-        exception.expect(RequestValidationException.class);
-        exception.expectMessage("No csar attribute found in the request body.");
+        Throwable exception = assertThrows(RequestValidationException.class, () -> {
 
-        BabelRequest request = new BabelRequest();
-        request.setCsar(null);
-        request.setArtifactVersion("1.0");
-        request.setArtifactName("hello");
-        new RequestValidator().validateRequest(request);
+            BabelRequest request = new BabelRequest();
+            request.setCsar(null);
+            request.setArtifactVersion("1.0");
+            request.setArtifactName("hello");
+            new RequestValidator().validateRequest(request);
+        });
+        assertTrue(exception.getMessage().contains("No csar attribute found in the request body."));
     }
 
 }

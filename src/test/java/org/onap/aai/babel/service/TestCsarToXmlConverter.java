@@ -25,7 +25,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,11 +38,9 @@ import java.util.Map;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.onap.aai.babel.csar.CsarConverterException;
 import org.onap.aai.babel.csar.CsarToXmlConverter;
 import org.onap.aai.babel.parser.ArtifactGeneratorToscaParser;
@@ -60,44 +61,51 @@ public class TestCsarToXmlConverter {
     // The class to be tested.
     private CsarToXmlConverter converter;
 
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
-    @Before
+    @BeforeEach
     public void setup() {
         new ArtifactTestUtils().setGeneratorSystemProperties();
         converter = new CsarToXmlConverter();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         converter = null;
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNullArtifactSupplied() throws CsarConverterException {
-        converter.generateXmlFromCsar(null, null, null);
+        assertThrows(NullPointerException.class, () -> {
+            converter.generateXmlFromCsar(null, null, null);
+        });
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testMissingName() throws CsarConverterException, IOException {
-        converter.generateXmlFromCsar(CsarTest.SD_WAN_CSAR_FILE.getContent(), null, null);
+        assertThrows(NullPointerException.class, () -> {
+            converter.generateXmlFromCsar(CsarTest.SD_WAN_CSAR_FILE.getContent(), null, null);
+        });
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testMissingVersion() throws CsarConverterException, IOException {
-        converter.generateXmlFromCsar(CsarTest.SD_WAN_CSAR_FILE.getContent(), INCORRECT_CSAR_NAME, null);
+        assertThrows(NullPointerException.class, () -> {
+            converter.generateXmlFromCsar(CsarTest.SD_WAN_CSAR_FILE.getContent(), INCORRECT_CSAR_NAME, null);
+        });
     }
 
-    @Test(expected = CsarConverterException.class)
+    @Test
     public void testNoPayloadExists() throws CsarConverterException {
-        converter.generateXmlFromCsar(new byte[0], INCORRECT_CSAR_NAME, SERVICE_VERSION);
+        assertThrows(CsarConverterException.class, () -> {
+            converter.generateXmlFromCsar(new byte[0], INCORRECT_CSAR_NAME, SERVICE_VERSION);
+        });
     }
 
-    @Test(expected = CsarConverterException.class)
+    @Test
     public void testCsarFileHasNoYmlFiles() throws CsarConverterException, IOException {
-        converter.generateXmlFromCsar(CsarTest.NO_YAML_FILES.getContent(), CsarTest.NO_YAML_FILES.getName(),
-                SERVICE_VERSION);
+        assertThrows(CsarConverterException.class, () -> {
+            converter.generateXmlFromCsar(CsarTest.NO_YAML_FILES.getContent(), CsarTest.NO_YAML_FILES.getName(),
+                    SERVICE_VERSION);
+        });
     }
 
     /**
@@ -110,21 +118,24 @@ public class TestCsarToXmlConverter {
      */
     @Test
     public void generateXmlFromCsarMappingSystemPropertyNotSet() throws CsarConverterException, IOException {
-        exception.expect(IllegalArgumentException.class);
-        exception.expectMessage("Cannot generate artifacts. System property "
-                + ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE + " not configured");
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
 
-        // Unset the required system property
-        System.clearProperty(ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE);
-        converter.generateXmlFromCsar(CsarTest.SD_WAN_CSAR_FILE.getContent(), CsarTest.SD_WAN_CSAR_FILE.getName(),
-                SERVICE_VERSION);
+            // Unset the required system property
+            System.clearProperty(ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE);
+            converter.generateXmlFromCsar(CsarTest.SD_WAN_CSAR_FILE.getContent(), CsarTest.SD_WAN_CSAR_FILE.getName(),
+                    SERVICE_VERSION);
+        });
+        assertTrue(exception.getMessage().contains("Cannot generate artifacts. System property "
+                + ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE + " not configured"));
     }
 
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void testServiceMetadataMissing()
             throws IOException, CsarConverterException {
-        converter.generateXmlFromCsar(CsarTest.MISSING_METADATA_CSAR.getContent(),
-                CsarTest.MISSING_METADATA_CSAR.getName(), SERVICE_VERSION);
+        assertDoesNotThrow(() -> {
+            converter.generateXmlFromCsar(CsarTest.MISSING_METADATA_CSAR.getContent(),
+                    CsarTest.MISSING_METADATA_CSAR.getName(), SERVICE_VERSION);
+        });
     }
 
     @Test

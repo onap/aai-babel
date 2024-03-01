@@ -22,7 +22,7 @@ package org.onap.aai.babel.xml.generator.api;
 
 
 import org.apache.groovy.util.Maps;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 import org.onap.aai.babel.xml.generator.model.Model;

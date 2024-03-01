@@ -21,7 +21,9 @@
 
 package org.onap.aai.babel;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
 import org.onap.aai.auth.AAIAuthException;
 import org.onap.aai.auth.AAIMicroServiceAuthCore;
 
@@ -37,9 +39,11 @@ public class TestMicroServiceAuthCore {
      * @throws AAIAuthException
      *             when the module has not been initialized
      */
-    @Test(expected = AAIAuthException.class)
+    @Test
     public void testUninitializedModule() throws AAIAuthException {
-        AAIMicroServiceAuthCore.authorize("user", "method:func");
+        assertThrows(AAIAuthException.class, () -> {
+            AAIMicroServiceAuthCore.authorize("user", "method:func");
+        });
     }
 
 }

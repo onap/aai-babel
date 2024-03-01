@@ -21,13 +21,14 @@
 
 package org.onap.aai.babel.xml.generator;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.onap.aai.babel.service.data.BabelArtifact;
 import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
@@ -43,16 +44,18 @@ public class TestModelGenerator {
         System.setProperty("APP_HOME", ".");
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         new ArtifactTestUtils().setGeneratorSystemProperties();
     }
 
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void testDefaultServiceVersion() throws XmlArtifactGenerationException, IOException {
-        Artifact ymlFile = new Artifact(null, null, null, null);
-        new ModelGenerator().generateArtifacts(CsarTest.SD_WAN_CSAR_FILE.getContent(),
-                Collections.singletonList(ymlFile));
+        assertDoesNotThrow(() -> {
+            Artifact ymlFile = new Artifact(null, null, null, null);
+            new ModelGenerator().generateArtifacts(CsarTest.SD_WAN_CSAR_FILE.getContent(),
+                    Collections.singletonList(ymlFile));
+        });
     }
 
     @Test

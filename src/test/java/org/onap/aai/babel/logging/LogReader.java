@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 public class LogReader {
 
@@ -98,7 +98,7 @@ public class LogReader {
 
         while (!cachedReader.ready()) {
             if (stopwatch.getTime() > TimeUnit.SECONDS.toMillis(30)) {
-                Assert.fail("Test took too long");
+                Assertions.fail("Test took too long");
             }
             // else keep waiting
         }

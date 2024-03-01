@@ -23,11 +23,13 @@ package org.onap.aai.babel.xml.generator.model;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 
 /**
@@ -42,7 +44,7 @@ public class TestModel {
      * @throws IOException
      *             if the mappings configuration cannot be loaded
      */
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws IOException {
         new ArtifactTestUtils().loadWidgetMappings();
     }
@@ -74,18 +76,22 @@ public class TestModel {
     /**
      * Test that there is no exception if processing a Model that has no metadata properties.
      */
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void testNullIdentProperties() {
-        createTestModel().populateModelIdentificationInformation(null);
+        assertDoesNotThrow(() -> {
+            createTestModel().populateModelIdentificationInformation(null);
+        });
     }
 
     /**
      * Test that an exception occurs if calling code passes an unsupported Widget Type value to the base implementation
      * of the hasWidgetType() method.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testUnknownWidgetType() {
-        createTestModel().hasWidgetType(null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            createTestModel().hasWidgetType(null);
+        });
     }
 
     /**

@@ -26,14 +26,15 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.onap.aai.babel.service.data.BabelArtifact;
 import org.onap.aai.babel.service.data.BabelArtifact.ArtifactType;
 import org.onap.aai.babel.testdata.CsarTest;
@@ -46,24 +47,32 @@ import org.onap.sdc.toscaparser.api.elements.Metadata;
  */
 public class TestVnfVendorImageExtractor {
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createVendorImageMappingsNullCsarSupplied() throws ToscaToCatalogException, IOException {
-        new VnfVendorImageExtractor().extract(null);
+        assertThrows(NullPointerException.class, () -> {
+            new VnfVendorImageExtractor().extract(null);
+        });
     }
 
-    @Test(expected = ToscaToCatalogException.class)
+    @Test
     public void createVendorImageMappingsEmptyCsarSupplied() throws ToscaToCatalogException, IOException {
-        new VnfVendorImageExtractor().extract(new byte[0]);
+        assertThrows(ToscaToCatalogException.class, () -> {
+            new VnfVendorImageExtractor().extract(new byte[0]);
+        });
     }
 
-    @Test(expected = ToscaToCatalogException.class)
+    @Test
     public void createVendorImageMappingsInvalidCsarFile() throws IOException, ToscaToCatalogException {
-        CsarTest.NO_YAML_FILES.extractVnfVendorImages();
+        assertThrows(ToscaToCatalogException.class, () -> {
+            CsarTest.NO_YAML_FILES.extractVnfVendorImages();
+        });
     }
 
-    @Test(expected = ToscaToCatalogException.class)
+    @Test
     public void createVendorImageMappingsInvalidFile() throws IOException, ToscaToCatalogException {
-        new VnfVendorImageExtractor().extract("not a real file".getBytes());
+        assertThrows(ToscaToCatalogException.class, () -> {
+            new VnfVendorImageExtractor().extract("not a real file".getBytes());
+        });
     }
 
     @Test
@@ -95,13 +104,15 @@ public class TestVnfVendorImageExtractor {
     /**
      * Test that an Exception is created when there are no software versions defined for a VF.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testBuildVendorImageConfigurations() {
-        SdcToscaHelper helper = new SdcToscaHelper();
-        NodeTemplate vf = helper.addNodeTemplate();
-        vf.setMetaData(new Metadata(ImmutableMap.of("resourceVendor", "vendor")));
-        vf.setSubMappingToscaTemplate(helper.buildMappings());
-        new VnfVendorImageExtractor().buildVendorImageConfigurations(null, vf);
+        assertThrows(IllegalArgumentException.class, () -> {
+            SdcToscaHelper helper = new SdcToscaHelper();
+            NodeTemplate vf = helper.addNodeTemplate();
+            vf.setMetaData(new Metadata(ImmutableMap.of("resourceVendor", "vendor")));
+            vf.setSubMappingToscaTemplate(helper.buildMappings());
+            new VnfVendorImageExtractor().buildVendorImageConfigurations(null, vf);
+        });
     }
 
     @Test

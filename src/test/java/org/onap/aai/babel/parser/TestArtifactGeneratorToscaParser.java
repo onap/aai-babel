@@ -24,6 +24,8 @@ package org.onap.aai.babel.parser;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.util.Resources;
@@ -63,9 +65,11 @@ public class TestArtifactGeneratorToscaParser {
      * @throws IOException
      *             if the file content could not be read successfully
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testMissingMappingsFile() throws IOException {
-        ArtifactGeneratorToscaParser.initToscaMappingsConfiguration("non-existent.file");
+        assertThrows(IllegalArgumentException.class, () -> {
+            ArtifactGeneratorToscaParser.initToscaMappingsConfiguration("non-existent.file");
+        });
     }
 
     /**
@@ -74,10 +78,12 @@ public class TestArtifactGeneratorToscaParser {
      * @throws IOException
      *             if the file content could not be read successfully
      */
-    @Test(expected = IOException.class)
+    @Test
     public void testMissingMappingsContent() throws IOException {
-        String emptyJson = new ArtifactTestUtils().getResourcePath(Resources.EMPTY_TOSCA_MAPPING_CONFIG);
-        ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(emptyJson);
+        assertThrows(IOException.class, () -> {
+            String emptyJson = new ArtifactTestUtils().getResourcePath(Resources.EMPTY_TOSCA_MAPPING_CONFIG);
+            ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(emptyJson);
+        });
     }
 
     /**
@@ -86,10 +92,12 @@ public class TestArtifactGeneratorToscaParser {
      * @throws IOException
      *             if the file content could not be read successfully
      */
-    @Test(expected = IOException.class)
+    @Test
     public void testInvalidMappingsContent() throws IOException {
-        String invalidJson = new ArtifactTestUtils().getResourcePath(Resources.INVALID_TOSCA_MAPPING_CONFIG);
-        ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(invalidJson);
+        assertThrows(IOException.class, () -> {
+            String invalidJson = new ArtifactTestUtils().getResourcePath(Resources.INVALID_TOSCA_MAPPING_CONFIG);
+            ArtifactGeneratorToscaParser.initToscaMappingsConfiguration(invalidJson);
+        });
     }
 
     /**
@@ -98,11 +106,13 @@ public class TestArtifactGeneratorToscaParser {
      * @throws XmlArtifactGenerationException
      *             because the ALLOTTED_RESOURCE lacks a Providing Service
      */
-    @Test(expected = XmlArtifactGenerationException.class)
+    @Test
     public void testMissingProvidingService() throws XmlArtifactGenerationException {
-        List<NodeTemplate> nodeTemplateList = Collections.singletonList(buildNodeTemplate("name", "BlockStorage"));
-        new ArtifactGeneratorToscaParser(null)
-                .processResourceModels(new Resource(WidgetType.valueOf("ALLOTTED_RESOURCE"), true), nodeTemplateList);
+        assertThrows(XmlArtifactGenerationException.class, () -> {
+            List<NodeTemplate> nodeTemplateList = Collections.singletonList(buildNodeTemplate("name", "BlockStorage"));
+            new ArtifactGeneratorToscaParser(null)
+                    .processResourceModels(new Resource(WidgetType.valueOf("ALLOTTED_RESOURCE"), true), nodeTemplateList);
+        });
     }
 
     /**
@@ -113,14 +123,16 @@ public class TestArtifactGeneratorToscaParser {
      * @throws IOException
      *             if the test mappings cannot be loaded
      */
-    @Test(expected = XmlArtifactGenerationException.class)
+    @Test
     public void testAddResourceNotProvidingService() throws XmlArtifactGenerationException, IOException {
-        new ArtifactTestUtils().loadWidgetMappings();
-        List<NodeTemplate> nodeTemplateList = Collections.singletonList(buildNodeTemplate("testCR", "CR"));
+        assertThrows(XmlArtifactGenerationException.class, () -> {
+            new ArtifactTestUtils().loadWidgetMappings();
+            List<NodeTemplate> nodeTemplateList = Collections.singletonList(buildNodeTemplate("testCR", "CR"));
 
-        // Create any Resource to which the CR can be added
-        final Resource dummyResource = new Resource(WidgetType.valueOf("ALLOTTED_RESOURCE"), true);
-        new ArtifactGeneratorToscaParser(null).processResourceModels(dummyResource, nodeTemplateList);
+            // Create any Resource to which the CR can be added
+            final Resource dummyResource = new Resource(WidgetType.valueOf("ALLOTTED_RESOURCE"), true);
+            new ArtifactGeneratorToscaParser(null).processResourceModels(dummyResource, nodeTemplateList);
+        });
     }
 
     /**
@@ -129,11 +141,13 @@ public class TestArtifactGeneratorToscaParser {
      * @throws IOException
      *             if a WidgetMapping is invalid
      */
-    @Test(expected = IOException.class)
+    @Test
     public void testToscaMappingWithoutType() throws IOException {
-        WidgetMapping invalidMapping = new WidgetMapping();
-        invalidMapping.setType(null);
-        WidgetConfigurationUtil.setWidgetMappings(Collections.singletonList(invalidMapping));
+        assertThrows(IOException.class, () -> {
+            WidgetMapping invalidMapping = new WidgetMapping();
+            invalidMapping.setType(null);
+            WidgetConfigurationUtil.setWidgetMappings(Collections.singletonList(invalidMapping));
+        });
     }
 
     /**
@@ -142,11 +156,13 @@ public class TestArtifactGeneratorToscaParser {
      * @throws IOException
      *             if a WidgetMapping is invalid
      */
-    @Test(expected = IOException.class)
+    @Test
     public void testToscaMappingWithInvalidType() throws IOException {
-        WidgetMapping invalidMapping = new WidgetMapping();
-        invalidMapping.setType("invalid");
-        WidgetConfigurationUtil.setWidgetMappings(Collections.singletonList(invalidMapping));
+        assertThrows(IOException.class, () -> {
+            WidgetMapping invalidMapping = new WidgetMapping();
+            invalidMapping.setType("invalid");
+            WidgetConfigurationUtil.setWidgetMappings(Collections.singletonList(invalidMapping));
+        });
     }
 
     /**
@@ -155,11 +171,13 @@ public class TestArtifactGeneratorToscaParser {
      * @throws IOException
      *             if a WidgetMapping is invalid
      */
-    @Test(expected = IOException.class)
+    @Test
     public void testToscaMappingWithoutWidget() throws IOException {
-        WidgetMapping invalidMapping = new WidgetMapping();
-        invalidMapping.setWidget(null);
-        WidgetConfigurationUtil.setWidgetMappings(Collections.singletonList(invalidMapping));
+        assertThrows(IOException.class, () -> {
+            WidgetMapping invalidMapping = new WidgetMapping();
+            invalidMapping.setWidget(null);
+            WidgetConfigurationUtil.setWidgetMappings(Collections.singletonList(invalidMapping));
+        });
     }
 
     /**
@@ -171,18 +189,20 @@ public class TestArtifactGeneratorToscaParser {
      * @throws XmlArtifactGenerationException
      *             if there is no configuration defined for the test resource's widget type
      */
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void testAddWidgetToService() throws IOException, XmlArtifactGenerationException {
-        ArtifactTestUtils testUtils = new ArtifactTestUtils();
-        testUtils.loadWidgetMappings();
+        assertDoesNotThrow(() -> {
+            ArtifactTestUtils testUtils = new ArtifactTestUtils();
+            testUtils.loadWidgetMappings();
 
-        Model serviceModel = new Service();
-        Resource resourceModel = new Resource(WidgetType.valueOf("VF"), false);
-        resourceModel.setModelType(ModelType.WIDGET);
+            Model serviceModel = new Service();
+            Resource resourceModel = new Resource(WidgetType.valueOf("VF"), false);
+            resourceModel.setModelType(ModelType.WIDGET);
 
-        ISdcCsarHelper helper = Mockito.mock(ISdcCsarHelper.class);
-        ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(helper);
-        parser.addRelatedModel(serviceModel, resourceModel);
+            ISdcCsarHelper helper = Mockito.mock(ISdcCsarHelper.class);
+            ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(helper);
+            parser.addRelatedModel(serviceModel, resourceModel);
+        });
     }
 
     /**

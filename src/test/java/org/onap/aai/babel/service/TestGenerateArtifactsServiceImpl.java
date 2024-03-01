@@ -22,8 +22,8 @@
 package org.onap.aai.babel.service;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -40,11 +40,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.onap.aai.auth.AAIAuthException;
 import org.onap.aai.auth.AAIMicroServiceAuth;
@@ -52,15 +49,13 @@ import org.onap.aai.babel.service.data.BabelRequest;
 import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * Direct invocation of the generate artifacts service implementation.
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/babel-beans.xml"})
+@SpringJUnitConfig(locations = {"classpath:/babel-beans.xml"})
 public class TestGenerateArtifactsServiceImpl {
 
     static {
@@ -70,7 +65,7 @@ public class TestGenerateArtifactsServiceImpl {
     @Inject
     private AAIMicroServiceAuth auth;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         new ArtifactTestUtils().setGeneratorSystemProperties();
     }

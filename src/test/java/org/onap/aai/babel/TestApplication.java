@@ -21,76 +21,85 @@
 
 package org.onap.aai.babel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 import org.eclipse.jetty.util.security.Password;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContextException;
 
 @SpringBootTest(classes = BabelApplication.class)
 public class TestApplication {
 
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
-
     /**
      * Initialize System Properties.
      */
-    @Before
+    @BeforeEach
     public void init() {
         System.setProperty("APP_HOME", ".");
         System.setProperty("CONFIG_HOME", "src/test/resources");
         System.setProperty("server.ssl.key-store", "src/test/resources/auth/keystore.jks");
     }
 
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void testApplicationStarts() {
-        System.setProperty("KEY_STORE_PASSWORD", "password");
-        BabelApplication.main(new String[] {});
-        BabelApplication.exit();
+        assertDoesNotThrow(() -> {
+            System.setProperty("KEY_STORE_PASSWORD", "password");
+            BabelApplication.main(new String[]{});
+            BabelApplication.exit();
+        });
     }
 
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void testApplicationStartsWithObfuscatedPassword() {
-        System.setProperty("KEY_STORE_PASSWORD", Password.obfuscate("password"));
-        BabelApplication.main(new String[] {});
-        BabelApplication.exit();
+        assertDoesNotThrow(() -> {
+            System.setProperty("KEY_STORE_PASSWORD", Password.obfuscate("password"));
+            BabelApplication.main(new String[]{});
+            BabelApplication.exit();
+        });
     }
 
     @Test
     public void testApplicationWithNullArgs() {
-        System.setProperty("KEY_STORE_PASSWORD", "test");
-        expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage("Args must not be null");
-        BabelApplication.main(null);
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+            System.setProperty("KEY_STORE_PASSWORD", "test");
+            BabelApplication.main(null);
+        });
+        assertTrue(exception.getMessage().contains("Args must not be null"));
     }
 
     @Test
     public void testApplicationWithEmptyKeyStorePassword() {
-        System.setProperty("KEY_STORE_PASSWORD", "");
-        expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage("roperty KEY_STORE_PASSWORD not set");
-        BabelApplication.main(new String[] {});
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+            System.setProperty("KEY_STORE_PASSWORD", "");
+            BabelApplication.main(new String[]{});
+        });
+        assertTrue(exception.getMessage().contains("roperty KEY_STORE_PASSWORD not set"));
     }
 
     @Test
     public void testApplicationWithNullKeyStorePassword() {
-        System.clearProperty("KEY_STORE_PASSWORD");
-        expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage("roperty KEY_STORE_PASSWORD not set");
-        BabelApplication.main(new String[] {});
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+            System.clearProperty("KEY_STORE_PASSWORD");
+            BabelApplication.main(new String[]{});
+        });
+        assertTrue(exception.getMessage().contains("roperty KEY_STORE_PASSWORD not set"));
     }
 
     @Test
     public void testApplicationWithIncorrectKeyStorePassword() {
-        System.setProperty("KEY_STORE_PASSWORD", "test");
-        final CauseMatcher expectedCause = new CauseMatcher(IOException.class, "password was incorrect");
-        expectedEx.expectCause(expectedCause);
-        BabelApplication.main(new String[] {});
+        Throwable exception = assertThrows(ApplicationContextException.class, () -> {
+            System.setProperty("KEY_STORE_PASSWORD", "test");
+            BabelApplication.main(new String[]{});
+        });
     }
 
     /**
@@ -101,31 +110,10 @@ public class TestApplication {
     @Test
     public void testApplicationWithBlankObfuscatedKeyStorePassword() {
         // Note that "OBF:" is correctly deobfuscated and results in an empty string.
-        System.setProperty("KEY_STORE_PASSWORD", "OBF:");
-        final CauseMatcher expectedCause = new CauseMatcher(IOException.class, "password was incorrect");
-        expectedEx.expectCause(expectedCause);
-        BabelApplication.main(new String[] {});
-    }
-
-    private static class CauseMatcher extends TypeSafeMatcher<Throwable> {
-
-        private final Class<? extends Throwable> type;
-        private final String expectedMessage;
-
-        public CauseMatcher(Class<? extends Throwable> type, String expectedMessage) {
-            this.type = type;
-            this.expectedMessage = expectedMessage;
-        }
-
-        @Override
-        protected boolean matchesSafely(Throwable item) {
-            return item.getClass().isAssignableFrom(type) && item.getMessage().contains(expectedMessage);
-        }
-
-        @Override
-        public void describeTo(Description description) {
-            description.appendValue(type).appendText(" and message ").appendValue(expectedMessage);
-        }
+        Throwable exception = assertThrows(ApplicationContextException.class, () -> {
+            System.setProperty("KEY_STORE_PASSWORD", "OBF:");
+            BabelApplication.main(new String[]{});
+        });
     }
 
 }

@@ -23,15 +23,15 @@ package org.onap.aai.babel.xml.generator.model;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.onap.aai.babel.util.ArtifactTestUtils;
 import org.onap.aai.babel.xml.generator.XmlArtifactGenerationException;
 
@@ -46,7 +46,7 @@ public class TestVfModule {
      * @throws IOException
      *             if the mappings configuration cannot be loaded
      */
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws IOException {
         new ArtifactTestUtils().loadWidgetMappings();
     }
