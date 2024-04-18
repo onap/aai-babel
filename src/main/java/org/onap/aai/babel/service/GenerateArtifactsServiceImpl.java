@@ -207,6 +207,6 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
      * @return
      */
     private Response buildResponse(Status status, String entity) {
-        return Response.status(status).entity(entity).type(MediaType.TEXT_PLAIN).build();
+        return Response.status(status).entity(entity).type(MediaType.APPLICATION_JSON).build();
     }
 }
