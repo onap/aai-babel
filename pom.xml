@@ -90,6 +90,7 @@
 		<aai.common.version>1.9.4</aai.common.version>
 		<logback.core.version>1.2.11</logback.core.version>
 		<groovy.version>3.0.13</groovy.version>
+		<spring-cloud.version>2020.0.2</spring-cloud.version>
 
 		<commons.compress.version>1.22</commons.compress.version>
 		<commons.codec.version>1.15</commons.codec.version>
@@ -375,8 +376,26 @@
 			<artifactId>jakarta.activation-api</artifactId>
 			<version>${jakarta.activation.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
+		</dependency>
+		<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-sleuth-zipkin</artifactId>
+		</dependency>
 	</dependencies>
-
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<plugins>
 			<plugin>
