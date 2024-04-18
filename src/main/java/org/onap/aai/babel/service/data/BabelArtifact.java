@@ -21,7 +21,14 @@
 
 package org.onap.aai.babel.service.data;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /** Bean representing the return artifacts of the Babel microservice. */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class BabelArtifact {
 
     public enum ArtifactType {
@@ -31,22 +38,4 @@ public class BabelArtifact {
     String name;
     ArtifactType type;
     String payload;
-
-    public BabelArtifact(String name, ArtifactType type, String payload) {
-        this.name = name;
-        this.type = type;
-        this.payload = payload;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public ArtifactType getType() {
-        return type;
-    }
-
-    public String getPayload() {
-        return payload;
-    }
 }
