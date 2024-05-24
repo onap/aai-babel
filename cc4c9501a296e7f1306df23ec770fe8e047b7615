@@ -1,0 +1,8 @@
+Verified+1: ONAP Required GHA <releng+onap.required.gha@linuxfoundation.org>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Fiete Ostkamp <fiete.ostkamp@telekom.de>
+Submitted-by: Fiete Ostkamp <fiete.ostkamp@telekom.de>
+Submitted-at: Fri, 24 May 2024 09:36:02 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/aai/babel/+/138065
+Project: aai/babel
+Branch: refs/heads/master
