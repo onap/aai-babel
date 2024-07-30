@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d104feda_c0f0df33",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8412
+      },
+      "writtenOn": "2024-07-30T06:12:08Z",
+      "side": 1,
+      "message": "Ok. Changing the version to 1.13.2",
+      "revId": "ac9615dfa6ad53351f975cf84ab18ff9f132b5d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
