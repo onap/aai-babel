@@ -66,12 +66,14 @@ public class YamlExtractor {
 
         List<Artifact> ymlFiles = new ArrayList<>();
         try (SeekableInMemoryByteChannel inMemoryByteChannel = new SeekableInMemoryByteChannel(archive);
-                ZipFile zipFile = new ZipFile(inMemoryByteChannel)) {
-            for (Enumeration<ZipArchiveEntry> enumeration = zipFile.getEntries(); enumeration.hasMoreElements();) {
+             ZipFile zipFile = new ZipFile(inMemoryByteChannel)) {
+            Enumeration<ZipArchiveEntry> enumeration = zipFile.getEntries();
+            while(enumeration.hasMoreElements()) {
                 ZipArchiveEntry entry = enumeration.nextElement();
                 if (fileShouldBeExtracted(entry)) {
-                    ymlFiles.add(ModelGenerator.createArtifact(IOUtils.toByteArray(zipFile.getInputStream(entry)),
-                            entry.getName(), version));
+                    Artifact artifact = ModelGenerator.createArtifact(IOUtils.toByteArray(zipFile.getInputStream(entry)),
+                    entry.getName(), version);
+                    ymlFiles.add(artifact);
                 }
             }
             if (ymlFiles.isEmpty()) {

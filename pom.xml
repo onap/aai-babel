@@ -33,7 +33,7 @@
 
 	<groupId>org.onap.aai</groupId>
 	<artifactId>babel</artifactId>
-	<version>1.13.2-SNAPSHOT</version>
+	<version>1.13.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>aai-babel</name>
@@ -92,7 +92,8 @@
 		<groovy.version>3.0.13</groovy.version>
 		<spring-cloud.version>2020.0.2</spring-cloud.version>
 
-		<commons.compress.version>1.22</commons.compress.version>
+		<commons.compress.version>1.27.0</commons.compress.version>
+		<commons.io.version>2.16.1</commons.io.version>
 		<commons.codec.version>1.15</commons.codec.version>
 
 		<javax.ws.rs.version>2.1.1</javax.ws.rs.version>
