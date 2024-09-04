@@ -33,7 +33,7 @@
 
 	<groupId>org.onap.aai</groupId>
 	<artifactId>babel</artifactId>
-	<version>1.13.3-SNAPSHOT</version>
+	<version>1.13.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>aai-babel</name>
@@ -733,7 +733,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M4</version>
+				<version>3.0.0-M8</version>
 				<configuration>
 					<!-- Sets the VM argument line used when unit tests are run. -->
 					<reuseForks>false</reuseForks>

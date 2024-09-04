@@ -53,6 +53,8 @@ if [ ! -z "$SERVER_CERTS_LOCATION" ]; then
 fi
 PROPS="${PROPS} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}"
 PROPS="${PROPS} -Daaf.cadi.file=${CONFIG_HOME}/cadi.properties"
+PROPS="${PROPS} -Daaf.cadi.file=${CONFIG_HOME}/cadi.properties"
+
+JVM_OPTS="${JVM_OPTS} -XX:MaxRAMPercentage=${MAX_RAM_PERCENTAGE:-60}"
 
 exec java ${JVM_OPTS} ${PROPS} -jar ${APP_HOME}/babel*.jar
-
