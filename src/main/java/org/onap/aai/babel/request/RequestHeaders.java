@@ -23,6 +23,7 @@ package org.onap.aai.babel.request;
 
 import java.util.Optional;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MultivaluedMap;
 
 /** Bean to represent the ECOMP request/transaction IDs required for EELF logging. */
 public class RequestHeaders {
@@ -41,6 +42,11 @@ public class RequestHeaders {
         requestId = headers.getHeaderString(RequestHeaders.HEADER_REQUEST_ID);
         instanceId = headers.getHeaderString(RequestHeaders.HEADER_SERVICE_INSTANCE_ID);
         transactionId = headers.getHeaderString(RequestHeaders.HEADER_X_TRANSACTION_ID);
+    }
+    public RequestHeaders(MultivaluedMap<String, String> headers) {
+        requestId = headers.getFirst(RequestHeaders.HEADER_REQUEST_ID);
+        instanceId = headers.getFirst(RequestHeaders.HEADER_SERVICE_INSTANCE_ID);
+        transactionId = headers.getFirst(RequestHeaders.HEADER_X_TRANSACTION_ID);
     }
 
     public String getRequestId() {
