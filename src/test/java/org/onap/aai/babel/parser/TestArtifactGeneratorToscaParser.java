@@ -61,7 +61,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Generator with an invalid mappings file path.
-     * 
+     *
      * @throws IOException
      *             if the file content could not be read successfully
      */
@@ -74,7 +74,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Generator with no Widget Mappings content.
-     * 
+     *
      * @throws IOException
      *             if the file content could not be read successfully
      */
@@ -88,7 +88,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Generator with invalid Widget Mappings content.
-     * 
+     *
      * @throws IOException
      *             if the file content could not be read successfully
      */
@@ -137,7 +137,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Artifact Generator Widget Mapping config with incomplete data (no type).
-     * 
+     *
      * @throws IOException
      *             if a WidgetMapping is invalid
      */
@@ -152,7 +152,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Artifact Generator Widget Mapping config with invalid data (type value).
-     * 
+     *
      * @throws IOException
      *             if a WidgetMapping is invalid
      */
@@ -167,7 +167,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Initialize the Artifact Generator Widget Mapping config with incomplete data (no widget name).
-     * 
+     *
      * @throws IOException
      *             if a WidgetMapping is invalid
      */
@@ -207,7 +207,7 @@ public class TestArtifactGeneratorToscaParser {
 
     /**
      * Process a dummy Group object for a Service Resource.
-     * 
+     *
      * @throws XmlArtifactGenerationException
      *             if there is no configuration defined for a member Widget of an instance group
      * @throws IOException
@@ -236,6 +236,12 @@ public class TestArtifactGeneratorToscaParser {
         assertThat(resources.size(), is(1));
         Resource resource = resources.get(0);
         assertThat(resource.getModelNameVersionId(), is(equalTo(TEST_UUID)));
+    }
+
+    @Test
+    public void testProcessVfModules() {
+        ArtifactGeneratorToscaParser parser = new ArtifactGeneratorToscaParser(null);
+        parser.processVfModules();
     }
 
     /**

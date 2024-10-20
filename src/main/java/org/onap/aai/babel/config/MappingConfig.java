@@ -2,14 +2,13 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2024 Deutsche Telekom. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,21 +17,20 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.aai.babel;
 
-import javax.ws.rs.ApplicationPath;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.onap.aai.babel.service.GenerateArtifactsControllerImpl;
-import org.onap.aai.babel.service.InfoService;
+package org.onap.aai.babel.config;
+
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 @Configuration
-@ApplicationPath("/v1")
-public class JerseyConfiguration extends ResourceConfig {
+public class MappingConfig {
 
-    public JerseyConfiguration() {
-        register(GenerateArtifactsControllerImpl.class);
-        register(InfoService.class);
-    }
-
+  @Bean
+  public Gson gson() {
+    return new GsonBuilder().disableHtmlEscaping().create();
+  }
 }
