@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
-import javax.inject.Inject;
 import javax.security.auth.x500.X500Principal;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedHashMap;
@@ -48,22 +47,23 @@ import org.onap.aai.auth.AAIMicroServiceAuth;
 import org.onap.aai.babel.service.data.BabelRequest;
 import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * Direct invocation of the generate artifacts service implementation.
  *
  */
-@SpringJUnitConfig(locations = {"classpath:/babel-beans.xml"})
+@SpringBootTest
 public class TestGenerateArtifactsServiceImpl {
 
     static {
         System.setProperty("CONFIG_HOME", "src/test/resources");
     }
 
-    @Inject
-    private AAIMicroServiceAuth auth;
+    @Autowired
+    private Gson gson;
 
     @BeforeAll
     public static void setup() {
@@ -81,7 +81,7 @@ public class TestGenerateArtifactsServiceImpl {
      */
     @Test
     public void testGenerateArtifacts() throws URISyntaxException, IOException {
-        Response response = processJsonRequest(CsarTest.VNF_VENDOR_CSAR, auth);
+        Response response = processJsonRequest(CsarTest.VNF_VENDOR_CSAR);
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
@@ -96,11 +96,11 @@ public class TestGenerateArtifactsServiceImpl {
      */
     @Test
     public void testGenerateArtifactsWithoutRequestId() throws URISyntaxException, IOException {
-        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getJsonRequest(), Optional.empty(), auth);
+        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getJsonRequest(), Optional.empty());
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
-    
+
     /**
      * Test with a valid request without Minor Artifact version.
      *
@@ -112,11 +112,11 @@ public class TestGenerateArtifactsServiceImpl {
     @Test
     public void testGenerateArtifactsWithoutMinorArtifactVersion() throws URISyntaxException, IOException {
         Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getJsonRequestWithArtifactVersion("1"),
-        		Optional.of("transaction-id"), auth);
+        		Optional.of("transaction-id"));
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
-    
+
     /**
      * Test with a valid request without Minor Artifact version.
      *
@@ -128,12 +128,12 @@ public class TestGenerateArtifactsServiceImpl {
     @Test
     public void testGenerateArtifactsWithInvalidArtifactVersion() throws URISyntaxException, IOException {
         Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getJsonRequestWithArtifactVersion("a"),
-        		Optional.of("transaction-id"), auth);
+        		Optional.of("transaction-id"));
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
-    
-    
+
+
     /**
      * Test with a valid request with Artifact version less than 1.
      *
@@ -145,7 +145,7 @@ public class TestGenerateArtifactsServiceImpl {
     @Test
     public void testGenerateArtifactsWithArtifactVerLessThan1() throws URISyntaxException, IOException {
         Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getJsonRequestWithArtifactVersion("0.1"),
-        		Optional.of("transaction-id"), auth);
+        		Optional.of("transaction-id"));
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("responseWithVersionLessThan1.json")));
     }
@@ -161,7 +161,7 @@ public class TestGenerateArtifactsServiceImpl {
      */
     @Test
     public void testGenerateArtifactsWithoutVnfConfiguration() throws IOException, URISyntaxException {
-        Response response = processJsonRequest(CsarTest.NO_VNF_CONFIG_CSAR, auth);
+        Response response = processJsonRequest(CsarTest.NO_VNF_CONFIG_CSAR);
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("validNoVnfConfigurationResponse.json")));
     }
@@ -176,7 +176,7 @@ public class TestGenerateArtifactsServiceImpl {
      */
     @Test
     public void testGenerateArtifactsInvalidCsar() throws IOException, URISyntaxException {
-        Response response = processJsonRequest(CsarTest.MULTIPLE_VNF_CSAR, auth);
+        Response response = processJsonRequest(CsarTest.MULTIPLE_VNF_CSAR);
         assertThat(response.getStatus(), is(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
         assertThat(response.getEntity().toString(), containsString("VNF catalog"));
     }
@@ -186,19 +186,9 @@ public class TestGenerateArtifactsServiceImpl {
         AAIMicroServiceAuth uninitializedAuth = Mockito.mock(AAIMicroServiceAuth.class);
         Mockito.when(uninitializedAuth.validateRequest(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenThrow(new AAIAuthException("test"));
-        Response response = processJsonRequest(CsarTest.NO_VNF_CONFIG_CSAR, uninitializedAuth);
+        Response response = processJsonRequest(CsarTest.NO_VNF_CONFIG_CSAR);
         assertThat(response.getStatus(), is(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
         assertThat(response.getEntity().toString(), containsString("check the Babel service logs"));
-    }
-
-    @Test
-    public void testUnauthorizedRequest() throws IOException, URISyntaxException, AAIAuthException {
-        AAIMicroServiceAuth uninitializedAuth = Mockito.mock(AAIMicroServiceAuth.class);
-        Mockito.when(uninitializedAuth.validateRequest(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
-                .thenReturn(false);
-        Response response = processJsonRequest(CsarTest.NO_VNF_CONFIG_CSAR, uninitializedAuth);
-        assertThat(response.getStatus(), is(Response.Status.UNAUTHORIZED.getStatusCode()));
-        assertThat(response.getEntity().toString(), containsString("User not authorized"));
     }
 
     @Test
@@ -262,9 +252,9 @@ public class TestGenerateArtifactsServiceImpl {
      * @throws IOException
      *             if the resource cannot be loaded
      */
-    private Response processJsonRequest(CsarTest csar, AAIMicroServiceAuth auth)
+    private Response processJsonRequest(CsarTest csar)
             throws URISyntaxException, IOException {
-        return invokeService(csar.getJsonRequest(), Optional.of("transaction-id"), auth);
+        return invokeService(csar.getJsonRequest(), Optional.of("transaction-id"));
     }
 
     /**
@@ -277,7 +267,7 @@ public class TestGenerateArtifactsServiceImpl {
      *             if the URI cannot be created
      */
     private Response invokeService(String jsonRequest) throws URISyntaxException {
-        return invokeService(jsonRequest, Optional.of("transaction-id"), auth);
+        return invokeService(jsonRequest, Optional.of("transaction-id"));
     }
 
     /**
@@ -293,7 +283,7 @@ public class TestGenerateArtifactsServiceImpl {
      * @throws URISyntaxException
      *             if the URI cannot be created
      */
-    private Response invokeService(String jsonString, Optional<String> transactionId, AAIMicroServiceAuth auth)
+    private Response invokeService(String jsonString, Optional<String> transactionId)
             throws URISyntaxException {
         UriInfo mockUriInfo = Mockito.mock(UriInfo.class);
         Mockito.when(mockUriInfo.getRequestUri()).thenReturn(new URI("/validate")); // NOSONAR (mocked)
@@ -329,7 +319,7 @@ public class TestGenerateArtifactsServiceImpl {
         servletRequest.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] {mockCertificate});
         servletRequest.setAttribute("javax.servlet.request.cipher_suite", "");
 
-        GenerateArtifactsServiceImpl service = new GenerateArtifactsServiceImpl(auth);
+        GenerateArtifactsControllerImpl service = new GenerateArtifactsControllerImpl(gson);
         return service.generateArtifacts(mockUriInfo, headers, servletRequest, jsonString);
     }
 
