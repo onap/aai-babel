@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 
 import javax.servlet.ServletRequest;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -158,7 +159,7 @@ public enum LogHelper implements Logger {
      * @param headers raw HTTP headers
      * @param servletRequest the request
      */
-    public void startAudit(final HttpHeaders headers, ServletRequest servletRequest) {
+    public void startAudit(final MultivaluedMap<String, String> headers, ServletRequest servletRequest) {
         auditStopwatch = new StopWatch();
         auditStopwatch.start();
 
@@ -170,7 +171,7 @@ public enum LogHelper implements Logger {
             RequestHeaders requestHeaders = new RequestHeaders(headers);
             requestId = Optional.ofNullable(requestHeaders.getCorrelationId());
             serviceInstanceId = requestHeaders.getInstanceId();
-            partnerName = Optional.ofNullable(headers.getHeaderString(Headers.FROM_APP_ID));
+            partnerName = Optional.ofNullable(headers.getFirst(Headers.FROM_APP_ID));
         }
 
         String clientHost = null;

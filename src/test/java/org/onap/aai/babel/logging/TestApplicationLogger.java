@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import javax.servlet.ServletRequest;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MultivaluedMap;
+
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -143,9 +145,9 @@ public class TestApplicationLogger {
         final LogHelper logger = LogHelper.INSTANCE;
         final LogReader reader = new LogReader(LogHelper.getLogDirectory(), "audit");
 
-        HttpHeaders headers = Mockito.mock(HttpHeaders.class);
-        Mockito.when(headers.getHeaderString("X-ECOMP-RequestID")).thenReturn("ecomp-request-id");
-        Mockito.when(headers.getHeaderString("X-FromAppId")).thenReturn("app-id");
+        MultivaluedMap<String, String> headers = Mockito.mock(MultivaluedMap.class);
+        Mockito.when(headers.getFirst("X-ECOMP-RequestID")).thenReturn("ecomp-request-id");
+        Mockito.when(headers.getFirst("X-FromAppId")).thenReturn("app-id");
 
         // Call logAudit without first calling startAudit
         logger.logAuditSuccess("first call: bob");
