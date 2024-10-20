@@ -24,10 +24,11 @@ package org.onap.aai.babel.service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+
+import lombok.RequiredArgsConstructor;
+
 import java.util.Base64;
 import java.util.List;
-import java.util.UUID;
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
@@ -44,81 +45,44 @@ import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.logging.LogHelper.MdcParameter;
 import org.onap.aai.babel.logging.LogHelper.StatusCode;
-import org.onap.aai.babel.request.RequestHeaders;
 import org.onap.aai.babel.service.data.BabelArtifact;
 import org.onap.aai.babel.service.data.BabelRequest;
 import org.onap.aai.babel.util.RequestValidationException;
 import org.onap.aai.babel.util.RequestValidator;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Controller;
 
 /**
  * Generate SDC Artifacts by passing in a CSAR payload, Artifact Name and Artifact version.
  *
  */
-@Service
-public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
+@Controller
+@RequiredArgsConstructor
+public class GenerateArtifactsControllerImpl implements GenerateArtifactsController {
+
     private static final LogHelper applicationLogger = LogHelper.INSTANCE;
+    private final Gson gson;
 
-    private AAIMicroServiceAuth aaiMicroServiceAuth;
-
-    /**
-     * @param authorization
-     *            the auth module
-     */
-    @Inject
-    public GenerateArtifactsServiceImpl(final AAIMicroServiceAuth authorization) {
-        this.aaiMicroServiceAuth = authorization;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.onap.aai.babel.service.GenerateArtifactsService#generateArtifacts(javax.ws.rs.core.UriInfo,
-     * javax.ws.rs.core.HttpHeaders, javax.servlet.http.HttpServletRequest, java.lang.String)
-     */
     @Override
     public Response generateArtifacts(UriInfo uriInfo, HttpHeaders headers, HttpServletRequest servletRequest,
             String requestBody) {
-        applicationLogger.startAudit(headers, servletRequest);
-        applicationLogger.info(ApplicationMsgs.BABEL_REQUEST_PAYLOAD,
-                "Received request: " + headers.getRequestHeaders() + requestBody);
-        applicationLogger.debug(String.format(
-                "Received request. UriInfo \"%s\", HttpHeaders \"%s\", ServletRequest \"%s\", Request \"%s\"", uriInfo,
-                headers, servletRequest, requestBody));
-
-        // Additional name/value pairs according to EELF guidelines
-        applicationLogger.setContextValue("Protocol", "https");
-        applicationLogger.setContextValue("Method", "POST");
-        applicationLogger.setContextValue("Path", uriInfo.getPath());
-        applicationLogger.setContextValue("Query", uriInfo.getPathParameters().toString());
-
-        RequestHeaders requestHeaders = new RequestHeaders(headers);
-        applicationLogger.info(ApplicationMsgs.BABEL_REQUEST_PAYLOAD, requestHeaders.toString());
-
-        String requestId = requestHeaders.getCorrelationId();
-        if (requestId == null || !isRequestIDValid(requestId)) {
-            requestId = UUID.randomUUID().toString();
-            applicationLogger.info(ApplicationMsgs.MISSING_REQUEST_ID, requestId);
-            applicationLogger.setContextValue(MdcParameter.REQUEST_ID, requestId);
-        }
-
         Response response;
-        try {
+        // try {
             // Get last URI path segment to use for authentication
-            List<PathSegment> pathSegments = uriInfo.getPathSegments();
-            String lastPathSegment = pathSegments.isEmpty() ? "" : pathSegments.get(pathSegments.size() - 1).getPath();
+            // List<PathSegment> pathSegments = uriInfo.getPathSegments();
+            // String lastPathSegment = pathSegments.isEmpty() ? "" : pathSegments.get(pathSegments.size() - 1).getPath();
 
-            boolean authorized = aaiMicroServiceAuth.validateRequest(headers, servletRequest,
-                    AAIMicroServiceAuthCore.HTTP_METHODS.POST, lastPathSegment);
+            // boolean authorized = aaiMicroServiceAuth.validateRequest(headers, servletRequest,
+            //         AAIMicroServiceAuthCore.HTTP_METHODS.POST, lastPathSegment);
 
-            response = authorized ? generateArtifacts(requestBody)
-                    : buildResponse(Status.UNAUTHORIZED, "User not authorized to perform the operation.");
-        } catch (AAIAuthException e) {
-            applicationLogger.error(ApplicationMsgs.PROCESS_REQUEST_ERROR, e);
-            applicationLogger.logAuditError(e);
-            return buildResponse(Status.INTERNAL_SERVER_ERROR,
-                    "Error while processing request. Please check the Babel service logs for more details.\n");
-        }
+        response = generateArtifacts(requestBody);
+            // response = authorized ? generateArtifacts(requestBody)
+                    // : buildResponse(Status.UNAUTHORIZED, "User not authorized to perform the operation.");
+        // } catch (AAIAuthException e) {
+        //     applicationLogger.error(ApplicationMsgs.PROCESS_REQUEST_ERROR, e);
+        //     applicationLogger.logAuditError(e);
+        //     return buildResponse(Status.INTERNAL_SERVER_ERROR,
+        //             "Error while processing request. Please check the Babel service logs for more details.\n");
+        // }
 
         StatusCode statusDescription;
         int statusCode = response.getStatus();
@@ -131,15 +95,6 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
                 Response.Status.fromStatusCode(statusCode).getReasonPhrase(), response.getEntity().toString());
 
         return response;
-    }
-
-    private boolean isRequestIDValid(String requestId) {
-        try {
-            UUID.fromString(requestId);
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -156,8 +111,6 @@ public class GenerateArtifactsServiceImpl implements GenerateArtifactsService {
         Response response;
 
         try {
-            Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-
             BabelRequest babelRequest = gson.fromJson(requestBody, BabelRequest.class);
             new RequestValidator().validateRequest(babelRequest);
             byte[] csarFile = Base64.getDecoder().decode(babelRequest.getCsar());
