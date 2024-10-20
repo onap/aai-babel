@@ -48,6 +48,7 @@ import org.onap.aai.auth.AAIMicroServiceAuth;
 import org.onap.aai.babel.service.data.BabelRequest;
 import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -62,8 +63,11 @@ public class TestGenerateArtifactsServiceImpl {
         System.setProperty("CONFIG_HOME", "src/test/resources");
     }
 
-    @Inject
+    @Autowired
     private AAIMicroServiceAuth auth;
+
+    @Autowired
+    private Gson gson;
 
     @BeforeAll
     public static void setup() {
@@ -100,7 +104,7 @@ public class TestGenerateArtifactsServiceImpl {
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
-    
+
     /**
      * Test with a valid request without Minor Artifact version.
      *
@@ -116,7 +120,7 @@ public class TestGenerateArtifactsServiceImpl {
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
-    
+
     /**
      * Test with a valid request without Minor Artifact version.
      *
@@ -132,8 +136,8 @@ public class TestGenerateArtifactsServiceImpl {
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
-    
-    
+
+
     /**
      * Test with a valid request with Artifact version less than 1.
      *
@@ -329,7 +333,7 @@ public class TestGenerateArtifactsServiceImpl {
         servletRequest.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] {mockCertificate});
         servletRequest.setAttribute("javax.servlet.request.cipher_suite", "");
 
-        GenerateArtifactsServiceImpl service = new GenerateArtifactsServiceImpl(auth);
+        GenerateArtifactsControllerImpl service = new GenerateArtifactsControllerImpl(auth, gson);
         return service.generateArtifacts(mockUriInfo, headers, servletRequest, jsonString);
     }
 

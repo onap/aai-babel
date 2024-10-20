@@ -2,14 +2,13 @@
  * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
- * Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright (c) 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2024 Deutsche Telekom. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,31 +20,17 @@
 
 package org.onap.aai.babel.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 @Configuration
-public class BabelAuthConfig {
+public class MappingConfig {
 
-    @Value("${auth.authentication.disable}")
-    private boolean authenticationDisable;
-
-    @Value("${auth.policy.file}")
-    private String authPolicyFile;
-
-    public boolean isAuthenticationDisable() {
-        return authenticationDisable;
-    }
-
-    public void setAuthenticationDisable(boolean authenticationDisable) {
-        this.authenticationDisable = authenticationDisable;
-    }
-
-    public String getAuthPolicyFile() {
-        return authPolicyFile;
-    }
-
-    public void setAuthPolicyFile(String authPolicyFile) {
-        this.authPolicyFile = authPolicyFile;
-    }
+  @Bean
+  public Gson gson() {
+    return new GsonBuilder().disableHtmlEscaping().create();
+  }
 }

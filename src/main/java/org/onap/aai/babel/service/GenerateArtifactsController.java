@@ -37,7 +37,7 @@ import org.onap.aai.auth.AAIAuthException;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @FunctionalInterface
-public interface GenerateArtifactsService {
+public interface GenerateArtifactsController {
 
     @POST
     @Path("/generateArtifacts")

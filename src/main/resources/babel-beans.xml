@@ -30,4 +30,7 @@
 		<constructor-arg ref="babelAuthConfig" />
 	</bean>
 
+	<bean id="gson" class="com.google.gson.Gson">
+	</bean>
+
 </beans>

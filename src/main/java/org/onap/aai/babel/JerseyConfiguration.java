@@ -22,7 +22,7 @@ package org.onap.aai.babel;
 
 import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.onap.aai.babel.service.GenerateArtifactsServiceImpl;
+import org.onap.aai.babel.service.GenerateArtifactsControllerImpl;
 import org.onap.aai.babel.service.InfoService;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
 public class JerseyConfiguration extends ResourceConfig {
 
     public JerseyConfiguration() {
-        register(GenerateArtifactsServiceImpl.class);
+        register(GenerateArtifactsControllerImpl.class);
         register(InfoService.class);
     }
 
