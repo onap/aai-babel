@@ -31,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.onap.aai.auth.AAIAuthException;
+import org.onap.aai.babel.service.data.BabelRequest;
 
 /** Generate artifacts from the specified request content */
 @Path("/app")
@@ -41,6 +42,5 @@ public interface GenerateArtifactsController {
 
     @POST
     @Path("/generateArtifacts")
-    Response generateArtifacts(@Context UriInfo uriInfo, @Context HttpHeaders headers,
-            @Context HttpServletRequest servletRequest, String request) throws AAIAuthException;
+    Response generateArtifacts(BabelRequest babelRequest) throws AAIAuthException;
 }

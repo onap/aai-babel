@@ -96,7 +96,7 @@ public class TestGenerateArtifactsServiceImpl {
      */
     @Test
     public void testGenerateArtifactsWithoutRequestId() throws URISyntaxException, IOException {
-        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getJsonRequest(), Optional.empty());
+        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getBabelRequest(), Optional.empty());
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
     }
@@ -111,7 +111,7 @@ public class TestGenerateArtifactsServiceImpl {
      */
     @Test
     public void testGenerateArtifactsWithoutMinorArtifactVersion() throws URISyntaxException, IOException {
-        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getJsonRequestWithArtifactVersion("1"),
+        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getBabelRequestWithArtifactVersion("1"),
         		Optional.of("transaction-id"));
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
@@ -127,7 +127,7 @@ public class TestGenerateArtifactsServiceImpl {
      */
     @Test
     public void testGenerateArtifactsWithInvalidArtifactVersion() throws URISyntaxException, IOException {
-        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getJsonRequestWithArtifactVersion("a"),
+        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getBabelRequestWithArtifactVersion("a"),
         		Optional.of("transaction-id"));
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("response.json")));
@@ -144,7 +144,7 @@ public class TestGenerateArtifactsServiceImpl {
      */
     @Test
     public void testGenerateArtifactsWithArtifactVerLessThan1() throws URISyntaxException, IOException {
-        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getJsonRequestWithArtifactVersion("0.1"),
+        Response response = invokeService(CsarTest.VNF_VENDOR_CSAR.getBabelRequestWithArtifactVersion("0.1"),
         		Optional.of("transaction-id"));
         assertThat(response.toString(), response.getStatus(), is(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), is(getResponseJson("responseWithVersionLessThan1.json")));
@@ -187,16 +187,9 @@ public class TestGenerateArtifactsServiceImpl {
         request.setArtifactName("hello");
         request.setArtifactVersion("1.0");
         request.setCsar("xxxx");
-        Response response = invokeService(new Gson().toJson(request));
+        Response response = invokeService(request);
         assertThat(response.getStatus(), is(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
         assertThat(response.getEntity(), is("Error converting CSAR artifact to XML model."));
-    }
-
-    @Test
-    public void testInvalidJsonFile() throws URISyntaxException, IOException {
-        Response response = invokeService("{\"csar:\"xxxx\"");
-        assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
-        assertThat(response.getEntity(), is("Malformed request."));
     }
 
     @Test
@@ -204,7 +197,7 @@ public class TestGenerateArtifactsServiceImpl {
         BabelRequest request = new BabelRequest();
         request.setArtifactVersion("1.0");
         request.setCsar("");
-        Response response = invokeService(new Gson().toJson(request));
+        Response response = invokeService(request);
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("No artifact name attribute found in the request body."));
     }
@@ -214,7 +207,7 @@ public class TestGenerateArtifactsServiceImpl {
         BabelRequest request = new BabelRequest();
         request.setArtifactName("hello");
         request.setCsar("");
-        Response response = invokeService(new Gson().toJson(request));
+        Response response = invokeService(request);
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("No artifact version attribute found in the request body."));
     }
@@ -224,7 +217,7 @@ public class TestGenerateArtifactsServiceImpl {
         BabelRequest request = new BabelRequest();
         request.setArtifactName("test-name");
         request.setArtifactVersion("1.0");
-        Response response = invokeService(new Gson().toJson(request));
+        Response response = invokeService(request);
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
         assertThat(response.getEntity(), is("No csar attribute found in the request body."));
     }
@@ -244,7 +237,7 @@ public class TestGenerateArtifactsServiceImpl {
      */
     private Response processJsonRequest(CsarTest csar)
             throws URISyntaxException, IOException {
-        return invokeService(csar.getJsonRequest(), Optional.of("transaction-id"));
+        return invokeService(csar.getBabelRequest(), Optional.of("transaction-id"));
     }
 
     /**
@@ -256,8 +249,8 @@ public class TestGenerateArtifactsServiceImpl {
      * @throws URISyntaxException
      *             if the URI cannot be created
      */
-    private Response invokeService(String jsonRequest) throws URISyntaxException {
-        return invokeService(jsonRequest, Optional.of("transaction-id"));
+    private Response invokeService(BabelRequest babelRequest) throws URISyntaxException {
+        return invokeService(babelRequest, Optional.of("transaction-id"));
     }
 
     /**
@@ -273,7 +266,7 @@ public class TestGenerateArtifactsServiceImpl {
      * @throws URISyntaxException
      *             if the URI cannot be created
      */
-    private Response invokeService(String jsonString, Optional<String> transactionId)
+    private Response invokeService(BabelRequest babelRequest, Optional<String> transactionId)
             throws URISyntaxException {
         UriInfo mockUriInfo = Mockito.mock(UriInfo.class);
         Mockito.when(mockUriInfo.getRequestUri()).thenReturn(new URI("/validate")); // NOSONAR (mocked)
@@ -310,7 +303,7 @@ public class TestGenerateArtifactsServiceImpl {
         servletRequest.setAttribute("javax.servlet.request.cipher_suite", "");
 
         GenerateArtifactsControllerImpl service = new GenerateArtifactsControllerImpl(gson);
-        return service.generateArtifacts(mockUriInfo, headers, servletRequest, jsonString);
+        return service.generateArtifacts(babelRequest);
     }
 
     private String getResponseJson(String jsonResponse) throws IOException, URISyntaxException {

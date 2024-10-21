@@ -22,7 +22,6 @@
 package org.onap.aai.babel.service;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import lombok.RequiredArgsConstructor;
@@ -34,9 +33,6 @@ import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.onap.aai.auth.AAIAuthException;
-import org.onap.aai.auth.AAIMicroServiceAuth;
-import org.onap.aai.auth.AAIMicroServiceAuthCore;
 import org.onap.aai.babel.csar.CsarConverterException;
 import org.onap.aai.babel.csar.CsarToXmlConverter;
 import org.onap.aai.babel.csar.vnfcatalog.ToscaToCatalogException;
@@ -63,26 +59,10 @@ public class GenerateArtifactsControllerImpl implements GenerateArtifactsControl
     private final Gson gson;
 
     @Override
-    public Response generateArtifacts(UriInfo uriInfo, HttpHeaders headers, HttpServletRequest servletRequest,
-            String requestBody) {
+    public Response generateArtifacts(BabelRequest babelRequest) {
         Response response;
-        // try {
-            // Get last URI path segment to use for authentication
-            // List<PathSegment> pathSegments = uriInfo.getPathSegments();
-            // String lastPathSegment = pathSegments.isEmpty() ? "" : pathSegments.get(pathSegments.size() - 1).getPath();
 
-            // boolean authorized = aaiMicroServiceAuth.validateRequest(headers, servletRequest,
-            //         AAIMicroServiceAuthCore.HTTP_METHODS.POST, lastPathSegment);
-
-        response = generateArtifacts(requestBody);
-            // response = authorized ? generateArtifacts(requestBody)
-                    // : buildResponse(Status.UNAUTHORIZED, "User not authorized to perform the operation.");
-        // } catch (AAIAuthException e) {
-        //     applicationLogger.error(ApplicationMsgs.PROCESS_REQUEST_ERROR, e);
-        //     applicationLogger.logAuditError(e);
-        //     return buildResponse(Status.INTERNAL_SERVER_ERROR,
-        //             "Error while processing request. Please check the Babel service logs for more details.\n");
-        // }
+        response = generateArtifactsImpl(babelRequest);
 
         StatusCode statusDescription;
         int statusCode = response.getStatus();
@@ -104,14 +84,13 @@ public class GenerateArtifactsControllerImpl implements GenerateArtifactsControl
      *            the request body in JSON format
      * @return response object containing the generated XML models
      */
-    protected Response generateArtifacts(String requestBody) {
+    protected Response generateArtifactsImpl(BabelRequest babelRequest) {
         StopWatch stopwatch = new StopWatch();
         stopwatch.start();
 
         Response response;
 
         try {
-            BabelRequest babelRequest = gson.fromJson(requestBody, BabelRequest.class);
             new RequestValidator().validateRequest(babelRequest);
             byte[] csarFile = Base64.getDecoder().decode(babelRequest.getCsar());
 

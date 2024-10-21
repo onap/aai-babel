@@ -96,31 +96,39 @@ public enum CsarTest {
 
     /**
      * Create a BabelRequest containing the encoded CSAR content.
-     * 
+     *
      * @return a new Babel request for this CSAR
      * @throws IOException
      *             if an I/O exception occurs
      */
     public String getJsonRequest() throws IOException {
+        return new Gson().toJson(getBabelRequest());
+    }
+
+    public BabelRequest getBabelRequest() throws IOException {
         BabelRequest request = new BabelRequest();
         request.setArtifactName(getName());
         request.setArtifactVersion("1.0");
         request.setCsar(new String(GeneratorUtil.encode(getContent())));
-        return new Gson().toJson(request);
+        return request;
     }
-    
+
     /**
      * Create a BabelRequest containing the encoded CSAR content by passing in the artifact version.
-     * 
+     *
      * @return a new Babel request for this CSAR
      * @throws IOException
      *             if an I/O exception occurs
      */
     public String getJsonRequestWithArtifactVersion(String artifactVersion) throws IOException {
+        BabelRequest babelRequest = getBabelRequestWithArtifactVersion(artifactVersion);
+        return new Gson().toJson(babelRequest);
+    }
+    public BabelRequest getBabelRequestWithArtifactVersion(String artifactVersion) throws IOException {
         BabelRequest request = new BabelRequest();
         request.setArtifactName(getName());
         request.setArtifactVersion(artifactVersion);
         request.setCsar(new String(GeneratorUtil.encode(getContent())));
-        return new Gson().toJson(request);
+        return request;
     }
 }
