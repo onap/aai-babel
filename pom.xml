@@ -425,9 +425,9 @@
 				<version>${spring.boot.version}</version>
 				<configuration>
 					<jvmArguments>
-						-DCONFIG_HOME=./appconfig-local
+						-DCONFIG_HOME=src/main/resources
 						-DAPP_HOME=.
-						-Dtosca.mappings.config=./appconfig-local/tosca-mappings.json
+						-Dtosca.mappings.config=src/main/resources/tosca-mappings.json
 						-DKEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}
 					</jvmArguments>
 				</configuration>
