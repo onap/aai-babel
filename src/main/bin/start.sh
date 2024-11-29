@@ -27,30 +27,16 @@ if [ -z "${CONFIG_HOME}" ]; then
 	exit 1
 fi
 
-#Either keystore password or server certs location must be passed. Both cannot be null
-if [ -z "${KEY_STORE_PASSWORD}" -a -z "${SERVER_CERTS_LOCATION}" ]; then
-	echo "KEY_STORE_PASSWORD or SERVER_CERTS_LOCATION must be set in order to start the process"
-	exit 1
-fi
-
 PROPS="-DAPP_HOME=${APP_HOME}"
 PROPS="${PROPS} -DCONFIG_HOME=${CONFIG_HOME}"
 PROPS="${PROPS} -Dtosca.mappings.config=${CONFIG_HOME}/tosca-mappings.json"
-
-if [ ! -z "$KEY_STORE_PASSWORD" ]; then
-   PROPS="${PROPS} -DKEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}"
-fi
 
 PROPS="${PROPS} -Dlogging.config=${APP_HOME}/config/logback.xml"
 
 if [ ! -z "$REQUIRE_CLIENT_AUTH" ]; then
    PROPS="$PROPS -Dserver.ssl.client-auth=${REQUIRE_CLIENT_AUTH}"
 fi
-if [ ! -z "$SERVER_CERTS_LOCATION" ]; then
-   PROPS="$PROPS -Dserver.certs.location=${SERVER_CERTS_LOCATION}"
-   PROPS="$PROPS -Dserver.ssl.key-store=${SERVER_CERTS_LOCATION}/${SERVER_KEY_STORE}"
-   PROPS="$PROPS -Dserver.ssl.trust-store=${SERVER_CERTS_LOCATION}/${SERVER_TRUST_STORE}"
-fi
+
 PROPS="${PROPS} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}"
 PROPS="${PROPS} -Daaf.cadi.file=${CONFIG_HOME}/cadi.properties"
 PROPS="${PROPS} -Daaf.cadi.file=${CONFIG_HOME}/cadi.properties"

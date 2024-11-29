@@ -31,9 +31,9 @@ import org.springframework.context.annotation.Configuration;
 public class JerseyConfiguration extends ResourceConfig {
 
     public JerseyConfiguration() {
-        packages("org.onap.aai.babel");
-        // register(GenerateArtifactsControllerImpl.class);
-        // register(InfoService.class);
+        // packages("org.onap.aai.babel");
+        register(GenerateArtifactsControllerImpl.class);
+        register(InfoService.class);
     }
 
 }
