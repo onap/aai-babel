@@ -13,3 +13,5 @@ appconfig-local/
 *.iml
 .idea/
 .vscode/
+*.log
+output*
