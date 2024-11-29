@@ -23,7 +23,7 @@ To find main logging config please check `logging.config` in the application.pro
   <include resource="org/springframework/boot/logging/logback/base.xml" />
 
   <property name="componentName" value="AAI-BAS" />
-  <property name="logDirectory" value="/var/log/onap/${componentName}" />
+  <property name="logDirectory" value="./${componentName}" />
 
   <!-- default EELF log file names -->
   <property name="generalLogName" value="error" />

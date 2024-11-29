@@ -21,7 +21,6 @@
 
 package org.onap.aai.babel;
 
-import org.onap.aai.babel.config.PropertyPasswordConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -46,14 +45,13 @@ public class BabelApplication extends SpringBootServletInitializer {
      *            main args (expected to be null)
      */
     public static void main(String[] args) {
-        String keyStorePassword = System.getProperty("KEY_STORE_PASSWORD");
-        if (keyStorePassword == null || keyStorePassword.isEmpty()) {
-            throw new IllegalArgumentException("Mandatory property KEY_STORE_PASSWORD not set");
-        }
+        // String keyStorePassword = System.getProperty("KEY_STORE_PASSWORD");
+        // if (keyStorePassword == null || keyStorePassword.isEmpty()) {
+        //     throw new IllegalArgumentException("Mandatory property KEY_STORE_PASSWORD not set");
+        // }
         SpringApplication app = new SpringApplication(BabelApplication.class);
         app.setLogStartupInfo(false);
         app.setRegisterShutdownHook(true);
-        app.addInitializers(new PropertyPasswordConfiguration());
         context = app.run(args);
     }
 

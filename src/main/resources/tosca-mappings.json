@@ -1,0 +1,193 @@
+{
+	"instanceGroupTypes": [
+		"org.openecomp.groups.NetworkCollection",
+		"org.openecomp.groups.VfcInstanceGroup",
+		"org.openecomp.groups.ResourceInstanceGroup"
+	],
+	"widgetTypes": [
+		{
+			"type": "SERVICE",
+			"name": "service-instance",
+			"deleteFlag": true,
+            "modelInvariantId": "service-instance-invariant-id",
+            "modelVersionId": "service-instance-version-id"
+		},
+		{
+			"type": "VF",
+			"name": "generic-vnf",
+			"deleteFlag": true,
+            "modelInvariantId": "generic-vnf-invariant-id",
+            "modelVersionId": "generic-vnf-version-id"
+		},
+		{
+			"type": "VFC",
+			"name": "vnfc",
+			"deleteFlag": true,
+            "modelInvariantId": "vnfc-invariant-id",
+            "modelVersionId": "vnfc-version-id"
+		},
+		{
+			"type": "VSERVER",
+			"name": "vserver",
+			"deleteFlag": true,
+            "modelInvariantId": "vserver-invariant-id",
+            "modelVersionId": "vserver-version-id"
+		},
+		{
+			"type": "VOLUME",
+			"name": "volume",
+			"deleteFlag": true,
+            "modelInvariantId": "volume-invariant-id",
+            "modelVersionId": "volume-version-id"
+		},
+		{
+			"type": "FLAVOR",
+			"name": "flavor",
+			"deleteFlag": false,
+            "modelInvariantId": "flavor-invariant-id",
+            "modelVersionId": "flavor-version-id"
+		},
+		{
+			"type": "TENANT",
+			"name": "tenant",
+			"deleteFlag": false,
+            "modelInvariantId": "tenant-invariant-id",
+            "modelVersionId": "tenant-version-id"
+		},
+		{
+			"type": "VOLUME_GROUP",
+			"name": "volume-group",
+			"deleteFlag": true,
+            "modelInvariantId": "volume-group-invariant-id",
+            "modelVersionId": "volume-group-version-id"
+		},
+		{
+			"type": "LINT",
+			"name": "l-interface",
+			"deleteFlag": true,
+            "modelInvariantId": "l-interface-invariant-id",
+            "modelVersionId": "l-interface-version-id"
+		},
+		{
+			"type": "L3_NET",
+			"name": "l3-network",
+			"deleteFlag": true,
+            "modelInvariantId": "l3-network-invariant-id",
+            "modelVersionId": "l3-network-version-id"
+		},
+		{
+			"type": "VFMODULE",
+			"name": "vf-module",
+			"deleteFlag": true,
+            "modelInvariantId": "vf-module-invariant-id",
+            "modelVersionId": "vf-module-version-id"
+		},
+		{
+			"type": "IMAGE",
+			"name": "image",
+			"deleteFlag": false,
+            "modelInvariantId": "image-invariant-id",
+            "modelVersionId": "image-version-id"
+		},
+		{
+			"type": "OAM_NETWORK",
+			"name": "oam-network",
+			"deleteFlag": true,
+            "modelInvariantId": "oam-network-invariant-id",
+            "modelVersionId": "oam-network-version-id"
+		},
+		{
+			"type": "ALLOTTED_RESOURCE",
+			"name": "allotted-resource",
+			"deleteFlag": true,
+            "modelInvariantId": "allotted-resource-invariant-id",
+			"modelVersionId": "allotted-resource-version-id"
+		},
+		{
+			"type": "TUNNEL_XCONNECT",
+			"name": "tunnel-xconnect",
+			"deleteFlag": true,
+            "modelInvariantId": "tunnel-xconnect-invariant-id",
+            "modelVersionId": "tunnel-xconnect-version-id"
+		},
+		{
+			"type": "CONFIGURATION",
+			"name": "configuration",
+			"deleteFlag": true,
+            "modelInvariantId": "configuration-invariant-id",
+            "modelVersionId": "configuration-version-id"
+		},
+		{
+			"type": "CR",
+			"name": "cr",
+			"deleteFlag": true,
+			"modelInvariantId": "collection-resource-invariant-id",
+			"modelVersionId": "collection-resource-version-id"
+		},
+		{
+			"type": "INSTANCE_GROUP",
+			"name": "instance-group",
+			"deleteFlag": true,
+			"modelInvariantId": "instance-group-invariant-id",
+			"modelVersionId": "instance-group-version-id"
+		},
+		{
+			"type": "PNF",
+			"name": "pnf",
+			"deleteFlag": true,
+			"modelInvariantId": "pnf-instance-invariant-id",
+			"modelVersionId": "pnf-instance-version-id"
+		}
+	],
+	"widgetMappings": [
+		{
+			"prefix": "org.openecomp.resource.vfc",
+			"type": "widget",
+			"widget": "VSERVER",
+			"deleteFlag": true
+		},
+		{
+			"prefix": "org.openecomp.resource.cp",
+			"type": "widget",
+			"widget": "LINT",
+			"deleteFlag": true
+		},
+		{
+			"prefix": "org.openecomp.cp",
+			"type": "widget",
+			"widget": "LINT",
+			"deleteFlag": true
+		},
+		{
+			"prefix": "org.openecomp.resource.vl",
+			"widget": "L3_NET",
+			"deleteFlag": false
+		},
+		{
+			"prefix": "org.openecomp.resource.vf",
+			"widget": "VF",
+			"deleteFlag": true
+		},
+		{
+			"prefix": "org.openecomp.groups.vfmodule",
+			"widget": "VFMODULE",
+			"deleteFlag": true
+		},
+		{
+			"prefix": "org.openecomp.groups.VfModule",
+			"widget": "VFMODULE",
+			"deleteFlag": true
+		},
+		{
+			"prefix": "org.openecomp.resource.vfc.nodes.heat.cinder",
+			"type": "widget",
+			"widget": "VOLUME",
+			"deleteFlag": true
+		},
+		{
+			"prefix": "org.openecomp.resource.pnf",
+			"widget": "PNF",
+			"deleteFlag": true
+		}
+	]
+}
