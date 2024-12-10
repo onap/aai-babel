@@ -1,4 +1,4 @@
-<model xmlns="http://org.onap.aai.inventory/v29">
+<model xmlns="http://org.onap.aai.inventory/v30">
     <model-invariant-id>66e7aed9-3257-4069-b0a6-9012aaca821a</model-invariant-id>
     <model-type>service</model-type>
     <model-role>Network L1-3</model-role>

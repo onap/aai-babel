@@ -1,4 +1,4 @@
-<model xmlns="http://org.onap.aai.inventory/v29">
+<model xmlns="http://org.onap.aai.inventory/v30">
     <model-invariant-id>extVL-invariant-uuid</model-invariant-id>
     <model-type>resource</model-type>
     <model-vers>
