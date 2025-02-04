@@ -42,8 +42,6 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.onap.aai.auth.AAIAuthException;
-import org.onap.aai.auth.AAIMicroServiceAuth;
 import org.onap.aai.babel.service.data.BabelRequest;
 import org.onap.aai.babel.testdata.CsarTest;
 import org.onap.aai.babel.util.ArtifactTestUtils;

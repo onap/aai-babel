@@ -28,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Base64;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
 
