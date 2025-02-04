@@ -24,7 +24,6 @@ package org.onap.aai.babel.xml.generator.api;
 
 import java.io.StringWriter;
 import java.util.Collection;
-import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
