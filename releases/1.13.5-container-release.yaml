@@ -1,0 +1,7 @@
+distribution_type: container
+container_release_tag: 1.13.5
+project: aai/babel
+ref: 109a8d7196d4053654ce70f558a1179486ec7959
+containers:
+    - name: babel
+      version: 1.13-STAGING-20250529T080612Z
