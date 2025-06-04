@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "023967bc_dc5522e2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-06-04T08:49:47Z",
+      "side": 1,
+      "message": "Please adjust your commit message as follows:\n\n```\nJava 17 and spring boot upgrade for babel\n\n- update spring boot (2.X.X -\u003e 2.7.15)\n- ...\n\nIssue-ID:AAI-4169\n```",
+      "revId": "3f6ba27cabfe89b65e6b524280f0567edfdbd1ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef086567_6771a2ee",
+        "filename": "src/main/bin/start.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-06-04T08:49:47Z",
+      "side": 1,
+      "message": "Are these args really needed? If so, please add a bullet point in your commit message (`- add additional java opts to XYZ`)",
+      "revId": "3f6ba27cabfe89b65e6b524280f0567edfdbd1ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f497826c_ccf60dd7",
+        "filename": "src/main/resources/logback.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-06-04T08:49:47Z",
+      "side": 1,
+      "message": "You are not from Orange are you? :D",
+      "revId": "3f6ba27cabfe89b65e6b524280f0567edfdbd1ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
