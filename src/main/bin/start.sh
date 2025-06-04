@@ -41,6 +41,8 @@ PROPS="${PROPS} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}"
 PROPS="${PROPS} -Daaf.cadi.file=${CONFIG_HOME}/cadi.properties"
 PROPS="${PROPS} -Daaf.cadi.file=${CONFIG_HOME}/cadi.properties"
 
-JVM_OPTS="${JVM_OPTS} -XX:MaxRAMPercentage=${MAX_RAM_PERCENTAGE:-60}"
+JVM_OPTS="${JVM_OPTS} -XX:MaxRAMPercentage=${MAX_RAM_PERCENTAGE:-60} --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+--add-opens java.base/java.lang=ALL-UNNAMED
+--add-opens java.base/java.util=ALL-UNNAMED"
 
 exec java ${JVM_OPTS} ${PROPS} -jar ${APP_HOME}/babel*.jar

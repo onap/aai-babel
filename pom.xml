@@ -41,7 +41,7 @@
 
 	<properties>
 		<!-- Spring boot version -->
-
+		<spring.boot.version>2.7.18</spring.boot.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -58,7 +58,7 @@
 		<sonar.jacoco.itReportPath />
 		<sonar.jacoco.reportMissing.force.zero />
 
-		<jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
 
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.coverage.jacoco.xmlReportPaths>${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
@@ -69,10 +69,10 @@
 		<!-- java 11 related properties -->
 		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-		<maven-compiler-plugin.source>11</maven-compiler-plugin.source>
-		<maven-compiler-plugin.target>11</maven-compiler-plugin.target>
-		<maven-compiler-plugin.test.source>11</maven-compiler-plugin.test.source>
-		<maven-compiler-plugin.test.target>11</maven-compiler-plugin.test.target>
+		<maven-compiler-plugin.source>17</maven-compiler-plugin.source>
+		<maven-compiler-plugin.target>17</maven-compiler-plugin.target>
+		<maven-compiler-plugin.test.source>17</maven-compiler-plugin.test.source>
+		<maven-compiler-plugin.test.target>17</maven-compiler-plugin.test.target>
 		<sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
 
 		<!-- docker related properties -->
@@ -371,20 +371,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>javax.xml.ws</groupId>
 			<artifactId>jaxws-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.activation</groupId>
@@ -404,6 +396,11 @@
 			<artifactId>lombok</artifactId>
 			<version>1.18.32</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>6.6</version>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
