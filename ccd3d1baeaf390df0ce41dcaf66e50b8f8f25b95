@@ -55,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "11563324_26efb96b",
+        "filename": "src/main/resources/logback.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 8520
+      },
+      "writtenOn": "2025-06-10T10:39:55Z",
+      "side": 1,
+      "message": "Removed",
+      "parentUuid": "b481f23c_a19c90af",
+      "revId": "ccd3d1baeaf390df0ce41dcaf66e50b8f8f25b95",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a4109ec7_95e51c4e",
         "filename": "src/main/resources/logback.xml",
         "patchSetId": 2
@@ -66,6 +84,24 @@
       "writtenOn": "2025-06-10T06:23:27Z",
       "side": 1,
       "message": "Please remove this unfinished merge conflict resolution",
+      "revId": "ccd3d1baeaf390df0ce41dcaf66e50b8f8f25b95",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "44c8c9f5_24f5f6d9",
+        "filename": "src/main/resources/logback.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 8520
+      },
+      "writtenOn": "2025-06-10T10:39:55Z",
+      "side": 1,
+      "message": "resolved",
+      "parentUuid": "a4109ec7_95e51c4e",
       "revId": "ccd3d1baeaf390df0ce41dcaf66e50b8f8f25b95",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
