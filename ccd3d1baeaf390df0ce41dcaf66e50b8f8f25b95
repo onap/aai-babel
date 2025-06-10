@@ -140,6 +140,24 @@
       "parentUuid": "a4109ec7_95e51c4e",
       "revId": "ccd3d1baeaf390df0ce41dcaf66e50b8f8f25b95",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f593a527_808d834c",
+        "filename": "src/main/resources/logback.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-06-10T11:59:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "44c8c9f5_24f5f6d9",
+      "revId": "ccd3d1baeaf390df0ce41dcaf66e50b8f8f25b95",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
