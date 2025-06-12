@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f08654c5_95268cd3",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-06-12T08:50:50Z",
+      "side": 0,
+      "message": "We did not touch these dependencies in the 2.7 CR right?",
+      "revId": "85eddc29352de227486ecda1d85ecfe64b9887e2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
