@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c314636_9aa68a3e",
+        "filename": "src/main/docker/Dockerfile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-06-12T06:51:37Z",
+      "side": 1,
+      "message": "We would need to adjust the pipeline to make it work with java 17. Please use java 11 here for now.\nThen we can merge this change, create a snapshot image and then run a gating to see if everything is working properly.",
+      "revId": "14574b455bbb5057bf850c7f0c18ed890a4591cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
