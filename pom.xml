@@ -41,7 +41,6 @@
 
 	<properties>
 		<!-- Spring boot version -->
-		<spring.boot.version>2.7.18</spring.boot.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -58,7 +57,7 @@
 		<sonar.jacoco.itReportPath />
 		<sonar.jacoco.reportMissing.force.zero />
 
-		<jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
 
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.coverage.jacoco.xmlReportPaths>${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
@@ -90,7 +89,7 @@
 		<aai.common.version>1.9.4</aai.common.version>
 		<logback.core.version>1.2.11</logback.core.version>
 		<groovy.version>3.0.13</groovy.version>
-		<spring-cloud.version>2021.0.9</spring-cloud.version>
+		<spring-cloud.version>2020.0.2</spring-cloud.version>
 
 		<commons.compress.version>1.27.0</commons.compress.version>
 		<commons.io.version>2.16.1</commons.io.version>
@@ -371,20 +370,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>javax.xml.ws</groupId>
 			<artifactId>jaxws-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.activation</groupId>
@@ -409,6 +400,14 @@
 			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
 			<version>6.6</version>
+		</dependency>
+                <dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
