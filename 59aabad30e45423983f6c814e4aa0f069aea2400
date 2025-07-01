@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "58045776_d984c9e5",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 8530
+      },
+      "writtenOn": "2025-07-01T13:45:54Z",
+      "side": 1,
+      "message": "Removed 1.5.16 version.",
+      "parentUuid": "40ba8cb0_53097add",
+      "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "58f34bc3_8f91220e",
         "filename": "pom.xml",
         "patchSetId": 1
@@ -37,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "97ffad6a_9265c9aa",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 8530
+      },
+      "writtenOn": "2025-07-01T13:45:54Z",
+      "side": 1,
+      "message": "previously rest-client:1.6.4 version is coming as a transitive dependency. so I kept the same version and moved it to properties section.",
+      "parentUuid": "58f34bc3_8f91220e",
+      "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "50e9d9ad_6e39ddb2",
         "filename": "pom.xml",
         "patchSetId": 1
@@ -48,6 +84,24 @@
       "writtenOn": "2025-07-01T09:43:16Z",
       "side": 1,
       "message": "Since we have two references to the same version here and they likely have to be aligned, please introduce a `\u003cjaxb.version\u003e\u003c/jaxb.version\u003e` property above",
+      "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e3ccbf7_c366c806",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 8530
+      },
+      "writtenOn": "2025-07-01T13:45:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "50e9d9ad_6e39ddb2",
       "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
