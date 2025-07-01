@@ -50,6 +50,23 @@
       "message": "Since we have two references to the same version here and they likely have to be aligned, please introduce a `\u003cjaxb.version\u003e\u003c/jaxb.version\u003e` property above",
       "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d86bec79_e813e6eb",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-01T09:52:20Z",
+      "side": 1,
+      "message": "Adding this dependency is not necessary for this change (perhaps when updating further, but the tests pass without it here).\nPlease remove it. Same for the glassfish jaxb-runtime",
+      "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
