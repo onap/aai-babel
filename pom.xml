@@ -88,14 +88,13 @@
 		<sdc.tosca.version>1.6.5</sdc.tosca.version>
 
 		<aai.common.version>1.9.4</aai.common.version>
-		<logback.core.version>1.5.16</logback.core.version>
 		<groovy.version>3.0.13</groovy.version>
 		<spring-cloud.version>2021.0.8</spring-cloud.version>
 
 		<commons.compress.version>1.27.0</commons.compress.version>
 		<commons.io.version>2.16.1</commons.io.version>
 		<commons.codec.version>1.15</commons.codec.version>
-
+		<jaxb.version>2.3.0</jaxb.version>
 		<javax.ws.rs.version>2.1.1</javax.ws.rs.version>
 		<mvn.jaxb2.version>0.15.1</mvn.jaxb2.version>
 		<aai-schema.group.id>org.onap.aai.schema-service</aai-schema.group.id>
@@ -334,7 +333,7 @@
 		<dependency>
 			<groupId>org.onap.aai</groupId>
 			<artifactId>rest-client</artifactId>
-			<version>1.6.4</version>
+			<version>${aai.rest.client.version}</version>
 		</dependency>
 
 		<!-- Testing -->
@@ -383,12 +382,12 @@
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-core</artifactId>
-			<version>2.3.0</version>
+			<version>${jaxb.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
-			<version>2.3.0</version>
+			<version>${jaxb.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.activation</groupId>
@@ -409,15 +408,6 @@
 			<version>1.18.32</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-        <groupId>jakarta.xml.bind</groupId>
-        <artifactId>jakarta.xml.bind-api</artifactId>
-        <version>3.0.1</version>
-    </dependency>
-    <dependency>
-        <groupId>org.glassfish.jaxb</groupId>
-        <artifactId>jaxb-runtime</artifactId>
-    </dependency>
 	<dependency>
 		<groupId>org.slf4j</groupId>
 		<artifactId>slf4j-api</artifactId>
@@ -750,9 +740,20 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.1.2</version> <!-- or latest stable -->
+				<version>3.0.0-M8</version>
 				<configuration>
-					<argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+					<!-- Sets the VM argument line used when unit tests are run. -->
+					<reuseForks>false</reuseForks>
+					<forkCount>1</forkCount>
+					<environmentVariables>
+						<APP_HOME>.</APP_HOME>
+						<CONFIG_HOME>src/test/resources</CONFIG_HOME>
+					</environmentVariables>
+					<argLine>${surefireArgLine}</argLine>
+					<!-- Excludes integration tests when unit tests are run. -->
+					<excludes>
+						<exclude>**/IT*.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
