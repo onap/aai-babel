@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cb10eca_fff55403",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-01T09:43:16Z",
+      "side": 0,
+      "message": "Can you spend a word what made this necessary? My guess is that this should likely be reverted",
+      "revId": "84f6345686810512e8a581ddc9b61f33ea33a343",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}

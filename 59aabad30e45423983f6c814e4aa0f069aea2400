@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "40ba8cb0_53097add",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-01T09:43:16Z",
+      "side": 1,
+      "message": "You are \"updating\" the `logback.core.version` here, while at the same time removing the reference to the this version further below. My guess is that you have not in fact updated logback to `1.5.16`, but you are now using whatever is defined in the `aai-parent` version `1.15.5`.\nThat is totally fine, but either make it work with `1.5.16` or remove the `\u003clogback.core.version\u003e` property here to not have this ambiguity",
+      "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "58f34bc3_8f91220e",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-01T09:43:16Z",
+      "side": 1,
+      "message": "Can you briefly comment here what the `rest-client` version was before your change and what motivated you to update (perhaps even downgrade) it to (the fairly old) `1.6.4` version here?",
+      "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "50e9d9ad_6e39ddb2",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-01T09:43:16Z",
+      "side": 1,
+      "message": "Since we have two references to the same version here and they likely have to be aligned, please introduce a `\u003cjaxb.version\u003e\u003c/jaxb.version\u003e` property above",
+      "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
