@@ -24,16 +24,24 @@ package org.onap.aai.babel;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
-@SpringBootTest(classes = BabelApplication.class)
+@SpringBootTest(
+    classes = BabelApplication.class,
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+)
+@ActiveProfiles("test")
+@TestPropertySource(properties = {
+    "APP_HOME=.",
+    "CONFIG_HOME=src/test/resources"
+})
 public class TestApplication {
 
-    /**
-     * Initialize System Properties.
-     */
     @BeforeEach
     public void init() {
         System.setProperty("APP_HOME", ".");
@@ -43,7 +51,7 @@ public class TestApplication {
     @Test
     public void testApplicationStarts() {
         assertDoesNotThrow(() -> {
-            BabelApplication.main(new String[]{});
+            BabelApplication.main(new String[] {});
             BabelApplication.exit();
         });
     }
@@ -51,7 +59,7 @@ public class TestApplication {
     @Test
     public void testApplicationStartsWithObfuscatedPassword() {
         assertDoesNotThrow(() -> {
-            BabelApplication.main(new String[]{});
+            BabelApplication.main(new String[] {});
             BabelApplication.exit();
         });
     }

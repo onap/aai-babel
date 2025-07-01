@@ -21,92 +21,89 @@
 package org.onap.aai.babel.filters;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.onap.aai.auth.AAIAuthException;
 import org.onap.aai.auth.AAIMicroServiceAuth;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.test.web.reactive.server.WebTestClient;
+import org.onap.aai.auth.AAIMicroServiceAuthCore.HTTP_METHODS;
+
+import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import java.time.Duration;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AuthenticationRequestFilterTest {
 
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private WebTestClient webTestClient;
-
-    @MockBean
+    @Mock
     private AAIMicroServiceAuth authService;
+
+    @Mock
+    private HttpServletRequest servletRequest;
+
+    @Mock
+    private ContainerRequestContext requestContext;
+
+    @Mock
+    private UriInfo uriInfo;
+
+    @Mock
+    private PathSegment pathSegment;
+
+    private AuthenticationRequestFilter filter;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        webTestClient = webTestClient.mutate()
-                                 .responseTimeout(Duration.ofMillis(300000))
-                                 .build();
+        filter = new AuthenticationRequestFilter(authService, servletRequest);
+
+        when(requestContext.getUriInfo()).thenReturn(uriInfo);
+        when(uriInfo.getPathSegments()).thenReturn(List.of(pathSegment));
+        when(pathSegment.getPath()).thenReturn("some-segment");
     }
 
     @Test
-    public void testAuthorizedRequest() throws AAIAuthException {
-        // Mocking authService to return true
-        when(authService.validateRequest(any(), any(HttpServletRequest.class), any(), anyString())).thenReturn(true);
+    public void testAuthorizedRequest() throws IOException, AAIAuthException {
+        when(requestContext.getMethod()).thenReturn("GET");
+        when(authService.validateRequest(any(), eq(servletRequest), eq(HTTP_METHODS.GET), eq("some-segment")))
+                .thenReturn(true);
 
-        webTestClient.post()
-                .uri("/v1/app/generateArtifacts")
-                .exchange()
-                .expectStatus().is5xxServerError();
+        filter.filter(requestContext);
+
+        verify(requestContext, never()).abortWith(any());
     }
 
     @Test
-    @Disabled
-    public void testUnauthorizedRequest() throws AAIAuthException {
-        // Mocking authService to return false
-        when(authService.validateRequest(any(), any(HttpServletRequest.class), any(), anyString())).thenReturn(false);
+    public void testUnauthorizedRequest() throws IOException, AAIAuthException {
+        when(requestContext.getMethod()).thenReturn("POST");
+        when(authService.validateRequest(any(), eq(servletRequest), eq(HTTP_METHODS.POST), eq("some-segment")))
+                .thenReturn(false);
 
-        webTestClient.post()
-                .uri("/services/babel-service/v1/app/generateArtifacts")
-                .exchange()
-                .expectStatus().isUnauthorized();
+        filter.filter(requestContext);
+
+        ArgumentCaptor<Response> captor = ArgumentCaptor.forClass(Response.class);
+        verify(requestContext).abortWith(captor.capture());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), captor.getValue().getStatus());
     }
 
-    // @TestConfiguration
-    // static class TestConfig {
+    @Test
+    public void testExceptionDuringValidation() throws IOException, AAIAuthException {
+        when(requestContext.getMethod()).thenReturn("DELETE");
+        when(authService.validateRequest(any(), eq(servletRequest), eq(HTTP_METHODS.DELETE), eq("some-segment")))
+                .thenThrow(new RuntimeException("Failure"));
 
-    //     @Bean
-    //     public FilterRegistrationBean<AuthenticationRequestFilter> loggingFilter(AAIMicroServiceAuth authService, HttpServletRequest servletRequest) {
-    //         FilterRegistrationBean<AuthenticationRequestFilter> registrationBean = new FilterRegistrationBean<>();
+        filter.filter(requestContext);
 
-    //         registrationBean.setFilter(new AuthenticationRequestFilter(authService, servletRequest));
-    //         registrationBean.addUrlPatterns("/test");
-
-    //         return registrationBean;
-    //     }
-
-    //     @Bean
-    //     public HttpServletRequest httpServletRequest() {
-    //         return new MockHttpServletRequest();
-    //     }
-    // }
-
-    // @RestController
-    // static class TestController {
-
-    //     @GetMapping("/test")
-    //     public ResponseEntity<String> testEndpoint() {
-    //         return ResponseEntity.ok("Authorized");
-    //     }
-    // }
+        ArgumentCaptor<Response> captor = ArgumentCaptor.forClass(Response.class);
+        verify(requestContext).abortWith(captor.capture());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), captor.getValue().getStatus());
+    }
 }
