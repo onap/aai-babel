@@ -67,6 +67,24 @@
       "message": "Adding this dependency is not necessary for this change (perhaps when updating further, but the tests pass without it here).\nPlease remove it. Same for the glassfish jaxb-runtime",
       "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f878c78a_47846082",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 8530
+      },
+      "writtenOn": "2025-07-01T13:19:57Z",
+      "side": 1,
+      "message": "Removed bind-api and jaxb-runtime from pom.xml.",
+      "parentUuid": "d86bec79_e813e6eb",
+      "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
