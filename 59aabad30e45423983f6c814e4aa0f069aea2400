@@ -36,6 +36,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b704db67_abea490b",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-02T06:30:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "58045776_d984c9e5",
+      "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "58f34bc3_8f91220e",
@@ -67,6 +85,24 @@
       "side": 1,
       "message": "previously rest-client:1.6.4 version is coming as a transitive dependency. so I kept the same version and moved it to properties section.",
       "parentUuid": "58f34bc3_8f91220e",
+      "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c9895852_4aa2d3c7",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-02T06:30:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "97ffad6a_9265c9aa",
       "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
@@ -106,6 +142,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "764149a4_128d7163",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-02T06:30:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3e3ccbf7_c366c806",
+      "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d86bec79_e813e6eb",
@@ -137,6 +191,24 @@
       "side": 1,
       "message": "Removed bind-api and jaxb-runtime from pom.xml.",
       "parentUuid": "d86bec79_e813e6eb",
+      "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "09f49fcd_2ead893e",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-02T06:30:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f878c78a_47846082",
       "revId": "59aabad30e45423983f6c814e4aa0f069aea2400",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
