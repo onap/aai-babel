@@ -33,7 +33,7 @@
 
 	<groupId>org.onap.aai</groupId>
 	<artifactId>babel</artifactId>
-	<version>1.13.5-SNAPSHOT</version>
+	<version>1.13.6</version>
 	<packaging>jar</packaging>
 
 	<name>aai-babel</name>
@@ -69,10 +69,10 @@
 		<!-- java 11 related properties -->
 		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-		<maven-compiler-plugin.source>11</maven-compiler-plugin.source>
-		<maven-compiler-plugin.target>11</maven-compiler-plugin.target>
-		<maven-compiler-plugin.test.source>11</maven-compiler-plugin.test.source>
-		<maven-compiler-plugin.test.target>11</maven-compiler-plugin.test.target>
+		<maven-compiler-plugin.source>17</maven-compiler-plugin.source>
+		<maven-compiler-plugin.target>17</maven-compiler-plugin.target>
+		<maven-compiler-plugin.test.source>17</maven-compiler-plugin.test.source>
+		<maven-compiler-plugin.test.target>17</maven-compiler-plugin.test.target>
 		<sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
 
 		<!-- docker related properties -->
@@ -89,7 +89,7 @@
 
 		<aai.common.version>1.9.4</aai.common.version>
 		<groovy.version>3.0.13</groovy.version>
-		<spring-cloud.version>2021.0.8</spring-cloud.version>
+		<spring-cloud.version>2021.0.9</spring-cloud.version>
 
 		<commons.compress.version>1.27.0</commons.compress.version>
 		<commons.io.version>2.16.1</commons.io.version>
@@ -111,7 +111,8 @@
 		<jakarta.activation.version>1.2.2</jakarta.activation.version>
 		<!-- This will be used for the docker images as the default format of maven build has issues -->
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
-
+		<jakarta.xml.bind-api.version>3.0.1</jakarta.xml.bind-api.version>
+		<jaxb-runtime.version>3.0.1</jaxb-runtime.version>
 	</properties>
 
 	<profiles>
@@ -303,22 +304,18 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>${commons.codec.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>
-			<version>${commons.compress.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>${commons.lang3.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
-			<version>${javax.ws.rs.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
@@ -351,7 +348,6 @@
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest</artifactId>
-			<version>2.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -392,7 +388,6 @@
 		<dependency>
 			<groupId>jakarta.activation</groupId>
 			<artifactId>jakarta.activation-api</artifactId>
-			<version>${jakarta.activation.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -413,6 +408,16 @@
 		<artifactId>slf4j-api</artifactId>
 		<version>2.0.9</version>
 	</dependency>
+	<dependency>
+		<groupId>jakarta.xml.bind</groupId>
+		<artifactId>jakarta.xml.bind-api</artifactId>
+		<version>${jakarta.xml.bind-api.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.glassfish.jaxb</groupId>
+		<artifactId>jaxb-runtime</artifactId>
+		<version>${jaxb-runtime.version}</version>
+	</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -430,7 +435,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring.boot.version}</version>
 				<configuration>
 					<jvmArguments>
 						-DCONFIG_HOME=src/main/resources
@@ -572,7 +576,6 @@
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>3.0</version>
 				<configuration>
 					<header>License.txt</header>
 					<includes>
@@ -740,7 +743,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M8</version>
+				<version>3.1.2</version>
 				<configuration>
 					<!-- Sets the VM argument line used when unit tests are run. -->
 					<reuseForks>false</reuseForks>
@@ -749,7 +752,10 @@
 						<APP_HOME>.</APP_HOME>
 						<CONFIG_HOME>src/test/resources</CONFIG_HOME>
 					</environmentVariables>
-					<argLine>${surefireArgLine}</argLine>
+					<!-- Needed from Jdk-17+ to address potential compatibility and class loading issues that can arise when JAXB's bytecode generation-->
+					<argLine>
+						-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true ${surefireArgLine}
+					</argLine>
 					<!-- Excludes integration tests when unit tests are run. -->
 					<excludes>
 						<exclude>**/IT*.java</exclude>
@@ -759,7 +765,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>3.1.2</version>
 				<executions>
 					<!-- Ensures that both integration-test and verify goals of the Failsafe
                      Maven plugin are executed. -->
@@ -779,7 +784,6 @@
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>${sonar.scanner.version}</version>
 			</plugin>
 			<!-- end removable sonar config, note the additional exclusion for babel above -->
 		</plugins>
