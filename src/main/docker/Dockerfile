@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 USER 1000
 ARG MICRO_HOME=/opt/app/babel
