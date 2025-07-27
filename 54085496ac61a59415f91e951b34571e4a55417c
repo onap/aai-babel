@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "45f078a7_4324f942",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-27T08:34:56Z",
+      "side": 1,
+      "message": "Please also change the base image to `eclipse-temurin:17-jre-alpine` in the `Dockerfile`",
+      "revId": "54085496ac61a59415f91e951b34571e4a55417c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c32bba89_e355d2bc",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-27T08:34:56Z",
+      "side": 1,
+      "message": "That may seem unintuitive, but the version should actually always stay as `...-SNAPSHOT` here.\nReleasing is done via the `-release.yaml` files and for them the `-SNAPSHOT` is not relevant.\n\nBut good that you bumped the version",
+      "revId": "54085496ac61a59415f91e951b34571e4a55417c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
