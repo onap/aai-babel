@@ -22,9 +22,10 @@
 package org.onap.aai.babel.logging;
 
 import com.att.eelf.i18n.EELFResourceManager;
+import com.att.eelf.i18n.EELFResolvableErrorEnum;
 import org.onap.aai.cl.eelf.LogMessageEnum;
 
-public enum ApplicationMsgs implements LogMessageEnum {
+public enum ApplicationMsgs implements LogMessageEnum, EELFResolvableErrorEnum {
 
     DISTRIBUTION_EVENT, //
     MESSAGE_AUDIT, //

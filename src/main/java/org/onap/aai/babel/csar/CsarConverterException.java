@@ -20,11 +20,14 @@
  */
 package org.onap.aai.babel.csar;
 
+import java.io.Serial;
+
 /**
  * This class represents an exception encountered when attempting to convert the YAML files in a CSAR archive into XML.
  */
 public class CsarConverterException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

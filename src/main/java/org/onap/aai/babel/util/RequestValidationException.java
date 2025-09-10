@@ -20,9 +20,12 @@
  */
 package org.onap.aai.babel.util;
 
+import java.io.Serial;
+
 /** This exception is thrown when the request fails validation. */
 public class RequestValidationException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

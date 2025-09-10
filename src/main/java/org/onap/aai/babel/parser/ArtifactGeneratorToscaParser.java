@@ -107,7 +107,7 @@ public class ArtifactGeneratorToscaParser {
         log.debug("Getting TOSCA Mappings Configuration");
         File file = new File(configLocation);
         if (!file.exists()) {
-            throw new IllegalArgumentException(String.format(GENERATOR_AAI_CONFIGFILE_NOT_FOUND, configLocation));
+            throw new IllegalArgumentException(GENERATOR_AAI_CONFIGFILE_NOT_FOUND.formatted(configLocation));
         }
 
         GroupConfiguration config;
@@ -269,7 +269,7 @@ public class ArtifactGeneratorToscaParser {
         }
 
         if (resourceModel.hasWidgetType("ALLOTTED_RESOURCE") && !foundProvidingService) {
-            throw new XmlArtifactGenerationException(String.format(GENERATOR_AAI_PROVIDING_SERVICE_MISSING,
+            throw new XmlArtifactGenerationException(GENERATOR_AAI_PROVIDING_SERVICE_MISSING.formatted(
                     Optional.ofNullable(resourceModel.getModelId()).orElse("<null ID>")));
         }
     }
@@ -313,7 +313,7 @@ public class ArtifactGeneratorToscaParser {
      */
     private List<Resource> generateResourcesAndWidgets(final ArrayList<NodeTemplate> memberNodes,
             final Resource groupModel) throws XmlArtifactGenerationException {
-        log.debug(String.format("Processing member nodes for Group %s (invariant UUID %s)", //
+        log.debug("Processing member nodes for Group %s (invariant UUID %s)".formatted( //
                 groupModel.getModelName(), groupModel.getModelId()));
 
         List<Resource> resources = new ArrayList<>();
@@ -322,13 +322,13 @@ public class ArtifactGeneratorToscaParser {
             String nodeTypeName = nodeTemplate.getType();
             final String metadataType = nodeTemplate.getMetaData().getValue("type");
 
-            log.debug(String.format("Get model for %s (metadata type %s)", nodeTypeName, metadataType));
+            log.debug("Get model for %s (metadata type %s)".formatted(nodeTypeName, metadataType));
             Resource memberModel = Model.getModelFor(nodeTypeName, metadataType);
 
             if (memberModel != null) {
                 memberModel.populateModelIdentificationInformation(nodeTemplate.getMetaData().getAllProperties());
 
-                log.debug(String.format("Generating grouped %s (%s) from TOSCA type %s",
+                log.debug("Generating grouped %s (%s) from TOSCA type %s".formatted(
                         memberModel.getClass().getSuperclass().getSimpleName(), memberModel.getClass(), nodeTypeName));
 
                 addRelatedModel(groupModel, memberModel);
@@ -493,7 +493,7 @@ public class ArtifactGeneratorToscaParser {
         if (nodeProperties == null || nodeProperties.get("providing_service_uuid") == null
                 || nodeProperties.get("providing_service_invariant_uuid") == null) {
             throw new IllegalArgumentException(
-                    String.format(GENERATOR_AAI_PROVIDING_SERVICE_METADATA_MISSING, resourceModel.getModelId()));
+                    GENERATOR_AAI_PROVIDING_SERVICE_METADATA_MISSING.formatted(resourceModel.getModelId()));
         }
         Map<String, String> properties = populateStringProperties(nodeProperties);
         properties.put(VERSION, "1.0");

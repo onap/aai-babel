@@ -27,7 +27,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,7 +72,7 @@ public class LogReader {
         Path cachedLog = cachedLogMap.get(filenamePrefix);
 
         if (cachedLog == null) {
-            Optional<Path> latestFilePath = Files.list(Paths.get(logDirectory))
+            Optional<Path> latestFilePath = Files.list(Path.of(logDirectory))
                     .filter(f -> Files.isDirectory(f) == false && f.getFileName().toString().startsWith(filenamePrefix))
                     .max(Comparator.comparingLong(f -> f.toFile().lastModified()));
             if (latestFilePath.isPresent()) {

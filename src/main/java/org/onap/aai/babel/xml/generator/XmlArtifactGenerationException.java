@@ -21,12 +21,15 @@
 
 package org.onap.aai.babel.xml.generator;
 
+import java.io.Serial;
+
 /**
  * This class represents a fatal exception encountered when generating an Artifact.
  *
  */
 public class XmlArtifactGenerationException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

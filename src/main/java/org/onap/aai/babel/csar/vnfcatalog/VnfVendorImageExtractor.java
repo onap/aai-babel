@@ -44,7 +44,7 @@ import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 /**
  * This class is responsible for extracting Virtual Network Function (VNF) information from a TOSCA 1.1 CSAR package.
@@ -212,7 +212,7 @@ public class VnfVendorImageExtractor {
             NodeTemplate vnfConfigurationNode = vnfConfigs.get(0);
 
             applicationLogger.info(ApplicationMsgs.DISTRIBUTION_EVENT,
-                    String.format("Found VNF Configuration node \"%s\"", vnfConfigurationNode));
+                    "Found VNF Configuration node \"%s\"".formatted(vnfConfigurationNode));
 
             if (vnfConfigs.size() > 1) {
                 throw new InvalidNumberOfNodesException("Only one VNF configuration node is allowed however "
