@@ -16,6 +16,57 @@
       "message": "recheck",
       "revId": "623170411e9497a58bb8428f3b6a723b33f527f4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8279178d_1d1c79c2",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-10T09:14:42Z",
+      "side": 1,
+      "message": "You should be able to use the release version here (`1.13.1`)",
+      "revId": "623170411e9497a58bb8428f3b6a723b33f527f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ea36f36_b33766ae",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 529,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-10T09:14:42Z",
+      "side": 1,
+      "message": "I think it makes sense to introduce a (`\u003cjaxb-plugin-version\u003e`) property here since you are also defining this a second time further down below",
+      "revId": "623170411e9497a58bb8428f3b6a723b33f527f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a90dcdb5_7ddedce3",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 626,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-10T09:14:42Z",
+      "side": 1,
+      "message": "Not sure if setting this is needed, but I would suggest to set it to `${maven-compiler-plugin.target}` and maybe undo the removal of that `\u003ctarget\u003e` property",
+      "revId": "623170411e9497a58bb8428f3b6a723b33f527f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
