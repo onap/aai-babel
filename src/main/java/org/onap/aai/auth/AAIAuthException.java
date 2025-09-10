@@ -21,8 +21,11 @@
 
 package org.onap.aai.auth;
 
+import java.io.Serial;
+
 public class AAIAuthException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public AAIAuthException(String string) {

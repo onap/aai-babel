@@ -20,12 +20,15 @@
  */
 package org.onap.aai.babel.csar.vnfcatalog;
 
+import java.io.Serial;
+
 /**
  * This class represents an exception raised when trying to extract VNFCatalog data out of a CSAR file.
  */
 public class ToscaToCatalogException extends Exception {
 
     /** Defaulted */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

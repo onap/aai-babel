@@ -22,10 +22,10 @@
 package org.onap.aai.auth;
 
 import java.security.cert.X509Certificate;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.security.auth.x500.X500Principal;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.HttpHeaders;
 import org.onap.aai.babel.config.BabelAuthConfig;
 import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.cl.api.Logger;

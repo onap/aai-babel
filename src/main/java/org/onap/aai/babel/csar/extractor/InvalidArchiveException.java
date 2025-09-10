@@ -20,9 +20,12 @@
  */
 package org.onap.aai.babel.csar.extractor;
 
+import java.io.Serial;
+
 /** This class represents an exception encountered when processing an archive in memory. */
 public class InvalidArchiveException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

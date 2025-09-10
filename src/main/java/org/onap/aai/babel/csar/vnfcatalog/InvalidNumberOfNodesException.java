@@ -20,11 +20,14 @@
  */
 package org.onap.aai.babel.csar.vnfcatalog;
 
+import java.io.Serial;
+
 /**
  * This class represents a scenario when there are invalid number of Nodes found during processing.
  */
 class InvalidNumberOfNodesException extends Exception {
     /** Default ID */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     InvalidNumberOfNodesException(String message) {

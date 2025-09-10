@@ -22,8 +22,8 @@
 package org.onap.aai.babel.request;
 
 import java.util.Optional;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 /** Bean to represent the ECOMP request/transaction IDs required for EELF logging. */
 public class RequestHeaders {

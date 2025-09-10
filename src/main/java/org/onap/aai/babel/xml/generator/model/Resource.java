@@ -65,8 +65,8 @@ public class Resource extends Model {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Resource) {
-            return getModelNameVersionId().equals(((Resource) obj).getModelNameVersionId());
+        if (obj instanceof Resource resource) {
+            return getModelNameVersionId().equals(resource.getModelNameVersionId());
         }
         return false;
     }

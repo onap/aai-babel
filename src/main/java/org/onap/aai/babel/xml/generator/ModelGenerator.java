@@ -36,7 +36,7 @@ import org.onap.aai.babel.xml.generator.data.Artifact;
 import org.onap.aai.babel.xml.generator.data.GenerationData;
 import org.onap.aai.babel.xml.generator.data.GeneratorUtil;
 import org.onap.aai.babel.xml.generator.data.GroupType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 /**
  * This class is responsible for generating XML model artifacts from a collection of CSAR artifacts.

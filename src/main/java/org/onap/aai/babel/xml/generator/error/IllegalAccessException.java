@@ -20,8 +20,11 @@
  */
 package org.onap.aai.babel.xml.generator.error;
 
+import java.io.Serial;
+
 public class IllegalAccessException extends RuntimeException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public IllegalAccessException(String message) {

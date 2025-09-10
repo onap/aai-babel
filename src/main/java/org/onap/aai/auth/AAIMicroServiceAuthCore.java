@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -129,15 +128,15 @@ public class AAIMicroServiceAuthCore {
     private static Optional<String> locateConfigFile(String authPolicyFile) throws IOException {
         if (authPolicyFile != null) {
             List<Path> paths = new ArrayList<>();
-            paths.add(Paths.get("."));
+            paths.add(Path.of("."));
 
             String configHome = System.getProperty("CONFIG_HOME");
             if (configHome == null) {
                 configHome = System.getProperty("APP_HOME") + "/appconfig";
             }
 
-            paths.add(Paths.get(configHome));
-            paths.add(Paths.get(configHome).resolve("auth"));
+            paths.add(Path.of(configHome));
+            paths.add(Path.of(configHome).resolve("auth"));
 
             for (Path path : paths) {
                 File authFile = path.resolve(authPolicyFile).toFile();

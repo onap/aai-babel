@@ -88,7 +88,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         String configLocation = System.getProperty(ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE);
         if (configLocation == null) {
             throw new IllegalArgumentException(
-                    String.format(ArtifactGeneratorToscaParser.GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND,
+                    ArtifactGeneratorToscaParser.GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND.formatted(
                             ArtifactGeneratorToscaParser.PROPERTY_TOSCA_MAPPING_FILE));
         }
 
@@ -240,7 +240,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
                 ArrayList<String> members = group.getMembers();
                 if (members != null && members.contains(nodeTemplate.getName())
                         && WidgetConfigurationUtil.isSupportedInstanceGroup(group.getType())) {
-                    log.debug(String.format("Adding group %s (type %s) with members %s", group.getName(),
+                    log.debug("Adding group %s (type %s) with members %s".formatted(group.getName(),
                             group.getType(), members));
 
                     Resource groupModel = parser.createInstanceGroupModel(
@@ -484,7 +484,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         } else {
             String versionRegex = "^\\d*\\.\\d*$";
             if (!(serviceVersion.matches(versionRegex))) {
-                throw new IllegalArgumentException(String.format(GENERATOR_AAI_INVALID_SERVICE_VERSION));
+                throw new IllegalArgumentException(GENERATOR_AAI_INVALID_SERVICE_VERSION.formatted());
             }
         }
         return serviceVersion;

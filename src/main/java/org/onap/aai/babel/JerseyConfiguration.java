@@ -20,7 +20,7 @@
  */
 package org.onap.aai.babel;
 
-import javax.ws.rs.ApplicationPath;
+import jakarta.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.onap.aai.babel.service.GenerateArtifactsControllerImpl;
 import org.onap.aai.babel.service.InfoService;

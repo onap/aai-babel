@@ -28,8 +28,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Base64;
 import java.util.List;
-import javax.ws.rs.core.*;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.*;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.onap.aai.babel.csar.CsarConverterException;

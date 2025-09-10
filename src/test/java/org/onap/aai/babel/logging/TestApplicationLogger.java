@@ -31,8 +31,8 @@ import com.att.eelf.configuration.EELFLogger.Level;
 import com.att.eelf.configuration.EELFManager;
 import java.io.IOException;
 import java.util.Arrays;
-import javax.servlet.ServletRequest;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.servlet.ServletRequest;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Assertions;

@@ -33,7 +33,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -143,7 +143,7 @@ public class ArtifactTestUtils {
     }
 
     public String readstringFromFile(String resourceFile) throws IOException, URISyntaxException {
-        return Files.lines(Paths.get(getResource(resourceFile).toURI())).collect(Collectors.joining());
+        return Files.lines(Path.of(getResource(resourceFile).toURI())).collect(Collectors.joining());
     }
 
     /**

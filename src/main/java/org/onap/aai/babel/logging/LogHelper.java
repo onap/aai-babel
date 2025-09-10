@@ -30,9 +30,9 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import javax.servlet.ServletRequest;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response.Status;
+import jakarta.servlet.ServletRequest;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.onap.aai.babel.request.RequestHeaders;
@@ -181,7 +181,7 @@ public enum LogHelper implements Logger {
             clientHost = servletRequest.getRemoteHost();
             clientIPAddress = servletRequest.getRemoteAddr();
 
-            if (!partnerName.isPresent()) {
+            if (partnerName.isEmpty()) {
                 partnerName = Optional.ofNullable(clientHost);
             }
         }

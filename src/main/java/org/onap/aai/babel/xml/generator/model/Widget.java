@@ -140,8 +140,7 @@ public class Widget extends Model {
     @Override
     public boolean equals(Object obj) {
         boolean isEqual = false;
-        if (obj instanceof Widget) {
-            Widget other = (Widget) obj;
+        if (obj instanceof Widget other) {
             if (getId().equals(other.getId())) {
                 other.keys.addAll(this.keys);
                 isEqual = true;

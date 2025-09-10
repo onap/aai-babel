@@ -27,11 +27,11 @@ import org.onap.aai.babel.request.RequestHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -52,8 +52,7 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
       applicationLogger.startAudit(headers, servletRequest);
       applicationLogger.info(ApplicationMsgs.BABEL_REQUEST_PAYLOAD,
               "Received request: " + headers + requestBody);
-      applicationLogger.debug(String.format(
-              "Received request. UriInfo \"%s\", HttpHeaders \"%s\", ServletRequest \"%s\", Request \"%s\"", uriInfo,
+      applicationLogger.debug("Received request. UriInfo \"%s\", HttpHeaders \"%s\", ServletRequest \"%s\", Request \"%s\"".formatted(uriInfo,
               headers, servletRequest, requestBody));
 
       // Additional name/value pairs according to EELF guidelines
