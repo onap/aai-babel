@@ -70,6 +70,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a0350dae_7a085936",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 529,
+      "author": {
+        "id": 8530
+      },
+      "writtenOn": "2025-09-10T10:29:30Z",
+      "side": 1,
+      "message": "yes I added the plugin version.",
+      "parentUuid": "3ea36f36_b33766ae",
+      "revId": "623170411e9497a58bb8428f3b6a723b33f527f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a90dcdb5_7ddedce3",
@@ -83,6 +101,24 @@
       "writtenOn": "2025-09-10T09:14:42Z",
       "side": 1,
       "message": "Not sure if setting this is needed, but I would suggest to set it to `${maven-compiler-plugin.target}` and maybe undo the removal of that `\u003ctarget\u003e` property",
+      "revId": "623170411e9497a58bb8428f3b6a723b33f527f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b420854e_65bb19f8",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 626,
+      "author": {
+        "id": 8530
+      },
+      "writtenOn": "2025-09-10T10:29:30Z",
+      "side": 1,
+      "message": "I have removed it.",
+      "parentUuid": "a90dcdb5_7ddedce3",
       "revId": "623170411e9497a58bb8428f3b6a723b33f527f4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
