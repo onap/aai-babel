@@ -118,6 +118,7 @@
 		<logback.version>1.4.14</logback.version>
 		<logstash.logback.encoder.version>6.6</logstash.logback.encoder.version>
 		<slf4j.api.version>2.0.9</slf4j.api.version>
+		<swagger.version>2.2.35</swagger.version>
 	</properties>
 
 	<profiles>
@@ -453,6 +454,11 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-jaxrs2-jakarta</artifactId>
+			<version>${swagger.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -800,6 +806,30 @@
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>io.swagger.core.v3</groupId>
+				<artifactId>swagger-maven-plugin-jakarta</artifactId>
+				<version>${swagger.version}</version>
+				<executions>
+					<execution>
+						<id>generate-openapi</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>resolve</goal>
+						</goals>
+						<configuration>
+							<attachSwaggerArtifact>false</attachSwaggerArtifact>
+							<outputPath>${project.build.directory}/generated-swagger-docs</outputPath>
+							<outputFileName>openapi</outputFileName>
+							<outputFormat>JSON</outputFormat>
+							<resourcePackages>
+								<resourcePackage>org.onap.aai.babel</resourcePackage>
+							</resourcePackages>
+							<prettyPrint>true</prettyPrint>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<!-- end removable sonar config, note the additional exclusion for babel above -->
 		</plugins>
