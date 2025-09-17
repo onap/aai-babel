@@ -28,12 +28,22 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+
 @SpringBootApplication
 @ImportResource("classpath:babel-beans.xml")
 @ComponentScan(basePackages = {
         "org.onap.aai.aaf",
         "org.onap.aai.babel"
 })
+@OpenAPIDefinition(
+  info = @Info(
+    title = "ONAP AAI Babel APIs",
+    description = "Generates AAI model XML from SDC TOSCA artifacts",
+    version = "1.0.0"
+  )
+)
 public class BabelApplication extends SpringBootServletInitializer {
 
     private static ConfigurableApplicationContext context;

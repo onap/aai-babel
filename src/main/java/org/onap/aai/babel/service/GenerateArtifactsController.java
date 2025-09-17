@@ -29,14 +29,30 @@ import javax.ws.rs.core.Response;
 import org.onap.aai.auth.AAIAuthException;
 import org.onap.aai.babel.service.data.BabelRequest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /** Generate artifacts from the specified request content */
 @Path("/app")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @FunctionalInterface
+@Tag(name = "Babel Services", description = "APIs for generating artifacts from TOSCA models in AAI Babel")
 public interface GenerateArtifactsController {
 
     @POST
     @Path("/generateArtifacts")
-    Response generateArtifacts(BabelRequest babelRequest) throws AAIAuthException;
+    @Operation(summary = "Generate artifacts", description = "Takes a BabelRequest containing TOSCA service model artifacts and generates AAI-compatible artifacts.", responses = {
+            @ApiResponse(responseCode = "200", description = "Artifacts generated successfully", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request or malformed input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized (authentication failure)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error during artifact generation")
+    })
+    Response generateArtifacts(
+            @RequestBody(required = true, description = "The BabelRequest containing TOSCA service model artifacts.", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = BabelRequest.class))) BabelRequest babelRequest)
+            throws AAIAuthException;
 }
