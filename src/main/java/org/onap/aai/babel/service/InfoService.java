@@ -33,13 +33,18 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import org.springframework.stereotype.Service;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
- * Information service for the micro-service. Return status details to the caller.
+ * Information service for the micro-service. Return status details to the
+ * caller.
  *
  * @exclude
  */
 @Path("/core/core-service")
 @Service
+@Tag(name = "Babel Info Service", description = "Provides uptime and status information for the Babel micro-service.")
 public class InfoService {
 
     private Clock clock = Clock.systemDefaultZone();
@@ -53,6 +58,7 @@ public class InfoService {
     @GET
     @Path("/info")
     @Produces("text/plain")
+    @Operation(summary = "Get Babel service status", description = "Returns uptime, start time, and request count information for the Babel micro-service.")
     public String getInfo(@DefaultValue("text") @QueryParam("format") String format) {
         return "Status: Up\n" + statusReport(clock) + "\n";
     }
