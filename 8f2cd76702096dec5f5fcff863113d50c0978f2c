@@ -1,5 +1,23 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5eff8e92_979025ad",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8530
+      },
+      "writtenOn": "2025-09-18T05:56:12Z",
+      "side": 1,
+      "message": "stage-release",
+      "revId": "8f2cd76702096dec5f5fcff863113d50c0978f2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ],
   "submitRequirementResults": [
     {
       "submitRequirement": {
