@@ -100,7 +100,7 @@
 		<mvn.jaxb2.version>0.15.1</mvn.jaxb2.version>
 		<aai-schema.group.id>org.onap.aai.schema-service</aai-schema.group.id>
 
-		<aai-schema.version>1.13.1-SNAPSHOT</aai-schema.version>
+		<aai-schema.version>1.13.3-SNAPSHOT</aai-schema.version>
 		<commons.lang3.version>3.12.0</commons.lang3.version>
 		<aai.rest.client.version>1.6.4</aai.rest.client.version>
 		<common.logging.version>1.13.0</common.logging.version>
