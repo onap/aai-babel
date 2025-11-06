@@ -1,4 +1,4 @@
-<model xmlns="http://org.onap.aai.inventory/v30">
+<model xmlns="http://org.onap.aai.inventory/v31">
     <model-invariant-id>b78ae06b-95f7-493c-963b-c81e110f2dee</model-invariant-id>
     <model-type>resource</model-type>
     <model-vers>
