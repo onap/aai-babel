@@ -33,6 +33,24 @@
       "message": "We should bump to `6` here",
       "revId": "1bb834f7e9563f942ab168880da5be1e5b1a1607",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d03d52d_c1ac315a",
+        "filename": "version.properties",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-11-11T09:17:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1d28b265_567a5d8a",
+      "revId": "1bb834f7e9563f942ab168880da5be1e5b1a1607",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
