@@ -1,0 +1,7 @@
+distribution_type: container
+container_release_tag: 1.14.0
+project: aai/babel
+ref: d07a2e9f59512c7a470814f42244bea7bc99eb85
+containers:
+    - name: babel
+      version: 1.14-STAGING-20251202T122533Z
