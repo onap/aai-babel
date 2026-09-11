@@ -24,25 +24,28 @@ import org.onap.aai.babel.logging.ApplicationMsgs;
 import org.onap.aai.babel.logging.LogHelper;
 import org.onap.aai.babel.logging.LogHelper.MdcParameter;
 import org.onap.aai.babel.request.RequestHeaders;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import lombok.RequiredArgsConstructor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.ext.Provider;
 
 import java.io.IOException;
 import java.util.UUID;
 
 @Component
+@Provider
+@RequiredArgsConstructor
 public class LoggingRequestFilter implements ContainerRequestFilter {
 
     private static final LogHelper applicationLogger = LogHelper.INSTANCE;
 
-    @Autowired
-    private HttpServletRequest servletRequest;
+    private final HttpServletRequest servletRequest;
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {

@@ -380,12 +380,17 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
-			<version>5.10.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Required by the maven-failsafe-plugin to launch the JUnit 5 platform for *IT tests -->
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-launcher</artifactId>
 			<scope>test</scope>
 		</dependency>
 
@@ -788,6 +793,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<!-- spring-boot:repackage rewrites the jar into fat-jar layout, whose relocated
+					     classes break Spring's @SpringBootTest annotation lookup. -->
+					<classesDirectory>${project.build.outputDirectory}</classesDirectory>
+				</configuration>
 				<executions>
 					<!-- Ensures that both integration-test and verify goals of the Failsafe
                      Maven plugin are executed. -->
