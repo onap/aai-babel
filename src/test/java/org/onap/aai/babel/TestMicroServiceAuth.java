@@ -30,13 +30,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.cert.X509Certificate;
 import java.util.concurrent.TimeUnit;
+import javax.security.auth.x500.X500Principal;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.onap.aai.auth.AAIAuthException;
 import org.onap.aai.auth.AAIMicroServiceAuth;
 import org.onap.aai.auth.AAIMicroServiceAuthCore;
@@ -265,6 +268,40 @@ public class TestMicroServiceAuth {
     public void testValidateRequest() throws AAIAuthException {
         AAIMicroServiceAuth auth = createStandardAuth();
         assertThat(auth.validateRequest(null, new MockHttpServletRequest(), null, "app/v1/babel"), is(false));
+    }
+
+    @Test
+    public void testValidateRequestWithAuthorizedClientCertificate() throws AAIAuthException {
+        AAIMicroServiceAuth auth = createStandardAuth();
+        MockHttpServletRequest request =
+                requestWithClientCertificate("CN=common-name, OU=org-unit, O=org, L=location, ST=state, C=US");
+        assertThat(auth.validateRequest(null, request, AAIMicroServiceAuthCore.HTTP_METHODS.POST,
+                "app/v1/getAndPublish"), is(true));
+    }
+
+    @Test
+    public void testValidateRequestWithUnauthorizedClientCertificate() throws AAIAuthException {
+        AAIMicroServiceAuth auth = createStandardAuth();
+        MockHttpServletRequest request =
+                requestWithClientCertificate("CN=unknown, OU=nowhere, O=nobody, L=nowhere, ST=nowhere, C=GB");
+        assertThat(auth.validateRequest(null, request, AAIMicroServiceAuthCore.HTTP_METHODS.POST,
+                "app/v1/getAndPublish"), is(false));
+    }
+
+    @Test
+    public void testValidateRequestWithoutCipherSuite() throws AAIAuthException {
+        AAIMicroServiceAuth auth = createStandardAuth();
+        assertThat(auth.validateRequest(null, new MockHttpServletRequest(), AAIMicroServiceAuthCore.HTTP_METHODS.POST,
+                "app/v1/getAndPublish"), is(false));
+    }
+
+    private MockHttpServletRequest requestWithClientCertificate(String subjectDn) {
+        X509Certificate certificate = Mockito.mock(X509Certificate.class);
+        Mockito.when(certificate.getSubjectX500Principal()).thenReturn(new X500Principal(subjectDn));
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("javax.servlet.request.cipher_suite", "TLS_AES_256_GCM_SHA384");
+        request.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] {certificate});
+        return request;
     }
 
     private AAIMicroServiceAuth createStandardAuth() throws AAIAuthException {

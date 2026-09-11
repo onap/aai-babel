@@ -56,7 +56,8 @@
 		<sonar.jacoco.reportMissing.force.zero />
 
 		<jacoco.report.directory>${project.build.directory}/code-coverage</jacoco.report.directory>
-		<jacoco.line.coverage.limit>0.87</jacoco.line.coverage.limit>
+		<jacoco.line.coverage.limit>0.95</jacoco.line.coverage.limit>
+		<jacoco.branch.coverage.limit>0.90</jacoco.branch.coverage.limit>
 		<sonar.jacoco.reportPath />
 		<sonar.jacoco.itReportPath />
 		<sonar.jacoco.reportMissing.force.zero />
@@ -64,7 +65,7 @@
 		<jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
 
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-		<sonar.coverage.jacoco.xmlReportPaths>${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml,${project.reporting.outputDirectory}/jacoco-it/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 		<sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**</sonar.exclusions>
 
 		<sonar.scanner.version>3.7.0.1746</sonar.scanner.version>
@@ -761,6 +762,11 @@
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
 											<minimum>${jacoco.line.coverage.limit}</minimum>
+										</limit>
+										<limit implementation="org.jacoco.report.check.Limit">
+											<counter>BRANCH</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>${jacoco.branch.coverage.limit}</minimum>
 										</limit>
 									</limits>
 								</rule>
