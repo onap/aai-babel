@@ -466,6 +466,10 @@
 			<artifactId>swagger-jaxrs2-jakarta</artifactId>
 			<version>${swagger.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
